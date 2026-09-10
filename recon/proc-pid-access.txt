@@ -1,0 +1,36 @@
+=== 受限域 u:r:misysdiagnose:s0 (uid=0) 对 /proc/<pid>/ 的访问能力 ===
+
+/proc 挂载: proc /proc proc rw,relatime,gid=3009,hidepid=2 0 0
+可见进程数: 232 个数字目录
+
+✅ 可读
+  /proc/<pid>/comm          -> 例如 /proc/1/comm = "init"
+  /proc/<pid>/maps          -> 可读！例如 /proc/1/maps 能看到 init 的完整映射
+                               (007d0000-007e6000 r--p 00000000 fd:02 617 /system/bin/init ...)
+  /proc/self/stat, /proc/self/maps
+  /proc/vmallocinfo         -> 可读（内核内存地图，见 mma-cma-layout.txt）
+  /proc/kallsyms            -> 可读（KASLR 关闭 => 地址直接可用）
+
+❌ 被拒
+  /proc/<pid>/fd/*           -> Permission denied   <<== 关键！
+  /proc/<pid>/fd/            -> 列不出（0 项）
+  /proc/1/mem                -> 存在(-rw------- root)，但 open 会被 SELinux 拦
+  /proc/iomem, /proc/modules, /proc/uptime, /proc/loadavg, /proc/version,
+  /proc/slabinfo, /proc/interrupts, /proc/filesystems, /proc/swaps,
+  /proc/config.gz, /proc/cmdline, /proc/keys, /proc/sysrq-trigger ...
+
+## 结论（对"路线 B：偷 fd"的影响）
+
+**原生 /proc/<pid>/fd 偷 fd 这条路被 SELinux 封死。**
+`/proc/<pid>/mem` 同样不可用。
+
+但 `/proc/<pid>/maps` 可读 => 仍然可以：
+* 枚举任意进程（含 surfaceflinger / 显示合成进程 / 媒体解码器）的
+  **地址空间布局与所用共享库**
+* 据此推断哪些进程持有 MMA/dma_buf，并定位其堆区
+
+下一步若要拿 fd，需要找别的门：
+* `pidfd_open(2)` + `pidfd_getfd(2)`（需要 SELinux 放行 ptrace 类操作，待测）
+* 让目标进程**自己**把 fd 传给我们（`SCM_RIGHTS` 已确认可用！见 unix-scm-rights.txt）
+  —— 但需要能向目标进程注入代码，而注入又回到同一个问题
+* 回到 MMA 自身的 import / authorize 命令（不需要 fd，只要能猜/算地址）

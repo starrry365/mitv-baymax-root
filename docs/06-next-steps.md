@@ -56,26 +56,30 @@
 
 **前置条件**：需要一个**合法且有效的 mma fd / handle**。
 
-### 路线 B — 从已运行的图形进程里"借" fd（**最被低估**）
+### 路线 B — 从已运行的图形进程里"借" fd ⚠️ **已实测被封**
 
 电视上 `surfaceflinger` / `gralloc` / `libGLES_mali` 天天在用 MMA，
-它们手里必然有大量 mma fd。
-
-我们已经是 `uid=0`（DAC 全通），因此可以：
+它们手里必然有大量 mma fd。理论上我们已是 uid 0（DAC 全通），可以：
 
 ```bash
 ls -l /proc/<pid>/fd          # 枚举别人的 fd
-cat /proc/<pid>/fdinfo/<n>    # 看 fd 信息
+cat /proc/<pid>/fdinfo/<n>
 ```
 
-甚至用 `pidfd_open(2)` + `pidfd_getfd(2)` **直接把别人的 fd 复制到自己进程里**
-（需要 `PTRACE_MODE_ATTACH_REALCREDS` 与 `CAP_SYS_PTRACE` —— 两者我们都有，
-但还要确认 SELinux 是否放行 `ptrace` 与 `/proc/<pid>/fd` 的读取）。
+**实测结果（见 [`../recon/proc-pid-access.txt`](../recon/proc-pid-access.txt)）：**
 
-拿到真实 mma fd 之后：
-* `mma_get_meminfo(fd)` → 直接读出它的**物理地址**；
-* `mma_map(fd, ...)` → 映射进自己的地址空间；
-* 那这些 buffer 就在我们手里了，再顺着 `/proc/vmallocinfo` 找内核结构。
+| 路径 | 结果 |
+|---|---|
+| `/proc/<pid>/comm` | ✅ 可读 |
+| `/proc/<pid>/maps` | ✅ **可读**（能看别的进程的完整映射） |
+| `/proc/<pid>/fd/*` | ❌ **Permission denied** |
+| `/proc/<pid>/mem` | ❌ 不可用 |
+
+⇒ **这条路被 SELinux 封死**。`pidfd_open(2)`+`pidfd_getfd(2)` 大概率同样被拒
+（需要 ptrace 类放行），可作一次性验证但期望不高。
+
+仍可利用的残余价值：`/proc/<pid>/maps` 可读 ⇒ 能枚举任意进程的
+地址空间布局与所用共享库，据此推断谁持有 MMA/dma_buf、堆区在哪。
 
 ### 路线 C — 等 CMA 有空隙时再试 `alloc`
 
