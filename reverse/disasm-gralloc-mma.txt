@@ -1,0 +1,1200 @@
+
+gralloc.so:	file format elf32-littlearm
+
+Disassembly of section .text:
+
+00010468 <_Z8mma_openv>:
+   10468: b510         	push	{r4, lr}
+   1046a: b082         	sub	sp, #0x8
+   1046c: 2031         	movs	r0, #0x31
+   1046e: 9000         	str	r0, [sp]
+   10470: 2003         	movs	r0, #0x3
+   10472: 4918         	ldr	r1, [pc, #0x60]         @ 0x104d4 <_Z8mma_openv+0x6c>
+   10474: 4a18         	ldr	r2, [pc, #0x60]         @ 0x104d8 <_Z8mma_openv+0x70>
+   10476: 4b19         	ldr	r3, [pc, #0x64]         @ 0x104dc <_Z8mma_openv+0x74>
+   10478: 4479         	add	r1, pc
+   1047a: 447a         	add	r2, pc
+   1047c: 447b         	add	r3, pc
+   1047e: f002 ef00    	blx	0x13280                 @ imm = #0x2e00
+   10482: 4817         	ldr	r0, [pc, #0x5c]         @ 0x104e0 <_Z8mma_openv+0x78>
+   10484: 4478         	add	r0, pc
+   10486: f003 e8e4    	blx	0x13650                 @ imm = #0x31c8
+   1048a: 4c16         	ldr	r4, [pc, #0x58]         @ 0x104e4 <_Z8mma_openv+0x7c>
+   1048c: 447c         	add	r4, pc
+   1048e: 6820         	ldr	r0, [r4]
+   10490: 3001         	adds	r0, #0x1
+   10492: d108         	bne	0x104a6 <_Z8mma_openv+0x3e> @ imm = #0x10
+   10494: 4814         	ldr	r0, [pc, #0x50]         @ 0x104e8 <_Z8mma_openv+0x80>
+   10496: 2102         	movs	r1, #0x2
+   10498: 4478         	add	r0, pc
+   1049a: f003 eb9a    	blx	0x13bd0                 @ imm = #0x3734
+   1049e: f1b0 3fff    	cmp.w	r0, #0xffffffff
+   104a2: 6020         	str	r0, [r4]
+   104a4: dd0b         	ble	0x104be <_Z8mma_openv+0x56> @ imm = #0x16
+   104a6: 4813         	ldr	r0, [pc, #0x4c]         @ 0x104f4 <_Z8mma_openv+0x8c>
+   104a8: 4478         	add	r0, pc
+   104aa: 6801         	ldr	r1, [r0]
+   104ac: 3101         	adds	r1, #0x1
+   104ae: 6001         	str	r1, [r0]
+   104b0: 4811         	ldr	r0, [pc, #0x44]         @ 0x104f8 <_Z8mma_openv+0x90>
+   104b2: 4478         	add	r0, pc
+   104b4: f003 e8e4    	blx	0x13680                 @ imm = #0x31c8
+   104b8: 2000         	movs	r0, #0x0
+   104ba: b002         	add	sp, #0x8
+   104bc: bd10         	pop	{r4, pc}
+   104be: 480b         	ldr	r0, [pc, #0x2c]         @ 0x104ec <_Z8mma_openv+0x84>
+   104c0: 4478         	add	r0, pc
+   104c2: f003 ebb6    	blx	0x13c30                 @ imm = #0x376c
+   104c6: 480a         	ldr	r0, [pc, #0x28]         @ 0x104f0 <_Z8mma_openv+0x88>
+   104c8: 4478         	add	r0, pc
+   104ca: f003 e8da    	blx	0x13680                 @ imm = #0x31b4
+   104ce: f06f 0012    	mvn	r0, #0x12
+   104d2: e7f2         	b	0x104ba <_Z8mma_openv+0x52> @ imm = #-0x1c
+   104d4: 6257         	str	r7, [r2, #0x24]
+   104d6: ffff 5848    	vtbx.8	d21, {d15}, d8
+   104da: ffff 64c4    	<unknown>
+   104de: ffff 640c    	<unknown>
+   104e2: 0000         	movs	r0, r0
+   104e4: 3b7c         	subs	r3, #0x7c
+   104e6: 0000         	movs	r0, r0
+   104e8: 5a0e         	ldrh	r6, [r1, r0]
+   104ea: ffff 59ef    	<unknown>
+   104ee: ffff 63c8    	<unknown>
+   104f2: 0000         	movs	r0, r0
+   104f4: 63ec         	str	r4, [r5, #0x3c]
+   104f6: 0000         	movs	r0, r0
+   104f8: 63de         	str	r6, [r3, #0x3c]
+   104fa: 0000         	movs	r0, r0
+
+000104fc <_Z11mma_releasev>:
+   104fc: b510         	push	{r4, lr}
+   104fe: b082         	sub	sp, #0x8
+   10500: 2042         	movs	r0, #0x42
+   10502: 9000         	str	r0, [sp]
+   10504: 2003         	movs	r0, #0x3
+   10506: 4913         	ldr	r1, [pc, #0x4c]         @ 0x10554 <_Z11mma_releasev+0x58>
+   10508: 4a13         	ldr	r2, [pc, #0x4c]         @ 0x10558 <_Z11mma_releasev+0x5c>
+   1050a: 4b14         	ldr	r3, [pc, #0x50]         @ 0x1055c <_Z11mma_releasev+0x60>
+   1050c: 4479         	add	r1, pc
+   1050e: 447a         	add	r2, pc
+   10510: 447b         	add	r3, pc
+   10512: f002 eeb6    	blx	0x13280                 @ imm = #0x2d6c
+   10516: 4812         	ldr	r0, [pc, #0x48]         @ 0x10560 <_Z11mma_releasev+0x64>
+   10518: 4478         	add	r0, pc
+   1051a: f003 e89a    	blx	0x13650                 @ imm = #0x3134
+   1051e: 4811         	ldr	r0, [pc, #0x44]         @ 0x10564 <_Z11mma_releasev+0x68>
+   10520: 4478         	add	r0, pc
+   10522: 6801         	ldr	r1, [r0]
+   10524: 3901         	subs	r1, #0x1
+   10526: 6001         	str	r1, [r0]
+   10528: d10d         	bne	0x10546 <_Z11mma_releasev+0x4a> @ imm = #0x1a
+   1052a: 480f         	ldr	r0, [pc, #0x3c]         @ 0x10568 <_Z11mma_releasev+0x6c>
+   1052c: 4478         	add	r0, pc
+   1052e: f003 eb80    	blx	0x13c30                 @ imm = #0x3700
+   10532: 4c0e         	ldr	r4, [pc, #0x38]         @ 0x1056c <_Z11mma_releasev+0x70>
+   10534: 447c         	add	r4, pc
+   10536: 6820         	ldr	r0, [r4]
+   10538: 2801         	cmp	r0, #0x1
+   1053a: db04         	blt	0x10546 <_Z11mma_releasev+0x4a> @ imm = #0x8
+   1053c: f002 eea8    	blx	0x13290                 @ imm = #0x2d50
+   10540: f04f 30ff    	mov.w	r0, #0xffffffff
+   10544: 6020         	str	r0, [r4]
+   10546: 480a         	ldr	r0, [pc, #0x28]         @ 0x10570 <_Z11mma_releasev+0x74>
+   10548: 4478         	add	r0, pc
+   1054a: f003 e89a    	blx	0x13680                 @ imm = #0x3134
+   1054e: 2000         	movs	r0, #0x0
+   10550: b002         	add	sp, #0x8
+   10552: bd10         	pop	{r4, pc}
+   10554: 61c3         	str	r3, [r0, #0x1c]
+   10556: ffff 57b4    	vqshl.u64	d21, d20, #0x3f
+   1055a: ffff 6662    	<unknown>
+   1055e: ffff 6378    	vrsra.u32	q11, q12, #0x1
+   10562: 0000         	movs	r0, r0
+   10564: 6374         	str	r4, [r6, #0x34]
+   10566: 0000         	movs	r0, r0
+   10568: 6646         	str	r6, [r0, #0x64]
+   1056a: ffff 3ad4    	<unknown>
+   1056e: 0000         	movs	r0, r0
+   10570: 6348         	str	r0, [r1, #0x34]
+   10572: 0000         	movs	r0, r0
+
+00010574 <_Z9mma_allocPKcjPyPii>:
+   10574: b580         	push	{r7, lr}
+   10576: b082         	sub	sp, #0x8
+   10578: 4694         	mov	r12, r2
+   1057a: 9a04         	ldr	r2, [sp, #0x10]
+   1057c: 9300         	str	r3, [sp]
+   1057e: 4663         	mov	r3, r12
+   10580: 9201         	str	r2, [sp, #0x4]
+   10582: 2200         	movs	r2, #0x0
+   10584: f000 f802    	bl	0x1058c <_Z9mma_allocPKcjPyPii+0x18> @ imm = #0x4
+   10588: b002         	add	sp, #0x8
+   1058a: bd80         	pop	{r7, pc}
+   1058c: e92d 47f0    	push.w	{r4, r5, r6, r7, r8, r9, r10, lr}
+   10590: b094         	sub	sp, #0x50
+   10592: 4606         	mov	r6, r0
+   10594: 482b         	ldr	r0, [pc, #0xac]         @ 0x10644 <_Z9mma_allocPKcjPyPii+0xd0>
+   10596: 4698         	mov	r8, r3
+   10598: 4615         	mov	r5, r2
+   1059a: 460f         	mov	r7, r1
+   1059c: 4478         	add	r0, pc
+   1059e: 6804         	ldr	r4, [r0]
+   105a0: 6820         	ldr	r0, [r4]
+   105a2: 9013         	str	r0, [sp, #0x4c]
+   105a4: f000 f8c4    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #0x188
+   105a8: b39e         	cbz	r6, 0x10612 <_Z9mma_allocPKcjPyPii+0x9e> @ imm = #0x66
+   105aa: f8dd 9070    	ldr.w	r9, [sp, #0x70]
+   105ae: f1b9 0f00    	cmp.w	r9, #0x0
+   105b2: d030         	beq	0x10616 <_Z9mma_allocPKcjPyPii+0xa2> @ imm = #0x60
+   105b4: f8dd a074    	ldr.w	r10, [sp, #0x74]
+   105b8: 970c         	str	r7, [sp, #0x30]
+   105ba: 9600         	str	r6, [sp]
+   105bc: ae04         	add	r6, sp, #0x10
+   105be: 2110         	movs	r1, #0x10
+   105c0: 4630         	mov	r0, r6
+   105c2: f000 f949    	bl	0x10858 <_Z22mma_reserve_iova_spacePKcyPyiz+0xec> @ imm = #0x292
+   105c6: f8cd a040    	str.w	r10, [sp, #0x40]
+   105ca: 950e         	str	r5, [sp, #0x38]
+   105cc: 215d         	movs	r1, #0x5d
+   105ce: 980c         	ldr	r0, [sp, #0x30]
+   105d0: e9cd 1600    	strd	r1, r6, [sp]
+   105d4: e9cd 0a02    	strd	r0, r10, [sp, #8]
+   105d8: 2003         	movs	r0, #0x3
+   105da: 491e         	ldr	r1, [pc, #0x78]         @ 0x10654 <_Z9mma_allocPKcjPyPii+0xe0>
+   105dc: 4a1e         	ldr	r2, [pc, #0x78]         @ 0x10658 <_Z9mma_allocPKcjPyPii+0xe4>
+   105de: 4b1f         	ldr	r3, [pc, #0x7c]         @ 0x1065c <_Z9mma_allocPKcjPyPii+0xe8>
+   105e0: 4479         	add	r1, pc
+   105e2: 447a         	add	r2, pc
+   105e4: 447b         	add	r3, pc
+   105e6: f002 ee4c    	blx	0x13280                 @ imm = #0x2c98
+   105ea: 481d         	ldr	r0, [pc, #0x74]         @ 0x10660 <_Z9mma_allocPKcjPyPii+0xec>
+   105ec: f644 5113    	movw	r1, #0x4d13
+   105f0: 4632         	mov	r2, r6
+   105f2: f2cc 0138    	movt	r1, #0xc038
+   105f6: 4478         	add	r0, pc
+   105f8: 6800         	ldr	r0, [r0]
+   105fa: f003 e9ea    	blx	0x139d0                 @ imm = #0x33d4
+   105fe: 2800         	cmp	r0, #0x0
+   10600: db16         	blt	0x10630 <_Z9mma_allocPKcjPyPii+0xbc> @ imm = #0x2c
+   10602: 990d         	ldr	r1, [sp, #0x34]
+   10604: f8c9 1000    	str.w	r1, [r9]
+   10608: e9dd 120a    	ldrd	r1, r2, [sp, #40]
+   1060c: e9c8 1200    	strd	r1, r2, [r8]
+   10610: e00e         	b	0x10630 <_Z9mma_allocPKcjPyPii+0xbc> @ imm = #0x1c
+   10612: 2055         	movs	r0, #0x55
+   10614: e000         	b	0x10618 <_Z9mma_allocPKcjPyPii+0xa4> @ imm = #0x0
+   10616: 2056         	movs	r0, #0x56
+   10618: 9000         	str	r0, [sp]
+   1061a: 2006         	movs	r0, #0x6
+   1061c: 490a         	ldr	r1, [pc, #0x28]         @ 0x10648 <_Z9mma_allocPKcjPyPii+0xd4>
+   1061e: 4a0b         	ldr	r2, [pc, #0x2c]         @ 0x1064c <_Z9mma_allocPKcjPyPii+0xd8>
+   10620: 4b0b         	ldr	r3, [pc, #0x2c]         @ 0x10650 <_Z9mma_allocPKcjPyPii+0xdc>
+   10622: 4479         	add	r1, pc
+   10624: 447a         	add	r2, pc
+   10626: 447b         	add	r3, pc
+   10628: f002 ee2a    	blx	0x13280                 @ imm = #0x2c54
+   1062c: f06f 0015    	mvn	r0, #0x15
+   10630: 6821         	ldr	r1, [r4]
+   10632: 9a13         	ldr	r2, [sp, #0x4c]
+   10634: 1a89         	subs	r1, r1, r2
+   10636: d102         	bne	0x1063e <_Z9mma_allocPKcjPyPii+0xca> @ imm = #0x4
+   10638: b014         	add	sp, #0x50
+   1063a: e8bd 87f0    	pop.w	{r4, r5, r6, r7, r8, r9, r10, pc}
+   1063e: f002 eeb0    	blx	0x133a0                 @ imm = #0x2d60
+   10642: bf00         	nop
+   10644: 4cd8         	ldr	r4, [pc, #0x360]        @ 0x109a8 <_Z20mma_buffer_authorizeii+0x24>
+   10646: 0000         	movs	r0, r0
+   10648: 60ad         	str	r5, [r5, #0x8]
+   1064a: ffff 6052    	vshr.u32	q11, q1, #0x1
+   1064e: ffff 4f04    	<unknown>
+   10652: ffff 60ef    	<unknown>
+   10656: ffff 4905    	vtbl.8	d20, {d15, d16}, d5
+   1065a: ffff 4f46    	<unknown>
+   1065e: ffff 3a12    	<unknown>
+   10662: 0000         	movs	r0, r0
+
+00010664 <_Z13mma_alloc_secPKcjPyPi>:
+   10664: b580         	push	{r7, lr}
+   10666: b082         	sub	sp, #0x8
+   10668: 4694         	mov	r12, r2
+   1066a: 2200         	movs	r2, #0x0
+   1066c: e9cd 3200    	strd	r3, r2, [sp]
+   10670: 2201         	movs	r2, #0x1
+   10672: 4663         	mov	r3, r12
+   10674: f7ff ff8a    	bl	0x1058c <_Z9mma_allocPKcjPyPii+0x18> @ imm = #-0xec
+   10678: b002         	add	sp, #0x8
+   1067a: bd80         	pop	{r7, pc}
+
+0001067c <_Z12mma_map_iovaPyi>:
+   1067c: b570         	push	{r4, r5, r6, lr}
+   1067e: b08a         	sub	sp, #0x28
+   10680: 4605         	mov	r5, r0
+   10682: 4823         	ldr	r0, [pc, #0x8c]         @ 0x10710 <_Z12mma_map_iovaPyi+0x94>
+   10684: 460c         	mov	r4, r1
+   10686: 4478         	add	r0, pc
+   10688: 6806         	ldr	r6, [r0]
+   1068a: 6830         	ldr	r0, [r6]
+   1068c: 9009         	str	r0, [sp, #0x24]
+   1068e: f000 f84f    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #0x9e
+   10692: 2c00         	cmp	r4, #0x0
+   10694: db22         	blt	0x106dc <_Z12mma_map_iovaPyi+0x60> @ imm = #0x44
+   10696: 9406         	str	r4, [sp, #0x18]
+   10698: f644 5114    	movw	r1, #0x4d14
+   1069c: 481d         	ldr	r0, [pc, #0x74]         @ 0x10714 <_Z12mma_map_iovaPyi+0x98>
+   1069e: f2cc 0110    	movt	r1, #0xc010
+   106a2: 4478         	add	r0, pc
+   106a4: 6800         	ldr	r0, [r0]
+   106a6: aa04         	add	r2, sp, #0x10
+   106a8: f003 e992    	blx	0x139d0                 @ imm = #0x3324
+   106ac: f1b0 3fff    	cmp.w	r0, #0xffffffff
+   106b0: dd17         	ble	0x106e2 <_Z12mma_map_iovaPyi+0x66> @ imm = #0x2e
+   106b2: e9dd 0104    	ldrd	r0, r1, [sp, #16]
+   106b6: 2380         	movs	r3, #0x80
+   106b8: e9c5 0100    	strd	r0, r1, [r5]
+   106bc: 9a06         	ldr	r2, [sp, #0x18]
+   106be: e9cd 3200    	strd	r3, r2, [sp]
+   106c2: e9cd 0102    	strd	r0, r1, [sp, #8]
+   106c6: 2003         	movs	r0, #0x3
+   106c8: 4916         	ldr	r1, [pc, #0x58]         @ 0x10724 <_Z12mma_map_iovaPyi+0xa8>
+   106ca: 4a17         	ldr	r2, [pc, #0x5c]         @ 0x10728 <_Z12mma_map_iovaPyi+0xac>
+   106cc: 4b17         	ldr	r3, [pc, #0x5c]         @ 0x1072c <_Z12mma_map_iovaPyi+0xb0>
+   106ce: 4479         	add	r1, pc
+   106d0: 447a         	add	r2, pc
+   106d2: 447b         	add	r3, pc
+   106d4: f002 edd4    	blx	0x13280                 @ imm = #0x2ba8
+   106d8: 2400         	movs	r4, #0x0
+   106da: e00f         	b	0x106fc <_Z12mma_map_iovaPyi+0x80> @ imm = #0x1e
+   106dc: f06f 0415    	mvn	r4, #0x15
+   106e0: e00c         	b	0x106fc <_Z12mma_map_iovaPyi+0x80> @ imm = #0x18
+   106e2: 4604         	mov	r4, r0
+   106e4: 207d         	movs	r0, #0x7d
+   106e6: e9cd 0400    	strd	r0, r4, [sp]
+   106ea: 2006         	movs	r0, #0x6
+   106ec: 490a         	ldr	r1, [pc, #0x28]         @ 0x10718 <_Z12mma_map_iovaPyi+0x9c>
+   106ee: 4a0b         	ldr	r2, [pc, #0x2c]         @ 0x1071c <_Z12mma_map_iovaPyi+0xa0>
+   106f0: 4b0b         	ldr	r3, [pc, #0x2c]         @ 0x10720 <_Z12mma_map_iovaPyi+0xa4>
+   106f2: 4479         	add	r1, pc
+   106f4: 447a         	add	r2, pc
+   106f6: 447b         	add	r3, pc
+   106f8: f002 edc2    	blx	0x13280                 @ imm = #0x2b84
+   106fc: 6830         	ldr	r0, [r6]
+   106fe: 9909         	ldr	r1, [sp, #0x24]
+   10700: 1a40         	subs	r0, r0, r1
+   10702: d102         	bne	0x1070a <_Z12mma_map_iovaPyi+0x8e> @ imm = #0x4
+   10704: 4620         	mov	r0, r4
+   10706: b00a         	add	sp, #0x28
+   10708: bd70         	pop	{r4, r5, r6, pc}
+   1070a: f002 ee4a    	blx	0x133a0                 @ imm = #0x2c94
+   1070e: bf00         	nop
+   10710: 4bee         	ldr	r3, [pc, #0x3b8]        @ 0x10acc <_Z7mma_mapihjj+0x20>
+   10712: 0000         	movs	r0, r0
+   10714: 3966         	subs	r1, #0x66
+   10716: 0000         	movs	r0, r0
+   10718: 5fdd         	ldrsh	r5, [r3, r7]
+   1071a: ffff 6340    	<unknown>
+   1071e: ffff 4e17    	vcvt.f32.u32	d20, d7, #0x1
+   10722: ffff 6001    	<unknown>
+   10726: ffff 51b0    	vsra.u64	d21, d16, #0x1
+   1072a: ffff 4e3b    	vcvt.f32.u32	d20, d27, #0x1
+   1072e: ffff b510    	vsli.32	d27, d0, #0x1f
+   10732: 480a         	ldr	r0, [pc, #0x28]         @ 0x1075c <_Z12mma_map_iovaPyi+0xe0>
+   10734: 4478         	add	r0, pc
+   10736: f002 ef8c    	blx	0x13650                 @ imm = #0x2f18
+   1073a: 4c09         	ldr	r4, [pc, #0x24]         @ 0x10760 <_Z12mma_map_iovaPyi+0xe4>
+   1073c: 447c         	add	r4, pc
+   1073e: 6820         	ldr	r0, [r4]
+   10740: 3001         	adds	r0, #0x1
+   10742: d105         	bne	0x10750 <_Z12mma_map_iovaPyi+0xd4> @ imm = #0xa
+   10744: 4807         	ldr	r0, [pc, #0x1c]         @ 0x10764 <_Z12mma_map_iovaPyi+0xe8>
+   10746: 2102         	movs	r1, #0x2
+   10748: 4478         	add	r0, pc
+   1074a: f003 ea42    	blx	0x13bd0                 @ imm = #0x3484
+   1074e: 6020         	str	r0, [r4]
+   10750: 4805         	ldr	r0, [pc, #0x14]         @ 0x10768 <_Z12mma_map_iovaPyi+0xec>
+   10752: 4478         	add	r0, pc
+   10754: e8bd 4010    	pop.w	{r4, lr}
+   10758: f002 bca8    	b.w	0x130ac <__udivmodsi4+0x258> @ imm = #0x2950
+   1075c: 615c         	str	r4, [r3, #0x14]
+   1075e: 0000         	movs	r0, r0
+   10760: 38cc         	subs	r0, #0xcc
+   10762: 0000         	movs	r0, r0
+   10764: 575e         	ldrsb	r6, [r3, r5]
+   10766: ffff 613e    	vsra.u32	d22, d30, #0x1
+   1076a: 0000         	movs	r0, r0
+
+0001076c <_Z22mma_reserve_iova_spacePKcyPyiz>:
+   1076c: e92d 41f0    	push.w	{r4, r5, r6, r7, r8, lr}
+   10770: b0b0         	sub	sp, #0xc0
+   10772: 4931         	ldr	r1, [pc, #0xc4]         @ 0x10838 <_Z22mma_reserve_iova_spacePKcyPyiz+0xcc>
+   10774: 2800         	cmp	r0, #0x0
+   10776: 4479         	add	r1, pc
+   10778: 680f         	ldr	r7, [r1]
+   1077a: 6839         	ldr	r1, [r7]
+   1077c: 912f         	str	r1, [sp, #0xbc]
+   1077e: d036         	beq	0x107ee <_Z22mma_reserve_iova_spacePKcyPyiz+0x82> @ imm = #0x6c
+   10780: 9e37         	ldr	r6, [sp, #0xdc]
+   10782: 2e08         	cmp	r6, #0x8
+   10784: dc3e         	bgt	0x10804 <_Z22mma_reserve_iova_spacePKcyPyiz+0x98> @ imm = #0x7c
+   10786: f10d 0810    	add.w	r8, sp, #0x10
+   1078a: 9000         	str	r0, [sp]
+   1078c: 2110         	movs	r1, #0x10
+   1078e: 461d         	mov	r5, r3
+   10790: 4614         	mov	r4, r2
+   10792: 4640         	mov	r0, r8
+   10794: f000 f860    	bl	0x10858 <_Z22mma_reserve_iova_spacePKcyPyiz+0xec> @ imm = #0xc0
+   10798: a82a         	add	r0, sp, #0xa8
+   1079a: 2e01         	cmp	r6, #0x1
+   1079c: c070         	stm	r0!, {r4, r5, r6}
+   1079e: a838         	add	r0, sp, #0xe0
+   107a0: 9003         	str	r0, [sp, #0xc]
+   107a2: db0e         	blt	0x107c2 <_Z22mma_reserve_iova_spacePKcyPyiz+0x56> @ imm = #0x1c
+   107a4: f108 0410    	add.w	r4, r8, #0x10
+   107a8: 9803         	ldr	r0, [sp, #0xc]
+   107aa: 1d01         	adds	r1, r0, #0x4
+   107ac: 9103         	str	r1, [sp, #0xc]
+   107ae: f04f 31ff    	mov.w	r1, #0xffffffff
+   107b2: 6800         	ldr	r0, [r0]
+   107b4: 9000         	str	r0, [sp]
+   107b6: 4620         	mov	r0, r4
+   107b8: f000 f84e    	bl	0x10858 <_Z22mma_reserve_iova_spacePKcyPyiz+0xec> @ imm = #0x9c
+   107bc: 3410         	adds	r4, #0x10
+   107be: 3e01         	subs	r6, #0x1
+   107c0: d1f2         	bne	0x107a8 <_Z22mma_reserve_iova_spacePKcyPyiz+0x3c> @ imm = #-0x1c
+   107c2: f7ff ffb5    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x96
+   107c6: 4820         	ldr	r0, [pc, #0x80]         @ 0x10848 <_Z22mma_reserve_iova_spacePKcyPyiz+0xdc>
+   107c8: f644 5100    	movw	r1, #0x4d00
+   107cc: f2cc 01a8    	movt	r1, #0xc0a8
+   107d0: 4478         	add	r0, pc
+   107d2: 6800         	ldr	r0, [r0]
+   107d4: aa04         	add	r2, sp, #0x10
+   107d6: f003 e8fc    	blx	0x139d0                 @ imm = #0x31f8
+   107da: f1b0 3fff    	cmp.w	r0, #0xffffffff
+   107de: dd1b         	ble	0x10818 <_Z22mma_reserve_iova_spacePKcyPyiz+0xac> @ imm = #0x36
+   107e0: 9836         	ldr	r0, [sp, #0xd8]
+   107e2: e9dd 1228    	ldrd	r1, r2, [sp, #160]
+   107e6: 2400         	movs	r4, #0x0
+   107e8: e9c0 1200    	strd	r1, r2, [r0]
+   107ec: e00c         	b	0x10808 <_Z22mma_reserve_iova_spacePKcyPyiz+0x9c> @ imm = #0x18
+   107ee: 208b         	movs	r0, #0x8b
+   107f0: 9000         	str	r0, [sp]
+   107f2: 2006         	movs	r0, #0x6
+   107f4: 4911         	ldr	r1, [pc, #0x44]         @ 0x1083c <_Z22mma_reserve_iova_spacePKcyPyiz+0xd0>
+   107f6: 4a12         	ldr	r2, [pc, #0x48]         @ 0x10840 <_Z22mma_reserve_iova_spacePKcyPyiz+0xd4>
+   107f8: 4b12         	ldr	r3, [pc, #0x48]         @ 0x10844 <_Z22mma_reserve_iova_spacePKcyPyiz+0xd8>
+   107fa: 4479         	add	r1, pc
+   107fc: 447a         	add	r2, pc
+   107fe: 447b         	add	r3, pc
+   10800: f002 ed3e    	blx	0x13280                 @ imm = #0x2a7c
+   10804: f06f 0415    	mvn	r4, #0x15
+   10808: 6838         	ldr	r0, [r7]
+   1080a: 992f         	ldr	r1, [sp, #0xbc]
+   1080c: 1a40         	subs	r0, r0, r1
+   1080e: d111         	bne	0x10834 <_Z22mma_reserve_iova_spacePKcyPyiz+0xc8> @ imm = #0x22
+   10810: 4620         	mov	r0, r4
+   10812: b030         	add	sp, #0xc0
+   10814: e8bd 81f0    	pop.w	{r4, r5, r6, r7, r8, pc}
+   10818: 4604         	mov	r4, r0
+   1081a: 209e         	movs	r0, #0x9e
+   1081c: e9cd 0400    	strd	r0, r4, [sp]
+   10820: 2006         	movs	r0, #0x6
+   10822: 490a         	ldr	r1, [pc, #0x28]         @ 0x1084c <_Z22mma_reserve_iova_spacePKcyPyiz+0xe0>
+   10824: 4a0a         	ldr	r2, [pc, #0x28]         @ 0x10850 <_Z22mma_reserve_iova_spacePKcyPyiz+0xe4>
+   10826: 4b0b         	ldr	r3, [pc, #0x2c]         @ 0x10854 <_Z22mma_reserve_iova_spacePKcyPyiz+0xe8>
+   10828: 4479         	add	r1, pc
+   1082a: 447a         	add	r2, pc
+   1082c: 447b         	add	r3, pc
+   1082e: f002 ed28    	blx	0x13280                 @ imm = #0x2a50
+   10832: e7e9         	b	0x10808 <_Z22mma_reserve_iova_spacePKcyPyiz+0x9c> @ imm = #-0x2e
+   10834: f002 edb4    	blx	0x133a0                 @ imm = #0x2b68
+   10838: 4afe         	ldr	r2, [pc, #0x3f8]        @ 0x10c34 <_Z21mma_import_globalnamei>
+   1083a: 0000         	movs	r0, r0
+   1083c: 5ed5         	ldrsh	r5, [r2, r3]
+   1083e: ffff 5e7a    	<unknown>
+   10842: ffff 57d6    	<unknown>
+   10846: ffff 3838    	vqshrun.s64	d19, q12, #0x1
+   1084a: 0000         	movs	r0, r0
+   1084c: 5ea7         	ldrsh	r7, [r4, r2]
+   1084e: ffff 620a    	<unknown>
+   10852: ffff 57a8    	<unknown>
+   10856: ffff b510    	vsli.32	d27, d0, #0x1f
+   1085a: b084         	sub	sp, #0x10
+   1085c: 460b         	mov	r3, r1
+   1085e: 490b         	ldr	r1, [pc, #0x2c]         @ 0x1088c <_Z22mma_reserve_iova_spacePKcyPyiz+0x120>
+   10860: 4479         	add	r1, pc
+   10862: 680c         	ldr	r4, [r1]
+   10864: 6821         	ldr	r1, [r4]
+   10866: 9103         	str	r1, [sp, #0xc]
+   10868: a906         	add	r1, sp, #0x18
+   1086a: 9102         	str	r1, [sp, #0x8]
+   1086c: 4a08         	ldr	r2, [pc, #0x20]         @ 0x10890 <_Z22mma_reserve_iova_spacePKcyPyiz+0x124>
+   1086e: 447a         	add	r2, pc
+   10870: e9cd 2100    	strd	r2, r1, [sp]
+   10874: 2110         	movs	r1, #0x10
+   10876: 2200         	movs	r2, #0x0
+   10878: f003 e8da    	blx	0x13a30                 @ imm = #0x31b4
+   1087c: 6820         	ldr	r0, [r4]
+   1087e: 9903         	ldr	r1, [sp, #0xc]
+   10880: 1a40         	subs	r0, r0, r1
+   10882: d101         	bne	0x10888 <_Z22mma_reserve_iova_spacePKcyPyiz+0x11c> @ imm = #0x2
+   10884: b004         	add	sp, #0x10
+   10886: bd10         	pop	{r4, pc}
+   10888: f002 ed8a    	blx	0x133a0                 @ imm = #0x2b14
+   1088c: 4a14         	ldr	r2, [pc, #0x50]         @ 0x108e0 <_Z19mma_free_iova_spacePKc+0x4c>
+   1088e: 0000         	movs	r0, r0
+   10890: 47f1         	<unknown>
+   10892: ffff b5b0    	vsli.64	d27, d16, #0x3f
+
+00010894 <_Z19mma_free_iova_spacePKc>:
+   10894: b5b0         	push	{r4, r5, r7, lr}
+   10896: b0ae         	sub	sp, #0xb8
+   10898: 4604         	mov	r4, r0
+   1089a: 4817         	ldr	r0, [pc, #0x5c]         @ 0x108f8 <_Z19mma_free_iova_spacePKc+0x64>
+   1089c: 2c00         	cmp	r4, #0x0
+   1089e: 4478         	add	r0, pc
+   108a0: 6805         	ldr	r5, [r0]
+   108a2: 6828         	ldr	r0, [r5]
+   108a4: 902d         	str	r0, [sp, #0xb4]
+   108a6: d012         	beq	0x108ce <_Z19mma_free_iova_spacePKc+0x3a> @ imm = #0x24
+   108a8: f7ff ff42    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x17c
+   108ac: 9400         	str	r4, [sp]
+   108ae: ac02         	add	r4, sp, #0x8
+   108b0: 2110         	movs	r1, #0x10
+   108b2: 4620         	mov	r0, r4
+   108b4: f7ff ffd0    	bl	0x10858 <_Z22mma_reserve_iova_spacePKcyPyiz+0xec> @ imm = #-0x60
+   108b8: 4813         	ldr	r0, [pc, #0x4c]         @ 0x10908 <_Z19mma_free_iova_spacePKc+0x74>
+   108ba: f644 5101    	movw	r1, #0x4d01
+   108be: 4622         	mov	r2, r4
+   108c0: f2c4 01a8    	movt	r1, #0x40a8
+   108c4: 4478         	add	r0, pc
+   108c6: 6800         	ldr	r0, [r0]
+   108c8: f003 e882    	blx	0x139d0                 @ imm = #0x3104
+   108cc: e00c         	b	0x108e8 <_Z19mma_free_iova_spacePKc+0x54> @ imm = #0x18
+   108ce: 20a7         	movs	r0, #0xa7
+   108d0: 9000         	str	r0, [sp]
+   108d2: 2006         	movs	r0, #0x6
+   108d4: 4909         	ldr	r1, [pc, #0x24]         @ 0x108fc <_Z19mma_free_iova_spacePKc+0x68>
+   108d6: 4a0a         	ldr	r2, [pc, #0x28]         @ 0x10900 <_Z19mma_free_iova_spacePKc+0x6c>
+   108d8: 4b0a         	ldr	r3, [pc, #0x28]         @ 0x10904 <_Z19mma_free_iova_spacePKc+0x70>
+   108da: 4479         	add	r1, pc
+   108dc: 447a         	add	r2, pc
+   108de: 447b         	add	r3, pc
+   108e0: f002 ecce    	blx	0x13280                 @ imm = #0x299c
+   108e4: f06f 0015    	mvn	r0, #0x15
+   108e8: 6829         	ldr	r1, [r5]
+   108ea: 9a2d         	ldr	r2, [sp, #0xb4]
+   108ec: 1a89         	subs	r1, r1, r2
+   108ee: d101         	bne	0x108f4 <_Z19mma_free_iova_spacePKc+0x60> @ imm = #0x2
+   108f0: b02e         	add	sp, #0xb8
+   108f2: bdb0         	pop	{r4, r5, r7, pc}
+   108f4: f002 ed54    	blx	0x133a0                 @ imm = #0x2aa8
+   108f8: 49d6         	ldr	r1, [pc, #0x358]        @ 0x10c54 <_Z21mma_import_globalnamei+0x20>
+   108fa: 0000         	movs	r0, r0
+   108fc: 5df5         	ldrb	r5, [r6, r7]
+   108fe: ffff 5d9a    	<unknown>
+   10902: ffff 537c    	<unknown>
+   10906: ffff 3744    	<unknown>
+   1090a: 0000         	movs	r0, r0
+
+0001090c <_Z14mma_get_pipeidPi>:
+   1090c: b570         	push	{r4, r5, r6, lr}
+   1090e: b090         	sub	sp, #0x40
+   10910: 4605         	mov	r5, r0
+   10912: 4817         	ldr	r0, [pc, #0x5c]         @ 0x10970 <_Z14mma_get_pipeidPi+0x64>
+   10914: 4478         	add	r0, pc
+   10916: 6806         	ldr	r6, [r0]
+   10918: 6830         	ldr	r0, [r6]
+   1091a: 900f         	str	r0, [sp, #0x3c]
+   1091c: f7ff ff08    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x1f0
+   10920: 4814         	ldr	r0, [pc, #0x50]         @ 0x10974 <_Z14mma_get_pipeidPi+0x68>
+   10922: f644 5102    	movw	r1, #0x4d02
+   10926: f2c8 0130    	movt	r1, #0x8030
+   1092a: 4478         	add	r0, pc
+   1092c: 6800         	ldr	r0, [r0]
+   1092e: aa02         	add	r2, sp, #0x8
+   10930: f003 e84e    	blx	0x139d0                 @ imm = #0x309c
+   10934: f1b0 3fff    	cmp.w	r0, #0xffffffff
+   10938: dd03         	ble	0x10942 <_Z14mma_get_pipeidPi+0x36> @ imm = #0x6
+   1093a: 9806         	ldr	r0, [sp, #0x18]
+   1093c: 2400         	movs	r4, #0x0
+   1093e: 6028         	str	r0, [r5]
+   10940: e00c         	b	0x1095c <_Z14mma_get_pipeidPi+0x50> @ imm = #0x18
+   10942: 4604         	mov	r4, r0
+   10944: 20b7         	movs	r0, #0xb7
+   10946: e9cd 0400    	strd	r0, r4, [sp]
+   1094a: 2006         	movs	r0, #0x6
+   1094c: 490a         	ldr	r1, [pc, #0x28]         @ 0x10978 <_Z14mma_get_pipeidPi+0x6c>
+   1094e: 4a0b         	ldr	r2, [pc, #0x2c]         @ 0x1097c <_Z14mma_get_pipeidPi+0x70>
+   10950: 4b0b         	ldr	r3, [pc, #0x2c]         @ 0x10980 <_Z14mma_get_pipeidPi+0x74>
+   10952: 4479         	add	r1, pc
+   10954: 447a         	add	r2, pc
+   10956: 447b         	add	r3, pc
+   10958: f002 ec92    	blx	0x13280                 @ imm = #0x2924
+   1095c: 6830         	ldr	r0, [r6]
+   1095e: 990f         	ldr	r1, [sp, #0x3c]
+   10960: 1a40         	subs	r0, r0, r1
+   10962: d102         	bne	0x1096a <_Z14mma_get_pipeidPi+0x5e> @ imm = #0x4
+   10964: 4620         	mov	r0, r4
+   10966: b010         	add	sp, #0x40
+   10968: bd70         	pop	{r4, r5, r6, pc}
+   1096a: f002 ed1a    	blx	0x133a0                 @ imm = #0x2a34
+   1096e: bf00         	nop
+   10970: 4960         	ldr	r1, [pc, #0x180]        @ 0x10af4 <_Z7mma_mapihjj+0x48>
+   10972: 0000         	movs	r0, r0
+   10974: 36de         	adds	r6, #0xde
+   10976: 0000         	movs	r0, r0
+   10978: 5d7d         	ldrb	r5, [r7, r5]
+   1097a: ffff 60e0    	<unknown>
+   1097e: ffff 676d    	<unknown>
+   10982: ffff b570    	<unknown>
+
+00010984 <_Z20mma_buffer_authorizeii>:
+   10984: b570         	push	{r4, r5, r6, lr}
+   10986: b08e         	sub	sp, #0x38
+   10988: 4605         	mov	r5, r0
+   1098a: 480e         	ldr	r0, [pc, #0x38]         @ 0x109c4 <_Z20mma_buffer_authorizeii+0x40>
+   1098c: 460c         	mov	r4, r1
+   1098e: 4478         	add	r0, pc
+   10990: 6806         	ldr	r6, [r0]
+   10992: 6830         	ldr	r0, [r6]
+   10994: 900d         	str	r0, [sp, #0x34]
+   10996: f7ff fecb    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x26a
+   1099a: 9404         	str	r4, [sp, #0x10]
+   1099c: 9509         	str	r5, [sp, #0x24]
+   1099e: f644 5104    	movw	r1, #0x4d04
+   109a2: 466a         	mov	r2, sp
+   109a4: 4808         	ldr	r0, [pc, #0x20]         @ 0x109c8 <_Z20mma_buffer_authorizeii+0x44>
+   109a6: f2c4 0130    	movt	r1, #0x4030
+   109aa: 4478         	add	r0, pc
+   109ac: 6800         	ldr	r0, [r0]
+   109ae: f003 e810    	blx	0x139d0                 @ imm = #0x3020
+   109b2: 6831         	ldr	r1, [r6]
+   109b4: 9a0d         	ldr	r2, [sp, #0x34]
+   109b6: 1a89         	subs	r1, r1, r2
+   109b8: d101         	bne	0x109be <_Z20mma_buffer_authorizeii+0x3a> @ imm = #0x2
+   109ba: b00e         	add	sp, #0x38
+   109bc: bd70         	pop	{r4, r5, r6, pc}
+   109be: f002 ecf0    	blx	0x133a0                 @ imm = #0x29e0
+   109c2: bf00         	nop
+   109c4: 48e6         	ldr	r0, [pc, #0x398]        @ 0x10d60 <_Z16mma_get_heapinfoPKcP14mma_heapinfo_t+0x30>
+   109c6: 0000         	movs	r0, r0
+   109c8: 365e         	adds	r6, #0x5e
+   109ca: 0000         	movs	r0, r0
+
+000109cc <_Z8mma_freei>:
+   109cc: b570         	push	{r4, r5, r6, lr}
+   109ce: b08e         	sub	sp, #0x38
+   109d0: 4604         	mov	r4, r0
+   109d2: 4818         	ldr	r0, [pc, #0x60]         @ 0x10a34 <_Z8mma_freei+0x68>
+   109d4: 4478         	add	r0, pc
+   109d6: 6805         	ldr	r5, [r0]
+   109d8: 6828         	ldr	r0, [r5]
+   109da: 900d         	str	r0, [sp, #0x34]
+   109dc: 20d8         	movs	r0, #0xd8
+   109de: 9000         	str	r0, [sp]
+   109e0: 2003         	movs	r0, #0x3
+   109e2: 4915         	ldr	r1, [pc, #0x54]         @ 0x10a38 <_Z8mma_freei+0x6c>
+   109e4: 4a15         	ldr	r2, [pc, #0x54]         @ 0x10a3c <_Z8mma_freei+0x70>
+   109e6: 4b16         	ldr	r3, [pc, #0x58]         @ 0x10a40 <_Z8mma_freei+0x74>
+   109e8: 4479         	add	r1, pc
+   109ea: 447a         	add	r2, pc
+   109ec: 447b         	add	r3, pc
+   109ee: f002 ec48    	blx	0x13280                 @ imm = #0x2890
+   109f2: f7ff fe9d    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x2c6
+   109f6: 9402         	str	r4, [sp, #0x8]
+   109f8: f644 510e    	movw	r1, #0x4d0e
+   109fc: 4e11         	ldr	r6, [pc, #0x44]         @ 0x10a44 <_Z8mma_freei+0x78>
+   109fe: f2cc 0128    	movt	r1, #0xc028
+   10a02: 447e         	add	r6, pc
+   10a04: 6830         	ldr	r0, [r6]
+   10a06: aa02         	add	r2, sp, #0x8
+   10a08: f002 efe2    	blx	0x139d0                 @ imm = #0x2fc4
+   10a0c: b950         	cbnz	r0, 0x10a24 <_Z8mma_freei+0x58> @ imm = #0x14
+   10a0e: f7ff fe8f    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x2e2
+   10a12: 6830         	ldr	r0, [r6]
+   10a14: f644 5105    	movw	r1, #0x4d05
+   10a18: 9402         	str	r4, [sp, #0x8]
+   10a1a: aa02         	add	r2, sp, #0x8
+   10a1c: f2c4 0128    	movt	r1, #0x4028
+   10a20: f002 efd6    	blx	0x139d0                 @ imm = #0x2fac
+   10a24: 6829         	ldr	r1, [r5]
+   10a26: 9a0d         	ldr	r2, [sp, #0x34]
+   10a28: 1a89         	subs	r1, r1, r2
+   10a2a: d101         	bne	0x10a30 <_Z8mma_freei+0x64> @ imm = #0x2
+   10a2c: b00e         	add	sp, #0x38
+   10a2e: bd70         	pop	{r4, r5, r6, pc}
+   10a30: f002 ecb6    	blx	0x133a0                 @ imm = #0x296c
+   10a34: 48a0         	ldr	r0, [pc, #0x280]        @ 0x10cb8 <_Z15mma_get_meminfoiP13mma_meminfo_t+0xc>
+   10a36: 0000         	movs	r0, r0
+   10a38: 5ce7         	ldrb	r7, [r4, r3]
+   10a3a: ffff 52d8    	<unknown>
+   10a3e: ffff 5f5d    	<unknown>
+   10a42: ffff 3606    	<unknown>
+   10a46: 0000         	movs	r0, r0
+
+00010a48 <_Z14mma_set_cachedih>:
+   10a48: b570         	push	{r4, r5, r6, lr}
+   10a4a: b08e         	sub	sp, #0x38
+   10a4c: 4605         	mov	r5, r0
+   10a4e: 4812         	ldr	r0, [pc, #0x48]         @ 0x10a98 <_Z14mma_set_cachedih+0x50>
+   10a50: 460c         	mov	r4, r1
+   10a52: 4478         	add	r0, pc
+   10a54: 6806         	ldr	r6, [r0]
+   10a56: 6830         	ldr	r0, [r6]
+   10a58: 900d         	str	r0, [sp, #0x34]
+   10a5a: 20e6         	movs	r0, #0xe6
+   10a5c: 9000         	str	r0, [sp]
+   10a5e: 2003         	movs	r0, #0x3
+   10a60: 490e         	ldr	r1, [pc, #0x38]         @ 0x10a9c <_Z14mma_set_cachedih+0x54>
+   10a62: 4a0f         	ldr	r2, [pc, #0x3c]         @ 0x10aa0 <_Z14mma_set_cachedih+0x58>
+   10a64: 4b0f         	ldr	r3, [pc, #0x3c]         @ 0x10aa4 <_Z14mma_set_cachedih+0x5c>
+   10a66: 4479         	add	r1, pc
+   10a68: 447a         	add	r2, pc
+   10a6a: 447b         	add	r3, pc
+   10a6c: f002 ec08    	blx	0x13280                 @ imm = #0x2810
+   10a70: 9408         	str	r4, [sp, #0x20]
+   10a72: 9502         	str	r5, [sp, #0x8]
+   10a74: f644 5106    	movw	r1, #0x4d06
+   10a78: 480b         	ldr	r0, [pc, #0x2c]         @ 0x10aa8 <_Z14mma_set_cachedih+0x60>
+   10a7a: f2c4 0128    	movt	r1, #0x4028
+   10a7e: 4478         	add	r0, pc
+   10a80: 6800         	ldr	r0, [r0]
+   10a82: aa02         	add	r2, sp, #0x8
+   10a84: f002 efa4    	blx	0x139d0                 @ imm = #0x2f48
+   10a88: 6831         	ldr	r1, [r6]
+   10a8a: 9a0d         	ldr	r2, [sp, #0x34]
+   10a8c: 1a89         	subs	r1, r1, r2
+   10a8e: d101         	bne	0x10a94 <_Z14mma_set_cachedih+0x4c> @ imm = #0x2
+   10a90: b00e         	add	sp, #0x38
+   10a92: bd70         	pop	{r4, r5, r6, pc}
+   10a94: f002 ec84    	blx	0x133a0                 @ imm = #0x2908
+   10a98: 4822         	ldr	r0, [pc, #0x88]         @ 0x10b24 <_Z7mma_mapihjj+0x78>
+   10a9a: 0000         	movs	r0, r0
+   10a9c: 5c69         	ldrb	r1, [r5, r1]
+   10a9e: ffff 525a    	<unknown>
+   10aa2: ffff 69e3    	<unknown>
+   10aa6: ffff 358a    	<unknown>
+   10aaa: 0000         	movs	r0, r0
+
+00010aac <_Z7mma_mapihjj>:
+   10aac: e92d 41f0    	push.w	{r4, r5, r6, r7, r8, lr}
+   10ab0: b08e         	sub	sp, #0x38
+   10ab2: 4606         	mov	r6, r0
+   10ab4: 481a         	ldr	r0, [pc, #0x68]         @ 0x10b20 <_Z7mma_mapihjj+0x74>
+   10ab6: 4698         	mov	r8, r3
+   10ab8: 4615         	mov	r5, r2
+   10aba: 460f         	mov	r7, r1
+   10abc: 4478         	add	r0, pc
+   10abe: 6804         	ldr	r4, [r0]
+   10ac0: 6820         	ldr	r0, [r4]
+   10ac2: 900d         	str	r0, [sp, #0x34]
+   10ac4: 20f6         	movs	r0, #0xf6
+   10ac6: 9000         	str	r0, [sp]
+   10ac8: 2003         	movs	r0, #0x3
+   10aca: 4916         	ldr	r1, [pc, #0x58]         @ 0x10b24 <_Z7mma_mapihjj+0x78>
+   10acc: 4a16         	ldr	r2, [pc, #0x58]         @ 0x10b28 <_Z7mma_mapihjj+0x7c>
+   10ace: 4b17         	ldr	r3, [pc, #0x5c]         @ 0x10b2c <_Z7mma_mapihjj+0x80>
+   10ad0: 4479         	add	r1, pc
+   10ad2: 447a         	add	r2, pc
+   10ad4: 447b         	add	r3, pc
+   10ad6: f002 ebd4    	blx	0x13280                 @ imm = #0x27a8
+   10ada: f7ff fe29    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x3ae
+   10ade: 9708         	str	r7, [sp, #0x20]
+   10ae0: 9602         	str	r6, [sp, #0x8]
+   10ae2: f644 5106    	movw	r1, #0x4d06
+   10ae6: 4812         	ldr	r0, [pc, #0x48]         @ 0x10b30 <_Z7mma_mapihjj+0x84>
+   10ae8: f2c4 0128    	movt	r1, #0x4028
+   10aec: 4478         	add	r0, pc
+   10aee: 6800         	ldr	r0, [r0]
+   10af0: aa02         	add	r2, sp, #0x8
+   10af2: f002 ef6e    	blx	0x139d0                 @ imm = #0x2edc
+   10af6: 2800         	cmp	r0, #0x0
+   10af8: db08         	blt	0x10b0c <_Z7mma_mapihjj+0x60> @ imm = #0x10
+   10afa: 2000         	movs	r0, #0x0
+   10afc: 4641         	mov	r1, r8
+   10afe: 2203         	movs	r2, #0x3
+   10b00: 2301         	movs	r3, #0x1
+   10b02: e9cd 6500    	strd	r6, r5, [sp]
+   10b06: f002 ebd4    	blx	0x132b0                 @ imm = #0x27a8
+   10b0a: e000         	b	0x10b0e <_Z7mma_mapihjj+0x62> @ imm = #0x0
+   10b0c: 2000         	movs	r0, #0x0
+   10b0e: 6821         	ldr	r1, [r4]
+   10b10: 9a0d         	ldr	r2, [sp, #0x34]
+   10b12: 1a89         	subs	r1, r1, r2
+   10b14: d102         	bne	0x10b1c <_Z7mma_mapihjj+0x70> @ imm = #0x4
+   10b16: b00e         	add	sp, #0x38
+   10b18: e8bd 81f0    	pop.w	{r4, r5, r6, r7, r8, pc}
+   10b1c: f002 ec40    	blx	0x133a0                 @ imm = #0x2880
+   10b20: 47b8         	blx	r7
+   10b22: 0000         	movs	r0, r0
+   10b24: 5bff         	ldrh	r7, [r7, r7]
+   10b26: ffff 51f0    	<unknown>
+   10b2a: ffff 6096    	vshr.u64	d22, d6, #0x1
+   10b2e: ffff 351c    	vsli.32	d19, d12, #0x1f
+   10b32: 0000         	movs	r0, r0
+
+00010b34 <_Z9mma_flushPvj>:
+   10b34: b570         	push	{r4, r5, r6, lr}
+   10b36: b08c         	sub	sp, #0x30
+   10b38: 4605         	mov	r5, r0
+   10b3a: 480f         	ldr	r0, [pc, #0x3c]         @ 0x10b78 <_Z9mma_flushPvj+0x44>
+   10b3c: 460c         	mov	r4, r1
+   10b3e: 4478         	add	r0, pc
+   10b40: 6806         	ldr	r6, [r0]
+   10b42: 6830         	ldr	r0, [r6]
+   10b44: 900b         	str	r0, [sp, #0x2c]
+   10b46: f7ff fdf3    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x41a
+   10b4a: 2000         	movs	r0, #0x0
+   10b4c: f644 5108    	movw	r1, #0x4d08
+   10b50: 466a         	mov	r2, sp
+   10b52: e9cd 5002    	strd	r5, r0, [sp, #8]
+   10b56: 9405         	str	r4, [sp, #0x14]
+   10b58: f2c4 0128    	movt	r1, #0x4028
+   10b5c: 4807         	ldr	r0, [pc, #0x1c]         @ 0x10b7c <_Z9mma_flushPvj+0x48>
+   10b5e: 4478         	add	r0, pc
+   10b60: 6800         	ldr	r0, [r0]
+   10b62: f002 ef36    	blx	0x139d0                 @ imm = #0x2e6c
+   10b66: 6831         	ldr	r1, [r6]
+   10b68: 9a0b         	ldr	r2, [sp, #0x2c]
+   10b6a: 1a89         	subs	r1, r1, r2
+   10b6c: d101         	bne	0x10b72 <_Z9mma_flushPvj+0x3e> @ imm = #0x2
+   10b6e: b00c         	add	sp, #0x30
+   10b70: bd70         	pop	{r4, r5, r6, pc}
+   10b72: f002 ec16    	blx	0x133a0                 @ imm = #0x282c
+   10b76: bf00         	nop
+   10b78: 4736         	bx	r6
+   10b7a: 0000         	movs	r0, r0
+   10b7c: 34aa         	adds	r4, #0xaa
+   10b7e: 0000         	movs	r0, r0
+
+00010b80 <_Z9mma_unmapPvj>:
+   10b80: b5b0         	push	{r4, r5, r7, lr}
+   10b82: b082         	sub	sp, #0x8
+   10b84: 4605         	mov	r5, r0
+   10b86: f44f 7089    	mov.w	r0, #0x112
+   10b8a: 460c         	mov	r4, r1
+   10b8c: 9000         	str	r0, [sp]
+   10b8e: 2003         	movs	r0, #0x3
+   10b90: 4907         	ldr	r1, [pc, #0x1c]         @ 0x10bb0 <_Z9mma_unmapPvj+0x30>
+   10b92: 4a08         	ldr	r2, [pc, #0x20]         @ 0x10bb4 <_Z9mma_unmapPvj+0x34>
+   10b94: 4b08         	ldr	r3, [pc, #0x20]         @ 0x10bb8 <_Z9mma_unmapPvj+0x38>
+   10b96: 4479         	add	r1, pc
+   10b98: 447a         	add	r2, pc
+   10b9a: 447b         	add	r3, pc
+   10b9c: f002 eb70    	blx	0x13280                 @ imm = #0x26e0
+   10ba0: 4628         	mov	r0, r5
+   10ba2: 4621         	mov	r1, r4
+   10ba4: b002         	add	sp, #0x8
+   10ba6: e8bd 40b0    	pop.w	{r4, r5, r7, lr}
+   10baa: f002 bb3f    	b.w	0x1322c <__udivmodsi4+0x3d8> @ imm = #0x267e
+   10bae: bf00         	nop
+   10bb0: 5b39         	ldrh	r1, [r7, r4]
+   10bb2: ffff 512a    	<unknown>
+   10bb6: ffff 44c8    	<unknown>
+   10bba: ffff b5b0    	vsli.64	d27, d16, #0x3f
+
+00010bbc <_Z21mma_export_globalnamei>:
+   10bbc: b5b0         	push	{r4, r5, r7, lr}
+   10bbe: b08e         	sub	sp, #0x38
+   10bc0: 4604         	mov	r4, r0
+   10bc2: 4817         	ldr	r0, [pc, #0x5c]         @ 0x10c20 <_Z21mma_export_globalnamei+0x64>
+   10bc4: 4478         	add	r0, pc
+   10bc6: 6805         	ldr	r5, [r0]
+   10bc8: 6828         	ldr	r0, [r5]
+   10bca: 900d         	str	r0, [sp, #0x34]
+   10bcc: f7ff fdb0    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x4a0
+   10bd0: 9402         	str	r4, [sp, #0x8]
+   10bd2: f644 5109    	movw	r1, #0x4d09
+   10bd6: 4813         	ldr	r0, [pc, #0x4c]         @ 0x10c24 <_Z21mma_export_globalnamei+0x68>
+   10bd8: f2cc 0128    	movt	r1, #0xc028
+   10bdc: 4478         	add	r0, pc
+   10bde: 6800         	ldr	r0, [r0]
+   10be0: aa02         	add	r2, sp, #0x8
+   10be2: f002 eef6    	blx	0x139d0                 @ imm = #0x2dec
+   10be6: f1b0 3fff    	cmp.w	r0, #0xffffffff
+   10bea: dd01         	ble	0x10bf0 <_Z21mma_export_globalnamei+0x34> @ imm = #0x2
+   10bec: 9c03         	ldr	r4, [sp, #0xc]
+   10bee: e00d         	b	0x10c0c <_Z21mma_export_globalnamei+0x50> @ imm = #0x1a
+   10bf0: 4604         	mov	r4, r0
+   10bf2: f240 101f    	movw	r0, #0x11f
+   10bf6: e9cd 0400    	strd	r0, r4, [sp]
+   10bfa: 2006         	movs	r0, #0x6
+   10bfc: 490a         	ldr	r1, [pc, #0x28]         @ 0x10c28 <_Z21mma_export_globalnamei+0x6c>
+   10bfe: 4a0b         	ldr	r2, [pc, #0x2c]         @ 0x10c2c <_Z21mma_export_globalnamei+0x70>
+   10c00: 4b0b         	ldr	r3, [pc, #0x2c]         @ 0x10c30 <_Z21mma_export_globalnamei+0x74>
+   10c02: 4479         	add	r1, pc
+   10c04: 447a         	add	r2, pc
+   10c06: 447b         	add	r3, pc
+   10c08: f002 eb3a    	blx	0x13280                 @ imm = #0x2674
+   10c0c: 6828         	ldr	r0, [r5]
+   10c0e: 990d         	ldr	r1, [sp, #0x34]
+   10c10: 1a40         	subs	r0, r0, r1
+   10c12: d102         	bne	0x10c1a <_Z21mma_export_globalnamei+0x5e> @ imm = #0x4
+   10c14: 4620         	mov	r0, r4
+   10c16: b00e         	add	sp, #0x38
+   10c18: bdb0         	pop	{r4, r5, r7, pc}
+   10c1a: f002 ebc2    	blx	0x133a0                 @ imm = #0x2784
+   10c1e: bf00         	nop
+   10c20: 46b0         	mov	r8, r6
+   10c22: 0000         	movs	r0, r0
+   10c24: 342c         	adds	r4, #0x2c
+   10c26: 0000         	movs	r0, r0
+   10c28: 5acd         	ldrh	r5, [r1, r3]
+   10c2a: ffff 5e30    	vcvt.f32.u32	d21, d16, #0x1
+   10c2e: ffff 3d62    	<unknown>
+   10c32: ffff b5b0    	vsli.64	d27, d16, #0x3f
+
+00010c34 <_Z21mma_import_globalnamei>:
+   10c34: b5b0         	push	{r4, r5, r7, lr}
+   10c36: b08e         	sub	sp, #0x38
+   10c38: 4604         	mov	r4, r0
+   10c3a: 4817         	ldr	r0, [pc, #0x5c]         @ 0x10c98 <_Z21mma_import_globalnamei+0x64>
+   10c3c: 4478         	add	r0, pc
+   10c3e: 6805         	ldr	r5, [r0]
+   10c40: 6828         	ldr	r0, [r5]
+   10c42: 900d         	str	r0, [sp, #0x34]
+   10c44: f7ff fd74    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x518
+   10c48: 9403         	str	r4, [sp, #0xc]
+   10c4a: f644 510a    	movw	r1, #0x4d0a
+   10c4e: 4813         	ldr	r0, [pc, #0x4c]         @ 0x10c9c <_Z21mma_import_globalnamei+0x68>
+   10c50: f2cc 0128    	movt	r1, #0xc028
+   10c54: 4478         	add	r0, pc
+   10c56: 6800         	ldr	r0, [r0]
+   10c58: aa02         	add	r2, sp, #0x8
+   10c5a: f002 eeba    	blx	0x139d0                 @ imm = #0x2d74
+   10c5e: f1b0 3fff    	cmp.w	r0, #0xffffffff
+   10c62: dd01         	ble	0x10c68 <_Z21mma_import_globalnamei+0x34> @ imm = #0x2
+   10c64: 9c02         	ldr	r4, [sp, #0x8]
+   10c66: e00d         	b	0x10c84 <_Z21mma_import_globalnamei+0x50> @ imm = #0x1a
+   10c68: 4604         	mov	r4, r0
+   10c6a: f240 102d    	movw	r0, #0x12d
+   10c6e: e9cd 0400    	strd	r0, r4, [sp]
+   10c72: 2006         	movs	r0, #0x6
+   10c74: 490a         	ldr	r1, [pc, #0x28]         @ 0x10ca0 <_Z21mma_import_globalnamei+0x6c>
+   10c76: 4a0b         	ldr	r2, [pc, #0x2c]         @ 0x10ca4 <_Z21mma_import_globalnamei+0x70>
+   10c78: 4b0b         	ldr	r3, [pc, #0x2c]         @ 0x10ca8 <_Z21mma_import_globalnamei+0x74>
+   10c7a: 4479         	add	r1, pc
+   10c7c: 447a         	add	r2, pc
+   10c7e: 447b         	add	r3, pc
+   10c80: f002 eafe    	blx	0x13280                 @ imm = #0x25fc
+   10c84: 6828         	ldr	r0, [r5]
+   10c86: 990d         	ldr	r1, [sp, #0x34]
+   10c88: 1a40         	subs	r0, r0, r1
+   10c8a: d102         	bne	0x10c92 <_Z21mma_import_globalnamei+0x5e> @ imm = #0x4
+   10c8c: 4620         	mov	r0, r4
+   10c8e: b00e         	add	sp, #0x38
+   10c90: bdb0         	pop	{r4, r5, r7, pc}
+   10c92: f002 eb86    	blx	0x133a0                 @ imm = #0x270c
+   10c96: bf00         	nop
+   10c98: 4638         	mov	r0, r7
+   10c9a: 0000         	movs	r0, r0
+   10c9c: 33b4         	adds	r3, #0xb4
+   10c9e: 0000         	movs	r0, r0
+   10ca0: 5a55         	ldrh	r5, [r2, r1]
+   10ca2: ffff 5db8    	<unknown>
+   10ca6: ffff 4af5    	<unknown>
+   10caa: ffff b570    	<unknown>
+
+00010cac <_Z15mma_get_meminfoiP13mma_meminfo_t>:
+   10cac: b570         	push	{r4, r5, r6, lr}
+   10cae: b090         	sub	sp, #0x40
+   10cb0: 4604         	mov	r4, r0
+   10cb2: 481a         	ldr	r0, [pc, #0x68]         @ 0x10d1c <_Z15mma_get_meminfoiP13mma_meminfo_t+0x70>
+   10cb4: 460d         	mov	r5, r1
+   10cb6: 4478         	add	r0, pc
+   10cb8: 6806         	ldr	r6, [r0]
+   10cba: 6830         	ldr	r0, [r6]
+   10cbc: 900f         	str	r0, [sp, #0x3c]
+   10cbe: f7ff fd37    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x592
+   10cc2: 940b         	str	r4, [sp, #0x2c]
+   10cc4: f644 510b    	movw	r1, #0x4d0b
+   10cc8: 4815         	ldr	r0, [pc, #0x54]         @ 0x10d20 <_Z15mma_get_meminfoiP13mma_meminfo_t+0x74>
+   10cca: f2cc 0130    	movt	r1, #0xc030
+   10cce: 4478         	add	r0, pc
+   10cd0: 6800         	ldr	r0, [r0]
+   10cd2: aa02         	add	r2, sp, #0x8
+   10cd4: f002 ee7c    	blx	0x139d0                 @ imm = #0x2cf8
+   10cd8: f1b0 3fff    	cmp.w	r0, #0xffffffff
+   10cdc: dd07         	ble	0x10cee <_Z15mma_get_meminfoiP13mma_meminfo_t+0x42> @ imm = #0xe
+   10cde: aa08         	add	r2, sp, #0x20
+   10ce0: 2400         	movs	r4, #0x0
+   10ce2: ca07         	ldm	r2, {r0, r1, r2}
+   10ce4: e885 0007    	stm.w	r5, {r0, r1, r2}
+   10ce8: 980c         	ldr	r0, [sp, #0x30]
+   10cea: 7368         	strb	r0, [r5, #0xd]
+   10cec: e00d         	b	0x10d0a <_Z15mma_get_meminfoiP13mma_meminfo_t+0x5e> @ imm = #0x1a
+   10cee: 4604         	mov	r4, r0
+   10cf0: f240 103b    	movw	r0, #0x13b
+   10cf4: e9cd 0400    	strd	r0, r4, [sp]
+   10cf8: 2006         	movs	r0, #0x6
+   10cfa: 490a         	ldr	r1, [pc, #0x28]         @ 0x10d24 <_Z15mma_get_meminfoiP13mma_meminfo_t+0x78>
+   10cfc: 4a0a         	ldr	r2, [pc, #0x28]         @ 0x10d28 <_Z15mma_get_meminfoiP13mma_meminfo_t+0x7c>
+   10cfe: 4b0b         	ldr	r3, [pc, #0x2c]         @ 0x10d2c <_Z15mma_get_meminfoiP13mma_meminfo_t+0x80>
+   10d00: 4479         	add	r1, pc
+   10d02: 447a         	add	r2, pc
+   10d04: 447b         	add	r3, pc
+   10d06: f002 eabc    	blx	0x13280                 @ imm = #0x2578
+   10d0a: 6830         	ldr	r0, [r6]
+   10d0c: 990f         	ldr	r1, [sp, #0x3c]
+   10d0e: 1a40         	subs	r0, r0, r1
+   10d10: d102         	bne	0x10d18 <_Z15mma_get_meminfoiP13mma_meminfo_t+0x6c> @ imm = #0x4
+   10d12: 4620         	mov	r0, r4
+   10d14: b010         	add	sp, #0x40
+   10d16: bd70         	pop	{r4, r5, r6, pc}
+   10d18: f002 eb42    	blx	0x133a0                 @ imm = #0x2684
+   10d1c: 45be         	cmp	lr, r7
+   10d1e: 0000         	movs	r0, r0
+   10d20: 333a         	adds	r3, #0x3a
+   10d22: 0000         	movs	r0, r0
+   10d24: 59cf         	ldr	r7, [r1, r7]
+   10d26: ffff 5d32    	<unknown>
+   10d2a: ffff 4816    	vqshrun.s64	d20, q3, #0x1
+   10d2e: ffff b5f0    	<unknown>
+
+00010d30 <_Z16mma_get_heapinfoPKcP14mma_heapinfo_t>:
+   10d30: b5f0         	push	{r4, r5, r6, r7, lr}
+   10d32: b08f         	sub	sp, #0x3c
+   10d34: 4605         	mov	r5, r0
+   10d36: 481f         	ldr	r0, [pc, #0x7c]         @ 0x10db4 <_Z16mma_get_heapinfoPKcP14mma_heapinfo_t+0x84>
+   10d38: 460c         	mov	r4, r1
+   10d3a: 4478         	add	r0, pc
+   10d3c: 6807         	ldr	r7, [r0]
+   10d3e: 6838         	ldr	r0, [r7]
+   10d40: 900e         	str	r0, [sp, #0x38]
+   10d42: f7ff fcf5    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x616
+   10d46: 9500         	str	r5, [sp]
+   10d48: ae02         	add	r6, sp, #0x8
+   10d4a: 2110         	movs	r1, #0x10
+   10d4c: 4630         	mov	r0, r6
+   10d4e: f7ff fd83    	bl	0x10858 <_Z22mma_reserve_iova_spacePKcyPyiz+0xec> @ imm = #-0x4fa
+   10d52: 4819         	ldr	r0, [pc, #0x64]         @ 0x10db8 <_Z16mma_get_heapinfoPKcP14mma_heapinfo_t+0x88>
+   10d54: f644 510c    	movw	r1, #0x4d0c
+   10d58: 4632         	mov	r2, r6
+   10d5a: f2cc 0130    	movt	r1, #0xc030
+   10d5e: 4478         	add	r0, pc
+   10d60: 6800         	ldr	r0, [r0]
+   10d62: f002 ee36    	blx	0x139d0                 @ imm = #0x2c6c
+   10d66: f1b0 3fff    	cmp.w	r0, #0xffffffff
+   10d6a: dd0b         	ble	0x10d84 <_Z16mma_get_heapinfoPKcP14mma_heapinfo_t+0x54> @ imm = #0x16
+   10d6c: f104 0010    	add.w	r0, r4, #0x10
+   10d70: f04f 31ff    	mov.w	r1, #0xffffffff
+   10d74: 9600         	str	r6, [sp]
+   10d76: f7ff fd6f    	bl	0x10858 <_Z22mma_reserve_iova_spacePKcyPyiz+0xec> @ imm = #-0x522
+   10d7a: aa08         	add	r2, sp, #0x20
+   10d7c: 2500         	movs	r5, #0x0
+   10d7e: ca07         	ldm	r2, {r0, r1, r2}
+   10d80: c427         	stm	r4!, {r0, r1, r2, r5}
+   10d82: e00d         	b	0x10da0 <_Z16mma_get_heapinfoPKcP14mma_heapinfo_t+0x70> @ imm = #0x1a
+   10d84: 4605         	mov	r5, r0
+   10d86: f44f 70a6    	mov.w	r0, #0x14c
+   10d8a: e9cd 0500    	strd	r0, r5, [sp]
+   10d8e: 2006         	movs	r0, #0x6
+   10d90: 490a         	ldr	r1, [pc, #0x28]         @ 0x10dbc <_Z16mma_get_heapinfoPKcP14mma_heapinfo_t+0x8c>
+   10d92: 4a0b         	ldr	r2, [pc, #0x2c]         @ 0x10dc0 <_Z16mma_get_heapinfoPKcP14mma_heapinfo_t+0x90>
+   10d94: 4b0b         	ldr	r3, [pc, #0x2c]         @ 0x10dc4 <_Z16mma_get_heapinfoPKcP14mma_heapinfo_t+0x94>
+   10d96: 4479         	add	r1, pc
+   10d98: 447a         	add	r2, pc
+   10d9a: 447b         	add	r3, pc
+   10d9c: f002 ea70    	blx	0x13280                 @ imm = #0x24e0
+   10da0: 6838         	ldr	r0, [r7]
+   10da2: 990e         	ldr	r1, [sp, #0x38]
+   10da4: 1a40         	subs	r0, r0, r1
+   10da6: d102         	bne	0x10dae <_Z16mma_get_heapinfoPKcP14mma_heapinfo_t+0x7e> @ imm = #0x4
+   10da8: 4628         	mov	r0, r5
+   10daa: b00f         	add	sp, #0x3c
+   10dac: bdf0         	pop	{r4, r5, r6, r7, pc}
+   10dae: f002 eaf8    	blx	0x133a0                 @ imm = #0x25f0
+   10db2: bf00         	nop
+   10db4: 453a         	cmp	r2, r7
+   10db6: 0000         	movs	r0, r0
+   10db8: 32aa         	adds	r2, #0xaa
+   10dba: 0000         	movs	r0, r0
+   10dbc: 5939         	ldr	r1, [r7, r4]
+   10dbe: ffff 5c9c    	<unknown>
+   10dc2: ffff 53b5    	vrsra.u64	d21, d21, #0x1
+   10dc6: ffff e92d    	vtbl.8	d30, {d15, d16}, d29
+
+00010dc8 <_Z17mma_query_buf_tagPKcPjS1_S1_>:
+   10dc8: e92d 41f0    	push.w	{r4, r5, r6, r7, r8, lr}
+   10dcc: b08a         	sub	sp, #0x28
+   10dce: 4606         	mov	r6, r0
+   10dd0: 481e         	ldr	r0, [pc, #0x78]         @ 0x10e4c <_Z17mma_query_buf_tagPKcPjS1_S1_+0x84>
+   10dd2: 4698         	mov	r8, r3
+   10dd4: 4615         	mov	r5, r2
+   10dd6: 460f         	mov	r7, r1
+   10dd8: 4478         	add	r0, pc
+   10dda: 6804         	ldr	r4, [r0]
+   10ddc: 6820         	ldr	r0, [r4]
+   10dde: 9009         	str	r0, [sp, #0x24]
+   10de0: f7ff fca6    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x6b4
+   10de4: 9600         	str	r6, [sp]
+   10de6: ae02         	add	r6, sp, #0x8
+   10de8: 2110         	movs	r1, #0x10
+   10dea: 4630         	mov	r0, r6
+   10dec: f7ff fd34    	bl	0x10858 <_Z22mma_reserve_iova_spacePKcyPyiz+0xec> @ imm = #-0x598
+   10df0: 4817         	ldr	r0, [pc, #0x5c]         @ 0x10e50 <_Z17mma_query_buf_tagPKcPjS1_S1_+0x88>
+   10df2: f644 510d    	movw	r1, #0x4d0d
+   10df6: 4632         	mov	r2, r6
+   10df8: f2cc 011c    	movt	r1, #0xc01c
+   10dfc: 4478         	add	r0, pc
+   10dfe: 6800         	ldr	r0, [r0]
+   10e00: f002 ede6    	blx	0x139d0                 @ imm = #0x2bcc
+   10e04: f1b0 3fff    	cmp.w	r0, #0xffffffff
+   10e08: dd08         	ble	0x10e1c <_Z17mma_query_buf_tagPKcPjS1_S1_+0x54> @ imm = #0x10
+   10e0a: 9806         	ldr	r0, [sp, #0x18]
+   10e0c: 2600         	movs	r6, #0x0
+   10e0e: 6038         	str	r0, [r7]
+   10e10: 9807         	ldr	r0, [sp, #0x1c]
+   10e12: 6028         	str	r0, [r5]
+   10e14: 9808         	ldr	r0, [sp, #0x20]
+   10e16: f8c8 0000    	str.w	r0, [r8]
+   10e1a: e00d         	b	0x10e38 <_Z17mma_query_buf_tagPKcPjS1_S1_+0x70> @ imm = #0x1a
+   10e1c: 4606         	mov	r6, r0
+   10e1e: f240 105d    	movw	r0, #0x15d
+   10e22: e9cd 0600    	strd	r0, r6, [sp]
+   10e26: 2006         	movs	r0, #0x6
+   10e28: 490a         	ldr	r1, [pc, #0x28]         @ 0x10e54 <_Z17mma_query_buf_tagPKcPjS1_S1_+0x8c>
+   10e2a: 4a0b         	ldr	r2, [pc, #0x2c]         @ 0x10e58 <_Z17mma_query_buf_tagPKcPjS1_S1_+0x90>
+   10e2c: 4b0b         	ldr	r3, [pc, #0x2c]         @ 0x10e5c <_Z17mma_query_buf_tagPKcPjS1_S1_+0x94>
+   10e2e: 4479         	add	r1, pc
+   10e30: 447a         	add	r2, pc
+   10e32: 447b         	add	r3, pc
+   10e34: f002 ea24    	blx	0x13280                 @ imm = #0x2448
+   10e38: 6820         	ldr	r0, [r4]
+   10e3a: 9909         	ldr	r1, [sp, #0x24]
+   10e3c: 1a40         	subs	r0, r0, r1
+   10e3e: d103         	bne	0x10e48 <_Z17mma_query_buf_tagPKcPjS1_S1_+0x80> @ imm = #0x6
+   10e40: 4630         	mov	r0, r6
+   10e42: b00a         	add	sp, #0x28
+   10e44: e8bd 81f0    	pop.w	{r4, r5, r6, r7, r8, pc}
+   10e48: f002 eaaa    	blx	0x133a0                 @ imm = #0x2554
+   10e4c: 449c         	add	r12, r3
+   10e4e: 0000         	movs	r0, r0
+   10e50: 320c         	adds	r2, #0xc
+   10e52: 0000         	movs	r0, r0
+   10e54: 58a1         	ldr	r1, [r4, r2]
+   10e56: ffff 5c04    	vdup.8	d21, d4[7]
+   10e5a: ffff 51b9    	vsra.u64	d21, d25, #0x1
+   10e5e: ffff b570    	<unknown>
+
+00010e60 <_Z17mma_import_handleiPi>:
+   10e60: b570         	push	{r4, r5, r6, lr}
+   10e62: b086         	sub	sp, #0x18
+   10e64: 4604         	mov	r4, r0
+   10e66: 481a         	ldr	r0, [pc, #0x68]         @ 0x10ed0 <_Z17mma_import_handleiPi+0x70>
+   10e68: 460d         	mov	r5, r1
+   10e6a: 4478         	add	r0, pc
+   10e6c: 6806         	ldr	r6, [r0]
+   10e6e: 6830         	ldr	r0, [r6]
+   10e70: 9005         	str	r0, [sp, #0x14]
+   10e72: 2000         	movs	r0, #0x0
+   10e74: e9cd 0002    	strd	r0, r0, [sp, #8]
+   10e78: f7ff fc5a    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x74c
+   10e7c: 9403         	str	r4, [sp, #0xc]
+   10e7e: f644 5115    	movw	r1, #0x4d15
+   10e82: 4814         	ldr	r0, [pc, #0x50]         @ 0x10ed4 <_Z17mma_import_handleiPi+0x74>
+   10e84: f2cc 0108    	movt	r1, #0xc008
+   10e88: 4478         	add	r0, pc
+   10e8a: 6800         	ldr	r0, [r0]
+   10e8c: aa02         	add	r2, sp, #0x8
+   10e8e: f002 eda0    	blx	0x139d0                 @ imm = #0x2b40
+   10e92: f1b0 3fff    	cmp.w	r0, #0xffffffff
+   10e96: dd03         	ble	0x10ea0 <_Z17mma_import_handleiPi+0x40> @ imm = #0x6
+   10e98: 9802         	ldr	r0, [sp, #0x8]
+   10e9a: 2400         	movs	r4, #0x0
+   10e9c: 6028         	str	r0, [r5]
+   10e9e: e00d         	b	0x10ebc <_Z17mma_import_handleiPi+0x5c> @ imm = #0x1a
+   10ea0: 4604         	mov	r4, r0
+   10ea2: f44f 70b7    	mov.w	r0, #0x16e
+   10ea6: e9cd 0400    	strd	r0, r4, [sp]
+   10eaa: 2006         	movs	r0, #0x6
+   10eac: 490a         	ldr	r1, [pc, #0x28]         @ 0x10ed8 <_Z17mma_import_handleiPi+0x78>
+   10eae: 4a0b         	ldr	r2, [pc, #0x2c]         @ 0x10edc <_Z17mma_import_handleiPi+0x7c>
+   10eb0: 4b0b         	ldr	r3, [pc, #0x2c]         @ 0x10ee0 <_Z17mma_import_handleiPi+0x80>
+   10eb2: 4479         	add	r1, pc
+   10eb4: 447a         	add	r2, pc
+   10eb6: 447b         	add	r3, pc
+   10eb8: f002 e9e2    	blx	0x13280                 @ imm = #0x23c4
+   10ebc: 6830         	ldr	r0, [r6]
+   10ebe: 9905         	ldr	r1, [sp, #0x14]
+   10ec0: 1a40         	subs	r0, r0, r1
+   10ec2: d102         	bne	0x10eca <_Z17mma_import_handleiPi+0x6a> @ imm = #0x4
+   10ec4: 4620         	mov	r0, r4
+   10ec6: b006         	add	sp, #0x18
+   10ec8: bd70         	pop	{r4, r5, r6, pc}
+   10eca: f002 ea6a    	blx	0x133a0                 @ imm = #0x24d4
+   10ece: bf00         	nop
+   10ed0: 440a         	add	r2, r1
+   10ed2: 0000         	movs	r0, r0
+   10ed4: 3180         	adds	r1, #0x80
+   10ed6: 0000         	movs	r0, r0
+   10ed8: 581d         	ldr	r5, [r3, r0]
+   10eda: ffff 5b80    	vtbl.8	d21, {d31, fpinst2, mvfr0, mvfr1}, d0
+   10ede: ffff 3d40    	<unknown>
+   10ee2: ffff b570    	<unknown>
+
+00010ee4 <_Z15mma_free_handlei>:
+   10ee4: b570         	push	{r4, r5, r6, lr}
+   10ee6: b086         	sub	sp, #0x18
+   10ee8: 4605         	mov	r5, r0
+   10eea: 4818         	ldr	r0, [pc, #0x60]         @ 0x10f4c <_Z15mma_free_handlei+0x68>
+   10eec: 2400         	movs	r4, #0x0
+   10eee: 4478         	add	r0, pc
+   10ef0: 6806         	ldr	r6, [r0]
+   10ef2: 6830         	ldr	r0, [r6]
+   10ef4: 9005         	str	r0, [sp, #0x14]
+   10ef6: e9cd 4402    	strd	r4, r4, [sp, #8]
+   10efa: f7ff fc19    	bl	0x10730 <_Z12mma_map_iovaPyi+0xb4> @ imm = #-0x7ce
+   10efe: 9502         	str	r5, [sp, #0x8]
+   10f00: f644 5116    	movw	r1, #0x4d16
+   10f04: 4812         	ldr	r0, [pc, #0x48]         @ 0x10f50 <_Z15mma_free_handlei+0x6c>
+   10f06: f2cc 0108    	movt	r1, #0xc008
+   10f0a: 4478         	add	r0, pc
+   10f0c: 6800         	ldr	r0, [r0]
+   10f0e: aa02         	add	r2, sp, #0x8
+   10f10: f002 ed5e    	blx	0x139d0                 @ imm = #0x2abc
+   10f14: f1b0 3fff    	cmp.w	r0, #0xffffffff
+   10f18: dc0e         	bgt	0x10f38 <_Z15mma_free_handlei+0x54> @ imm = #0x1c
+   10f1a: 4605         	mov	r5, r0
+   10f1c: f240 107d    	movw	r0, #0x17d
+   10f20: e9cd 0500    	strd	r0, r5, [sp]
+   10f24: 2006         	movs	r0, #0x6
+   10f26: 490b         	ldr	r1, [pc, #0x2c]         @ 0x10f54 <_Z15mma_free_handlei+0x70>
+   10f28: 4a0b         	ldr	r2, [pc, #0x2c]         @ 0x10f58 <_Z15mma_free_handlei+0x74>
+   10f2a: 4b0c         	ldr	r3, [pc, #0x30]         @ 0x10f5c <_Z15mma_free_handlei+0x78>
+   10f2c: 4479         	add	r1, pc
+   10f2e: 447a         	add	r2, pc
+   10f30: 447b         	add	r3, pc
+   10f32: f002 e9a6    	blx	0x13280                 @ imm = #0x234c
+   10f36: 462c         	mov	r4, r5
+   10f38: 6830         	ldr	r0, [r6]
+   10f3a: 9905         	ldr	r1, [sp, #0x14]
+   10f3c: 1a40         	subs	r0, r0, r1
+   10f3e: d102         	bne	0x10f46 <_Z15mma_free_handlei+0x62> @ imm = #0x4
+   10f40: 4620         	mov	r0, r4
+   10f42: b006         	add	sp, #0x18
+   10f44: bd70         	pop	{r4, r5, r6, pc}
+   10f46: f002 ea2c    	blx	0x133a0                 @ imm = #0x2458
+   10f4a: bf00         	nop
+   10f4c: 4386         	bics	r6, r0
+   10f4e: 0000         	movs	r0, r0
+   10f50: 30fe         	adds	r0, #0xfe
+   10f52: 0000         	movs	r0, r0
+   10f54: 57a3         	ldrsb	r3, [r4, r6]
+   10f56: ffff 5b06    	vtbl.8	d21, {d15, d16, d17, d18}, d6
+   10f5a: ffff 558d    	<unknown>
+   10f5e: ffff 6803    	vtbl.8	d22, {d15}, d3
+
+00010f60 <decode_eht_entry>:
+   10f60: 6803         	ldr	r3, [r0]
+   10f62: 2b00         	cmp	r3, #0x0
+   10f64: db09         	blt	0x10f7a <decode_eht_entry+0x1a> @ imm = #0x12
+   10f66: 2301         	movs	r3, #0x1
+   10f68: 600b         	str	r3, [r1]
+   10f6a: 2304         	movs	r3, #0x4
+   10f6c: f850 1f04    	ldr	r1, [r0, #4]!
+   10f70: 0e09         	lsrs	r1, r1, #0x18
+   10f72: eb03 0181    	add.w	r1, r3, r1, lsl #2
+   10f76: 6011         	str	r1, [r2]
+   10f78: 4770         	bx	lr
+   10f7a: f3c3 6c03    	ubfx	r12, r3, #0x18, #0x4
+   10f7e: f1bc 0f00    	cmp.w	r12, #0x0

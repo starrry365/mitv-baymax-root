@@ -1,0 +1,58 @@
+=== mmatest2 运行结果（基于反汇编还原的真实 ioctl 号）===
+
+--- 命令构造已从 gralloc.mt5872.so 反汇编确认：
+    blx 0x139d0 == ioctl@LIBC
+    mma_open()  -> open("/dev/mma", O_RDWR)
+
+[1] mma_get_pipeid  0x80304d02   (R 'M' nr=0x02 size=48)
+    r=0 errno=0(Success)
+    [+00]=00000011 [+04]=00000000 [+08]=00000003 [+0c]=00000000
+    [+10]=2e1548c1 [+14]=ffffffc0 [+18]=000003ea [+1c]=00000000
+    [+20]=38cc9400 [+24]=ffffffc0 [+28]=80304d02 [+2c]=00000000
+    -> u64: [+10] = 0xffffffc02e1548c1   <== 内核线性映射地址 (PAGE_OFFSET=0xffffffc000000000)
+           [+20] = 0xffffffc038cc9400   <== 内核线性映射地址（页对齐）
+           [+28] = 0x0000000080304d02   <== 回显 ioctl 命令字
+    说明：两次运行值不同（另一次为 0xffffffc0b458fb40 / 0x...(见下)），
+          是**活动内核堆对象地址**，构成 KASLR 无关的内核地址泄露
+          （且本法对 KASLR 关闭的机器是"额外保险"）。
+          换算物理地址：phys = addr - 0xffffffc000000000
+             0xffffffc02e1548c1 -> phys 0x2e1548c1
+             0xffffffc038cc9400 -> phys 0x38cc9400
+
+[2] mma_get_meminfo 0xc0304d0b  传 fd=0 -> r=-1 errno=22(EINVAL)  (需要有效 mma fd)
+
+[3] mma_alloc 0xc0384d13  (RW 'M' nr=0x13 size=56)
+    struct: +0x00 name[16]; +0x20 size(u32); +0x24 fd(out);
+            +0x28 pa(out,u64); +0x30 flags(u32)
+    size=4096    flags=0 -> r=-1 errno=12(ENOMEM)
+    size=0x10000 ... 0x1000000 -> 全部 ENOMEM
+
+[5] mma_query_buf_tag  0xc01c4d0d -> EPERM(1)
+[6] mma_get_heapinfo   0xc0304d0c -> EPERM(1)
+
+
+=== mmatest3 运行结果（扫描 31 个 tag 名 x 3 尺寸 x 8 个 flags = 744 次）===
+    名称集: AMM MMA mma MI_MMA MIMMA mmap ion ION graphic Graphic GRAPHIC
+            disp DISP vdec VDEC osd OSD video VIDEO fb FB_MAIN GFX gfx
+            system default VE ve VE_OSD snapshot JPEG dmabuf
+    => **全部 744 次尝试均返回 ENOMEM(errno=12)**
+
+    结论：ENOMEM 与 tag 名 / size / flags 无关，是系统性分配失败。
+
+
+=== 根因线索：CMA 几近耗尽 ===
+MemTotal:   1885816 kB
+MemFree:      41148 kB
+MemAvailable:600400 kB
+SwapTotal:   511996 kB
+SwapFree:    327420 kB
+CmaTotal:     24576 kB   <== 只有 24 MB
+CmaFree:       2108 kB   <== 仅剩 ~2 MB
+
+MMA 的物理内存来自 CMA（见 /proc/vmallocinfo 里
+"MsOS_MMA_CMA_Unauthorize+0x1ac/0xc68 [utpa2k] phys=0x... ioremap" 条目）。
+24MB 的 CMA 被显示/视频流水线长期占满，只剩 2MB 且高度碎片化
+=> 任何尺寸的 mma_alloc 都拿不到连续块。
+
+另一可能因素：本进程由 init 的 `exec` 拉起，属于 u:r:misysdiagnose:s0 域，
+可能未被 MMA 驱动登记为合法客户端（未注册 pipe），驱动的分配路径直接判失败。

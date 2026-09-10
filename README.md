@@ -19,8 +19,40 @@ MStar **MMA** 内核驱动的 ioctl 协议逆向（通往完整 root 的下一�
 | 4 | 打通 **uid 0 命令执行**（`CapEff=0x3fffffffff`） | ✅ 完成，稳定 |
 | 5 | 常驻 root daemon（`rootd`） | ✅ 完成 |
 | 6 | SELinux 域 `u:r:misysdiagnose:s0` 提权突破 | 🔬 进行中 |
-| 7 | MStar MMA 驱动 ioctl 协议还原（29 条命令） | ✅ 完成 |
+| 7 | MStar MMA 驱动 ioctl 协议还原 | ✅ 完成（**权威版**，见下） |
+| 7b | 内核地址泄露（`mma_get_pipeid`） | ✅ 完成 |
+| 7c | 内核内存地图（`/proc/vmallocinfo`） | ✅ 完成 |
 | 8 | 经 `/dev/mma` 做内核物理内存读写 → 改 cred / 关 SELinux | 🔬 下一步 |
+
+### 第 7 阶段的关键修正
+
+早期版本里的 MMA ioctl 表来自对立即数构造点的**猜测性还原，有多处错误**。
+后来在设备上找到了真正实现这套 API 的 `gralloc.mt5872.so`（93 KB，未 strip），
+**反汇编它逐条读出真实命令字**，并顺带解出完整的结构体布局与函数签名
+（C++ 修饰名直接给出参数类型）。
+
+详见 [`reverse/mma-ioctl-table.md`](reverse/mma-ioctl-table.md)。
+
+### 意料之外的两项收获
+
+* **`mma_get_pipeid` 泄露内核地址**：这条只读命令稳定返回两个
+  `0xffffffc0xxxxxxxx` 形式的**内核线性映射地址**（每次调用值不同 ⇒ 真实内核堆对象）。
+* **`/proc/vmallocinfo` 在受限域里完全可读**，直接暴露 MMA/CMA 的**物理地址区段**、
+  各内核对象虚拟地址、以及内核函数符号与偏移 —— 配合 KASLR 关闭，
+  相当于拿到了一张相当完整的内核内存地图。
+
+### 当前阻塞点
+
+`mma_alloc` 在 **744 种组合**（31 个 tag 名 × 3 尺寸 × 8 个 flags）下**全部返回 ENOMEM**。
+根因指向 **CMA 耗尽**：`CmaTotal=24 MB` 而 `CmaFree` 只剩 **~2 MB**，
+MMA 的物理内存正是从 CMA 分配（`/proc/vmallocinfo` 里的
+`MsOS_MMA_CMA_Unauthorize+... phys=0x... ioremap [utpa2k]` 条目即为证据）。
+
+因此下一步改为**绕开分配**，直接打「地址转换 / 句柄导入 / 授权」类命令
+（`mma_map`、`mma_map_iova`、`mma_import_handle`、`mma_import_globalname`、
+`mma_globalname_query`、`mma_buffer_authorize`、`mma_va2iova`），
+这些命令的输入本来就是句柄或物理地址，不需要新分配。详见
+[`docs/06-next-steps.md`](docs/06-next-steps.md)。
 
 **当前权限**：`uid=0(root)`，全部 38 个 capability（`CapEff=0x3fffffffff`），
 但 SELinux 域为受限的 `u:r:misysdiagnose:s0` —— 能读 `/dev/mma`、能 binder 到

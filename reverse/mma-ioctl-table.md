@@ -1,155 +1,248 @@
-# MMA 驱动接口逆向
+# MMA 驱动接口逆向（权威版）
 
-目标：`/dev/mma` —— MStar TV SoC 的物理内存分配器（MMA = MStar Memory Agent）。
-实现模块：`/vendor/lib/modules/utpa2k.ko`（14.6 MB，`/dev/mma` 字符串就在其中，
-`lsmod` 显示被 `mdrv_ldm, mik, misck, mwgifker, xcker, hdcp2x, hdcp1x` 共 7 个模块依赖）。
-
-> 注意：`utpa2k.ko` 里的 `MsOS_MMA_*` 是 16 字节间隔的 **`W`（weak）符号桩**，
-> 那是给别的内核模块用的导出 API 胶水层；**用户态走的是 `/dev/mma` 的 ioctl**，
-> 两条路径不要混淆。
+> **本文取代早期版本。** 早期版本的表来自反汇编中"立即数构造点"的猜测性还原，
+> **有多处错误**（例如把 `mma_map` 写成 `0xc0304d03`，实际 `mma_map` 是 `0x40284d06`，
+> 而 `0xc0304d03` 根本不存在）。
+> 现在的方法：在设备上找到**真正实现这些函数的那个 .so**，反汇编它，逐条读出
+> `movw/movt r1, ...` → `blx ioctl` 的完整命令字。
 
 ---
 
-## 1. ioctl 命令表（magic = `'M'` = `0x4d`）
+## 0. 关键突破：找到用户态实现
 
-命令码由标准 `_IOC` 宏编码：`dir(2) | size(14) | type(8) | nr(8)`。
+排查过程：
 
-| ioctl 码 | 方向 | nr | 结构体大小 | 对应处理函数 | 语义 |
-|---|---|---|---|---|---|
-| `0xc0a84d00` | RW | 0x00 | 168 | `mma_reserve_iova_space` | 预留 IOVA 空间 |
-| `0x80044d00` | R | 0x00 | 4 | —（复用 nr 0，4 字节查询） | 查询已预留 IOVA |
-| `0x80304d02` | R | 0x02 | 48 | `mma_get_pipeid` | 取 pipeID |
-| `0xc0304d03` | RW | 0x03 | 48 | **`mma_alloc`** | 分配物理内存，返回 handle/fd |
-| `0x40304d04` | W | 0x04 | 48 | `mma_buffer_authorize` | 以**物理地址**授权 buffer 给 pipe |
-| `0x40284d05` | W | 0x05 | 40 | `mma_free` | 释放 |
-| `0x40284d06` | W | 0x06 | 40 | `mma_map` | 映射到进程地址空间 |
-| `0x40284d08` | W | 0x08 | 40 | `mma_flush` | cache flush |
-| `0xc0284d09` | RW | 0x09 | 40 | `mma_export_globalname` | 导出全局名（跨进程共享） |
-| `0xc0284d0a` | RW | 0x0a | 40 | `mma_import_globalname` | 按**物理地址**导入全局名 |
-| `0xc0304d0b` | RW | 0x0b | 48 | `mma_get_meminfo` | **fd → 物理地址** |
-| `0xc0304d0c` | RW | 0x0c | 48 | `mma_get_heapinfo` | 堆信息 |
-| `0xc01c4d0d` | RW | 0x0d | 28 | `mma_query_buf_tag` | 查询 buffer tag |
-| `0xc0304d17` | RW | 0x17 | 48 | `mma_va2iova` | 虚拟地址 → IOVA |
-| `0x40184d0a` | W | 0x0a | 24 | `MsOS_MPool_SetWatchPT` | MPool 页表监视 |
-| `0x80954d1f` | R | 0x1f | 149 | `_MHal_XC_GetFlowControlPixelRate` | 读像素时钟（非 MMA，同 magic 段） |
+```bash
+# 1. 谁引用 mma_alloc_internal？
+adb shell 'for f in /vendor/lib/*.so /vendor/lib/hw/*.so /system/lib/*.so; do \
+             grep -q -a mma_alloc_internal "$f" && echo HIT $f; done'
+#   HIT: /vendor/lib/libOpenCL.so
+#   HIT: /vendor/lib/libutopia.so
+#   HIT: /vendor/lib/hw/gralloc.mt5872.so        <-- 93 KB，小而全
+#   HIT: /vendor/lib/hw/vulkan.mt5872.so
 
-**置信度**：
-* 命令码与 size 来自对 `utpa2k.ko` / `libutopia.so` 反汇编中立即数构造点的还原；
-* **处理函数名**来自设备端 `strings` 导出的错误日志，是本表最硬的部分（见下）。
-
----
-
-## 2. 权威证据：29 个 `mma_*` 处理函数（来自模块内错误字符串）
-
-```
-$ adb shell strings -n 4 /vendor/lib/modules/utpa2k.ko | grep -oE 'mma_[a-z_0-9]+' | sort -u
+adb pull /vendor/lib/hw/gralloc.mt5872.so
+llvm-nm -D gralloc.so | grep mma
 ```
 
-去掉面板 gamma 曲线名（`mma_0dot4`、`mma_dither` 等），得到 **29 个真实 ioctl 处理函数**：
-
-| # | 函数 | # | 函数 |
-|---|---|---|---|
-| 1 | `mma_open` | 16 | `mma_free` |
-| 2 | `mma_release` | 17 | `mma_free_iova_space` |
-| 3 | `mma_alloc` | 18 | `mma_reserve_iova_space` |
-| 4 | `mma_alloc_sec` | 19 | `mma_va2iova` |
-| 5 | `mma_map` | 20 | `mma_map_iova` |
-| 6 | `mma_unmap` | 21 | `mma_get_meminfo` |
-| 7 | `mma_flush` | 22 | `mma_get_pipeid` |
-| 8 | `mma_table` | 23 | `mma_put_pipeid` |
-| 9 | `mma_buf_store` | 24 | `mma_export_globalname` |
-| 10 | `mma_buf_remove` | 25 | `mma_import_globalname` |
-| 11 | `mma_buf_remove_va` | 26 | `mma_import_handle` |
-| 12 | `mma_query_buf_tag` | 27 | `mma_globalname_query` |
-| 13 | `mma_buffer_authorize` | 28 | `mma_dmabuf_put` |
-| 14 | `mma_buffer_unauthorize` | 29 | `mma_physical_buffer_authorize` |
-| 15 | `mma_cma_buffer_authorize` / `mma_cma_buffer_unauthorize` | | `mma_physical_buffer_unauthorize` |
-
----
-
-## 3. 参数语义：从错误字符串反推
-
-模块里的校验日志**逐字泄露了每个参数的用途**，这比反汇编猜结构体快得多：
+`gralloc.mt5872.so`（93 KB，**带完整动态符号表**）**导出了整套 MMA 用户态 API**，
+而且它的 C++ 修饰名直接给出了参数类型：
 
 ```
-error: buf_info == NULL          error: pFd == NULL
-error: buf_tag == NULL           error: pMem_info == NULL
-error: feature == NULL           error: pPhy == NULL
-error: pglb_name == NULL         error: pphyBaseAddr == NULL
-error: pu8space_tag == NULL      error: u8bufTag == NULL
-error: u32pipeID == NULL         error: size == 0
-error: u32size <= 0              error: u64size == 0
-error: vaddr == 0                error: vaddr == NULL
+_Z8mma_openv                       mma_open()
+_Z11mma_releasev                   mma_release()
+_Z9mma_allocPKcjPyPii              mma_alloc(const char*, u32, u64*, int*, int)
+_Z13mma_alloc_secPKcjPyPi          mma_alloc_sec(const char*, u32, u64*, int*)
+_Z8mma_freei                       mma_free(int)
+_Z8mma_freei  (_Z15mma_free_handlei)  mma_free_handle(int)
+_Z7mma_mapihjj                     mma_map(int, u8, u32, u32)
+_Z12mma_map_iovaPyi                mma_map_iova(void*, u32, int)
+_Z9mma_unmapPvj                    mma_unmap(void*, u32)
+_Z9mma_flushPvj                    mma_flush(void*, u32)
+_Z14mma_set_cachedih               mma_set_cached(int, u8)
+_Z15mma_get_meminfoiP13mma_meminfo_t   mma_get_meminfo(int, mma_meminfo_t*)
+_Z16mma_get_heapinfoPKcP14mma_heapinfo_t mma_get_heapinfo(const char*, mma_heapinfo_t*)
+_Z14mma_get_pipeidPi               mma_get_pipeid(int*)
+_Z20mma_buffer_authorizeii         mma_buffer_authorize(int, int)
+_Z22mma_reserve_iova_spacePKcyPyiz mma_reserve_iova_space(const char*, u8, u64*, int, u32, i64)
+_Z19mma_free_iova_spacePKc         mma_free_iova_space(const char*)
+_Z21mma_export_globalnamei         mma_export_globalname(int)
+_Z21mma_import_globalnamei         mma_import_globalname(int)
+_Z17mma_import_handleiPi           mma_import_handle(int, int*)
+_Z17mma_query_buf_tagPKcPjS1_S1_   mma_query_buf_tag(const char*, u32*, u32*, u32*)
 ```
 
-以及每个函数的失败路径都带出了它的关键参数：
+## 1. 反汇编要点
 
-```
-mma_get_meminfo fail, fd = %d, pa = %llx    <-- 输入 fd，输出 pa
-mma_buffer_authorize fail, pa = %llx        <-- 输入就是物理地址
-mma_buffer_unauthorize fail, fd = %d
-mma_cma_buffer_authorize fail, pa = %llx
-mma_import_globalname fail, pa = %llx       <-- 输入物理地址
-mma_globalname_query fail, pa = 0x%llx
-mma_va2iova fail, va = %llx
-mma_unmap fail, va:%llx pid:%x
-mma_map failed! va = 0x%p
-mma_export_globalname fail, ret = %d
+它是 **Thumb-2** 代码（`llvm-objdump` 默认按 ARM 解会得到乱码）：
+
+```bash
+OBJDUMP=.../llvm-objdump.exe
+$OBJDUMP -d --triple=thumbv7-none-linux-gnueabi gralloc.so
 ```
 
-### 关键推论
-
-1. **`mma_get_meminfo(输入 fd, 输出 pa)`** —— 这是 `dma_buf` fd → **物理地址** 的转换器。
-   我们完全可以先正常 `mma_alloc` 拿到自己的 buffer fd，再用它拿到 pa，
-   **从而知道内核物理地址长什么样、以及分配器的地址规律**。
-
-2. **`mma_buffer_authorize(pa, size, pipeid)` /
-   `mma_physical_buffer_authorize`** —— 直接接受**用户提供的物理地址**，
-   把它当作合法 DMA buffer 授权给某个硬件 pipe。
-   这里没有任何「这个 pa 是不是该进程分配的」校验痕迹（错误串里只有 NULL 检查）。
-
-3. **`mma_import_globalname(pa)` / `mma_globalname_query(pa)`** —— 同样以物理地址为输入，
-   用于跨进程/跨模块共享 buffer。如果 global name 表没有做归属校验，
-   就能"导入"别人的物理内存。
-
-4. **`mma_map(va/size)` 与 `mma_map_iova`** —— 映射原语，
-   配合 1、2 即可构造「把任意物理页映射进本进程」的路径。
-
-而且模块里有一句直白的边界检查提示：
+用 PLT 重定位可以确认 `blx 0x139d0` 就是 `ioctl@LIBC`：
 
 ```
-IOCTL command out of bounds, please check!
+$ llvm-readelf -r gralloc.so | grep 15510
+00015510  00007b16 R_ARM_JUMP_SLOT  00010575  _Z9mma_allocPKcjPyPii
+=> mma_alloc 的 PLT 桩 = 0x13bf0
+=> blx 0x139d0 对应的 GOT 槽解析为 ioctl@LIBC
 ```
 
-说明分发器是**按表索引**的（`mma_table` 很可能就是这张表），
-这既意味着命令号是连续可枚举的，也可能意味着 `nr` 越界检查存在疏漏。
+于是每一处 `movw r1, #0x4dXX` + `movt r1, #0xC0YY` 都是真实 ioctl 命令字。
+自动提取脚本：[`decode_ioctl.py`](decode_ioctl.py)（配套 [`resolve_plt.py`](resolve_plt.py)）。
 
----
+## 2. ★ 权威 ioctl 命令表
 
-## 4. 攻击链假设（待上机验证）
+命令码按标准 `_IOC` 编码：`dir(2) | size(14) | type(8=0x4d) | nr(8)`。
+
+| 用户态函数 | ioctl 命令 | 方向 | nr | 结构体大小 |
+|---|---|---|---|---|
+| `mma_open()` | — | — | — | `open("/dev/mma", O_RDWR)` |
+| `mma_get_pipeid(int*)` | `0x80304d02` | R | 0x02 | 48 |
+| `mma_alloc(name, size, &pa, &fd, flags)` | **`0xc0384d13`** | RW | 0x13 | **56** |
+| `mma_alloc_sec(name, size, &pa, &fd)` | （复用 alloc 路径） | — | — | — |
+| `mma_map(fd, u8, u32, u32)` | `0x40284d06` | W | 0x06 | 40 |
+| `mma_map_iova(void*, u32, int)` | `0xc0104d14` | RW | 0x14 | 16 |
+| `mma_unmap(void*, u32)` | `0x40284d08` | W | 0x08 | 40 |
+| `mma_free(int)` | `0x40284d05` / `0xc0284d0e` | W / RW | 0x05 / 0x0e | 40 |
+| `mma_flush(void*, u32)` | `0x40284d08` | W | 0x08 | 40 |
+| `mma_get_meminfo(fd, info*)` | `0xc0304d0b` | RW | 0x0b | 48 |
+| `mma_get_heapinfo(name, info*)` | `0xc0304d0c` | RW | 0x0c | 48 |
+| `mma_query_buf_tag(name,p,p,p)` | `0xc01c4d0d` | RW | 0x0d | 28 |
+| `mma_buffer_authorize(int,int)` | `0x40304d04` | W | 0x04 | 48 |
+| `mma_export_globalname(int)` | `0xc0284d09` | RW | 0x09 | 40 |
+| `mma_import_globalname(int)` | `0xc0284d0a` | RW | 0x0a | 40 |
+| `mma_import_handle(int,int*)` | `0xc0084d15` | RW | 0x15 | 8 |
+| `mma_free_handle(int)` | `0xc0084d16` | RW | 0x16 | 8 |
+| `mma_reserve_iova_space(...)` | `0xc0a84d00` | RW | 0x00 | 168 |
+| `mma_free_iova_space(const char*)` | `0x40a84d01` | W | 0x01 | 168 |
+
+（`mma_set_cached` 与 `mma_map` 共享 `0x40284d06`，可能只是对该命令的另一种参数写法。）
+
+## 3. ★ 结构体布局（从反汇编逐字段解出）
+
+### `mma_alloc` — 56 字节（0x38）
 
 ```
-[用户态] mma_alloc(size)                 -> 拿到自己的 buffer fd
-         mma_get_meminfo(fd)             -> 学到 pa（验证 fd->pa 转换 + 观察物理地址分布）
-         mma_map(fd, ...)                -> 确认映射语义
-   --- 以上全部是「合法用法」，先打通语义 ---
-[提权]   mma_physical_buffer_authorize(<目标 pa>)  -> 授权任意物理地址
-         或 mma_import_globalname(<目标 pa>)       -> 导入任意物理地址
-         再配合 map 把它映射进本进程
-   --- 若成功 => 物理内存任意读写 ---
-[收尾]   写 selinux_state.enforcing = 0，或改自身 cred->selinux_cred->sid
++0x00  char  name[16]        (in)   buffer tag，15 字符 + NUL
++0x10  (16 字节保留，清零)
++0x20  u32   size            (in)   请求大小
++0x24  int   fd              (out)  ← 成功时返回的 dma_buf/mma 句柄
++0x28  u64   pa              (out)  ← 成功时返回的**物理地址**
++0x30  u32   flags           (in)
++0x34  u32   (保留)
 ```
 
-## 5. 复现脚本
+`flags` 位含义（从 `ion_alloc_fd` 的构造逻辑反推）：
 
-* [`extract-mma-ioctl.sh`](extract-mma-ioctl.sh) —— 从设备拉 blob 并导出符号/字符串
-* 交叉工具：[`../tools/mmatest.c`](../tools/mmatest.c)
+```
+bit0 = (usage >> 16) & 1
+bit1 = (frame_count == 0x10)      ; 即 r4 == 0x10 时置位
+bit2 = usage & 1
+```
 
-## 6. 未完成 / 已知不确定
+### `mma_get_meminfo` — 48 字节
 
-* **ioctl 与处理函数的 nr 绑定关系尚未逐条坐实**：
-  表 1 的 nr 来自反汇编还原，表 2 的函数名来自 strings，
-  两者的对应是按语义命名推断的，**需要在设备上用只读命令逐条校准**（`mmatest.c` 的 A 段就是干这个）。
-* 结构体字段偏移（尤其 `mma_alloc` 的 in/out 布局、`mma_map` 的 va/size/handle 顺序）**尚未确认**。
-* `mma_table` 的内容（真正的 nr→函数指针映射表）未提取 —— 这是下一步最值得做的一件事，
-  拿到它就能一次性确认全部编号。
+```
++0x24  int   fd              (in)
++0x18  12 字节                (out) → mma_meminfo_t[0..11]
++0x28  u8                     (out) → mma_meminfo_t[13]
+```
+即 `mma_meminfo_t` 大致是 `{ u64 pa; u32 size; ...; u8 cached; }`。
+**语义：输入一个 mma fd，输出它的物理地址。**
+
+### `mma_get_pipeid` — 48 字节
+
+实测（只读，安全）：
+
+```
+ioctl(fd, 0x80304d02, buf) -> 0
+buf+0x00 u32 = 0x11      (可能是 pipe 数或本进程 pipe id)
+buf+0x08 u32 = 3
+buf+0x10 u64 = 0xffffffc02e1548c1   <== 内核线性映射地址
+buf+0x18 u64 = 0x3ea
+buf+0x20 u64 = 0xffffffc038cc9400   <== 内核线性映射地址（页对齐）
+buf+0x28 u32 = 0x80304d02           <== 回显 ioctl 命令字
+```
+
+## 4. ★ 实测结果与当前阻塞点
+
+完整记录见 [`../recon/mma-runtime-probe.txt`](../recon/mma-runtime-probe.txt)。
+
+| 命令 | 结果 |
+|---|---|
+| `mma_open()` | ✅ 成功（DAC 层 uid=0 可打开 `/dev/mma`） |
+| `mma_get_pipeid` | ✅ **成功，并泄露两个内核线性映射地址** |
+| `mma_alloc` | ❌ **ENOMEM**（4096 ~ 16 MB 全部失败） |
+| `mma_get_meminfo` | ❌ EINVAL（需要有效 fd） |
+| `mma_query_buf_tag` / `mma_get_heapinfo` | ❌ EPERM |
+| 未知 nr 的命令 | EINVAL（分发表拒绝） |
+
+`mma_alloc` 的 ENOMEM 已排除以下原因（**31 个 tag 名 × 3 个尺寸 × 8 个 flags
+= 744 次尝试全部 ENOMEM**）：
+
+* ❌ tag 名不对
+* ❌ size 太大
+* ❌ flags 不对
+
+剩下的两个根因（都在证据里）：
+
+1. **CMA 几近耗尽**（最强嫌疑）：
+   ```
+   CmaTotal:  24576 kB     <- 只有 24 MB
+   CmaFree:    2108 kB     <- 仅剩 ~2 MB
+   ```
+   MMA 的物理内存来自 CMA（`/proc/vmallocinfo` 里全是
+   `MsOS_MMA_CMA_Unauthorize+... phys=0x... ioremap [utpa2k]` 条目）。
+   24 MB 的 CMA 被电视的显示/视频流水线长期占满且高度碎片化，
+   任何尺寸的 `mma_alloc` 都拿不到**连续**物理块。
+2. 调用进程（由 init 的 `exec` 拉起，域 `u:r:misysdiagnose:s0`）
+   可能未被 MMA 驱动登记为合法客户端。
+
+## 5. ★ 意外收获：`/proc/vmallocinfo` 完全可读
+
+受限域里 `/proc/vmallocinfo` **可读**（`/proc/iomem`、`/proc/modules` 则被拒），
+它直接暴露了 MMA 的**物理地址布局**：
+
+```
+0xFFFFFF800D700000-0xFFFFFF800D711000  69632  MsOS_MMA_CMA_Unauthorize+0x1ac/0xc68 [utpa2k] phys=0x0000000045370000 ioremap
+0xFFFFFF800D7C0000-0xFFFFFF800D801000 266240  ... phys=0x0000000045321000 ioremap
+0xFFFFFF8012000000-0xFFFFFF8013D12000 30482432 ... phys=0x0000000043210000 ioremap
+0xFFFFFF8014000000-0xFFFFFF8015FEC000 33472512 ... phys=0x00000000454b0000 ioremap
+...
+```
+
+再加上 `MsOS_MMA_map+0x1f4/0x518`、`MsOS_MMA_putfd+0x128/0x500`、
+`MsOS_SHM_GetId+0x224/0x28c` 等条目，可以完整重建：
+
+* MMA/CMA 的**物理内存区段**
+* 每个内核对象的**虚拟地址**（配合 KASLR 关闭 ⇒ 地址固定）
+* 内核函数符号 + 偏移（`+0x1ac/0xc68`）
+
+即：**在完全没有内核代码执行的情况下，我们已经有了一幅相当完整的内核内存地图。**
+
+## 6. 下一步（按可行性排序）
+
+1. **绕开 `alloc`，直接打地址转换/导入类命令**
+   —— 这些命令的输入本来就是句柄或物理地址，不依赖新分配：
+   * `mma_map` / `mma_map_iova` / `mma_unmap`
+   * `mma_import_handle` / `mma_import_globalname` / `mma_globalname_query`
+   * `mma_buffer_authorize` / `mma_physical_buffer_authorize`
+   * `mma_va2iova`
+   需要先拿到一个**其他进程已分配的合法 mma fd/handle**（电视上显示流水线天天在用）。
+
+2. **从已运行的图形进程里取 fd**
+   `gralloc`/`surfaceflinger`/`libGLES_mali` 手里一定有大量 mma fd。
+   我们已经是 uid 0（DAC 全通），可以
+   `/proc/<pid>/fd/` 列目录、甚至 `pidfd_getfd(2)` 拿别人的 fd
+   —— 这是**当前最被低估的一条路**（需要确认 SELinux 是否放行
+   `/proc/<pid>/fd` 的读取与 ptrace 类操作）。
+
+3. **等 CMA 有空隙时再试 alloc**
+   TV 空闲/待机时 CMA 占用会下降，届时 `mma_alloc` 可能直接成功。
+
+4. **路线 B 备用**：CVE-2021-0920（`AF_UNIX` GC UAF）。入口条件已满足
+   （`socketpair(AF_UNIX, SOCK_STREAM)` 可用），但 `userfaultfd` 不可用，堆风水更难做。
+
+## 7. 复现命令
+
+```bash
+# 反汇编（注意必须指定 thumbv7）
+NDK/toolchains/llvm/prebuilt/windows-x86_64/bin/llvm-objdump.exe \
+    -d --triple=thumbv7-none-linux-gnueabi gralloc.so > gralloc.asm
+
+# 提取 ioctl 命令
+python decode_ioctl.py gralloc.asm
+
+# 解析 PLT 桩 → 导入符号
+python resolve_plt.py gralloc.so 0x139d0 0x13bf0
+
+# 上机
+armv7a-linux-androideabi21-clang -O2 -o mmatest2 mmatest2.c   # 不要 -static
+adb push mmatest2 /sdcard/mmatest2
+./tv_root_exec.sh "/data/diagnosis/mmatest2"
+```
+
+原始反汇编：[`disasm-gralloc-mma.txt`](disasm-gralloc-mma.txt)
