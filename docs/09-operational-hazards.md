@@ -149,3 +149,74 @@ ssh router 'ping -c 2 192.168.1.164; nc -z -w 3 192.168.1.164 5555 && echo OPEN 
 ⇒ 用 `runSystemCommand` 跑东西时，**务必让命令自己把输出重定向到文件**
 （`sh /sdcard/x.sh > /sdcard/x.out 2>&1` 这种效果，要先写成脚本），
 不要让它往 stdout 狂打。
+
+---
+
+## 事故 3 — MI_UTIL `rphy`/`rmem` 读内核内存导致内核 panic / adbd 失联（2026-09-10）
+
+### 现象
+
+两次独立的内核内存读尝试，两种不同程度的故障：
+
+| 命令 | 地址 | 故障级别 | 恢复 |
+|---|---|---|---|
+| `rphy 0x43000000` | CMA 区物理地址（1.1GB 偏移） | **内核 panic → 自动重启** | uptime 回到 46s |
+| `rmem 0xffffff80024009e0` | mik.ko 代码段 VA（vmalloc 区内） | **adbd 失联**（系统未崩，conntrack/DNS 正常） | 需电视端重新开启 adb |
+
+### 根因（反汇编确认）
+
+**`rphy [PA]`** 的调用链：
+```
+MI_DEBUG_UTIL_ProcessDbgInfo
+  → MI_DEBUG_UTIL_DHConvert64(字符串→u64)
+  → MI_OS_Pa2NonCachedVa(PA, &VA)
+    → _MI_OS_Pa2Kseg(PA, mode=2, &VA)
+      → MsOS_PA2KSEG1(PA)          // MStar 物理地址→_uncached VA 映射
+  → *(volatile u32*)VA             // ← 如果 VA 非法，这里 fault
+```
+
+`MsOS_PA2KSEG1` 是 MStar 私有的 PA→VA 映射函数，类似 MIPS kseg1。
+对超出 MIU（Memory Interface Unit）地址窗口的物理地址，
+该函数**可能返回一个看似有效但实际未映射的 VA**，
+后续 dereference 触发 **同步异常 → 内核 panic**。
+
+官方帮助文本中的示例 `rphy 0x400000`（4MB）是安全的 MIU 内地址；
+用户输入的 `0x43000000`（1.1GB）远超 MIU 窗口（通常 ≤256MB）。
+
+**`rmem [VA]`** 的调用链：
+```
+MI_DEBUG_UTIL_ProcessDbgInfo
+  → MI_OS_Va2Pa(VA, &PA)
+    → MsOS_VA2PA(VA)               // VA→PA 反查；无效 VA 返回 -1
+  → 如果 PA 有效：后续读取
+```
+
+`rmem` 有 `MsOS_VA2PA` 保护（无效 VA 返回 -1 → 退出），
+但对 vmalloc 区地址的反查行为不明确，
+可能在 PA→VA 重映射阶段触发问题，或 binder/HIDL 调用超时导致 adbd 异常退出。
+
+### 判据
+
+```bash
+# 从路由器旁路检查（不依赖电视 adb）
+ssh router 'ping -c2 192.168.1.164; cat /proc/net/nf_conntrack | grep -c 192.168.1.164'
+# ping 通 + conntrack >0 = 系统活着（可能 adbd 挂了但内核在跑）
+# ping 不通 = 整机挂死（需断电）
+```
+
+### 恢复
+
+- **内核 panic（rphy）**：设备自动重启。开机后 `persist.adb.tcp.port=5555` 仍在，
+  但开机头 20–40s adb connect 报积极拒绝 → 循环重试。
+- **adbd 失联（rmem）**：系统未崩，但 adbd 停止监听。
+  需在电视端**重新进入开发者选项**开启网络调试（系统有时会在下次重启后自动恢复）。
+
+### 预防（**绝对规则**）
+
+> **MI_UTIL 的 `rphy`/`wphy`/`rmem`/`wmem` 四个命令全部禁用。**
+> 只使用安全的 `flag`/`color`/`rbank`/`rreg`/`wreg`（寄存器级操作，不涉及内存映射）。
+
+如果确实需要读写内核内存（如定位 `selinux_state`），改用：
+1. `/proc/utopia` ioctl（HAL 域有 rw+ioctl 授权，待验证命令集）
+2. HAL 域 `mstar_miomap_device` chr_file 的 ioctl+mmap（需先反汇编 libmi3.so 拿协议）
+3. 从 vmallocinfo 泄露的模块基址 + 本地符号表计算偏移（只算不发命令）
