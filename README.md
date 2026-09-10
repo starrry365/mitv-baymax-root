@@ -23,6 +23,10 @@ MStar **MMA** 内核驱动的 ioctl 协议逆向（通往完整 root 的下一�
 | 7b | 内核地址泄露（`mma_get_pipeid`） | ✅ 完成 |
 | 7c | 内核内存地图（`/proc/vmallocinfo`） | ✅ 完成 |
 | 8 | 经 `/dev/mma` 做内核物理内存读写 → 改 cred / 关 SELinux | 🔬 下一步 |
+| **9** | **爆破 `ITvService` AIDL → 三条无鉴权通道** | ✅ 完成 |
+| **10** | **`system_app`（uid 1000）任意命令执行** | ✅ 完成，稳定 |
+| **11** | **`system_app` 域执行自研原生二进制** | ✅ 打通（`system_app_data_file` 有 `execute`） |
+| **12** | **`system_app` 域打 `/dev/miomap` / `/dev/malloc` 物理内存映射** | 🔬 下一步（**新首选**） |
 
 ### 第 7 阶段的关键修正
 
@@ -109,6 +113,45 @@ service call TvService 4400 s16 "s" s16 "/sdcard/cmd.sh"
 
 ---
 
+## 1.5 TvService AIDL 突破：再拿一层 `system_app`（阶段 9–11）
+
+`service list` 显示 `TvService: [mitv.internal.ITvService]` —— 它是**标准 AIDL 服务**，
+实现类 `TvServiceDefaultImpl extends ITvService.Stub`，**全部方法都没有调用方校验**。
+
+用「`Not a data message` = 事务码不存在」这个 oracle 枚举，再用三路副作用 oracle
+（属性 / 文件 / 命令）定位危险方法，得到：
+
+| code | 方法 | 能力 |
+|---|---|---|
+| **1** | `systemPropertiesSet(k, v)` | 写任意系统属性 |
+| **2** | `writeSystemFile(path, content)` | **任意路径写文件** |
+| **3** | `runSystemCommand(cmd)` | **任意命令执行（system_app / uid 1000）** |
+| 4400 | （非 AIDL）misysdiagnose 属性写 | uid 0 脚本执行（阶段 4） |
+
+```bash
+adb shell 'service call TvService 3 s16 "id"'
+# uid=1000(system) ... context=u:r:system_app:s0
+```
+
+**为什么这一层比 uid 0 更有用**：`system_app` 能打开 misysdiagnose 域被拒的
+**全部 MStar 私有设备** —— `/dev/miomap`(物理内存映射)、`/dev/malloc`(物理内存分配)、
+`/dev/system`、`/dev/msmailbox`、`/dev/scaler`、`/dev/semutex`，以及 `/proc/utopia`
+（ioctl + rw + map）和可写的 `/proc/cmdline`。
+
+更进一步：`system_app` 的 `execute` 权限只覆盖两个类型，其中
+**`system_app_data_file` 是我们自己能创建的目录**（`/data/data/com.mediatek.tv.factory/`，
+新建文件自动继承该标签）⇒ **可以把自研 armv7a ELF 放进去，在 `system_app` 域执行**。
+
+* 详见 [`docs/07-tvservice-aidl-breakout.md`](docs/07-tvservice-aidl-breakout.md)
+* 详见 [`docs/08-system-app-execution.md`](docs/08-system-app-execution.md)
+* 权限清单 [`policy/system-app-privileges.txt`](policy/system-app-privileges.txt)
+* 执行器 [`tools/sysapp.sh`](tools/sysapp.sh) / [`tools/sarun.sh`](tools/sarun.sh)
+
+> ⚠️ **动手前请先读 [`docs/09-operational-hazards.md`](docs/09-operational-hazards.md)** ——
+> 记录了两次把电视搞挂的经过（init 死锁、画面定格在锁屏），以及对应的三层防护。
+
+---
+
 ## 2. 常驻通道（阶段 5）
 
 [`tools/rootd.c`](tools/rootd.c) 是一个以 uid 0 常驻的用户态 daemon：
@@ -160,12 +203,23 @@ service call TvService 4400 s16 "s" s16 "/sdcard/cmd.sh"
 ## 4. 目录结构
 
 ```
-docs/     研究文档（设备、后门、uid0 通道、MMA、环境限制、下一步）
+docs/     研究文档（设备、后门、uid0 通道、MMA、环境限制、下一步、
+          TvService AIDL 突破、system_app 执行、操作风险）
 tools/    自研工具源码（C / shell / python）
 reverse/  MMA ioctl 逆向成果（表 + 从设备抽取 blob 的脚本）
-policy/   关键 SELinux 规则摘录
-recon/    原始侦察输出（设备节点、syscall 普查、进程等）
+policy/   关键 SELinux 规则摘录（misysdiagnose / system_app 权限画像）
+recon/    原始侦察输出（设备节点、syscall 普查、进程、AIDL 事务码勘定等）
 ```
+
+## 4.5 设备重启后的一键恢复
+
+```bash
+./tools/reconnect.sh          # 循环重连 adb（最长 120s）→ 校验 uid0 + system_app 两条通道
+```
+
+`persist.adb.tcp.port=5555` 已持久化，重启后 adbd 会自动起；
+但开机头 ~20–40 秒内 `connect` 会报 `Connection refused (10061)`，属正常，重试即可。
+首次 `connect` 若报 `failed to authenticate`，再连一次即 `device`。
 
 ## 5. 环境 / 编译
 

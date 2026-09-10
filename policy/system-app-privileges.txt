@@ -1,0 +1,367 @@
+################ system_app_29_0 (u:r:system_app:s0, uid 1000) SELinux 权限摘要 ################
+来源: 从设备导出 plat_sepolicy.cil + vendor_sepolicy.cil 后提取
+生成时间: 2026-09-10 18:08
+
+===== [1] capability =====
+
+===== [2] 可写 (file/dir/chr_file/blk_file/sock_file) 目标类型 =====
+blk_file <- mstar_eeprom_block_device
+chr_file <- audio_device_29_0
+chr_file <- cb_device
+chr_file <- fbm_mpeg2_device
+chr_file <- fbm_mpeg_device
+chr_file <- fbmpng_device
+chr_file <- fbmvenc_device
+chr_file <- graphics_device_29_0
+chr_file <- ion_device_29_0
+chr_file <- jpg_device
+chr_file <- kmem2_device
+chr_file <- mi_audio_device
+chr_file <- mstar_mailbox_device
+chr_file <- mstar_malloc_device
+chr_file <- mstar_mik_devices
+chr_file <- mstar_miomap_device
+chr_file <- mstar_mma_device
+chr_file <- mstar_scaler_device
+chr_file <- mstar_semutex_device
+chr_file <- mstar_system_device
+chr_file <- mtal_device
+chr_file <- rmmgr_device
+dir <- apk_data_file_29_0
+dir <- cache_file_29_0
+dir <- cache_recovery_file_29_0
+dir <- dropbox_data_file_29_0
+dir <- mt_tmp
+dir <- ota_package_file_29_0
+dir <- system_data_file_29_0
+dir <- tmpfs_29_0
+dir <- tombstone_data_file_29_0
+dir <- unlabeled_29_0
+dir <- vendor_data_file_29_0
+dir <- vfat_29_0
+dir <- xiaomi_bluetooth_data_file
+dir <- xiaomi_data_file
+fifo_file <- mediacodec
+fifo_file <- misysdiagnose_29_0
+fifo_file <- mt_tmp
+file <- cache_file_29_0
+file <- cache_recovery_file_29_0
+file <- dropbox_data_file_29_0
+file <- mt_tmp
+file <- ota_package_file_29_0
+file <- proc_29_0
+file <- proc_cmdline_29_0
+file <- proc_irq
+file <- proc_utopia
+file <- sysfs_devices_mstar_mci
+file <- sysfs_thermal_29_0
+file <- system_data_file_29_0
+file <- third_rw_file
+file <- tombstone_data_file_29_0
+file <- tv_database_file
+file <- unlabeled_29_0
+file <- vendor_data_file_29_0
+file <- xiaomi_bluetooth_data_file
+file <- xiaomi_data_file
+sock_file <- dmvold_socket
+sock_file <- mt_tmp
+sock_file <- property_socket_29_0
+sock_file <- system_app_data_file_29_0
+sock_file <- tmpfs_29_0
+
+===== [3] 可 execute 的 file 类型 =====
+(allow system_app_29_0 mi_audio_exec (file (read getattr map execute execute_no_trans open))
+(allow system_app_29_0 system_app_data_file_29_0 (file (execute execute_no_trans))
+
+===== [4] MStar / 内存 / 寄存器类设备完整授权 =====
+(allow system_app_29_0 audio_device_29_0 (chr_file (ioctl read write open)))
+(allow system_app_29_0 cb_device (chr_file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 fbm_mpeg2_device (chr_file (ioctl)))
+(allow system_app_29_0 fbm_mpeg2_device (chr_file (open)))
+(allow system_app_29_0 fbm_mpeg2_device (chr_file (read write)))
+(allow system_app_29_0 fbm_mpeg_device (chr_file (ioctl)))
+(allow system_app_29_0 fbm_mpeg_device (chr_file (open)))
+(allow system_app_29_0 fbm_mpeg_device (chr_file (read write)))
+(allow system_app_29_0 fbmpng_device (chr_file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 fbmvenc_device (chr_file (read write open)))
+(allow system_app_29_0 graphics_device_29_0 (chr_file (ioctl read write open)))
+(allow system_app_29_0 ion_device_29_0 (chr_file (ioctl read write open)))
+(allow system_app_29_0 jpg_device (chr_file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 kmem2_device (chr_file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 mi_audio_device (chr_file (ioctl read write open)))
+(allow system_app_29_0 mstar_mailbox_device (chr_file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 mstar_malloc_device (chr_file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 mstar_mik_devices (chr_file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 mstar_miomap_device (chr_file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 mstar_mma_device (chr_file (ioctl read write open)))
+(allow system_app_29_0 mstar_scaler_device (chr_file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 mstar_semutex_device (chr_file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 mstar_system_device (chr_file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 mtal_device (chr_file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 mtal_device (chr_file (read write open)))
+(allow system_app_29_0 rmmgr_device (chr_file (ioctl read write getattr lock append map open)))
+
+===== [5] proc / sysfs 类授权 =====
+(allow system_app_29_0 proc_cmdline_29_0 (file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 proc_irq (file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 proc_utopia (file (ioctl read write getattr lock append map open)))
+(allow system_app_29_0 sysfs_devices_mstar_ehci (file (read getattr open)))
+(allow system_app_29_0 sysfs_devices_mstar_mci (file (ioctl read write getattr lock append map open)))
+
+===== [6] 对 system_app_data_file 的全部授权（execute 突破点） =====
+(allow system_app_29_0 system_app_data_file_29_0 (file (execute execute_no_trans)))
+(allow system_app_29_0 system_app_data_file_29_0 (sock_file (write create unlink)))
+
+===== [7] binder 可达域 =====
+(allow system_app_29_0 hal_camera (binder (call))
+(allow system_app_29_0 hal_memtrack_default (binder (call))
+(allow system_app_29_0 hal_mmdisp_mstar (binder (call))
+(allow system_app_29_0 hal_networkproxy_mediatek (binder (call))
+(allow system_app_29_0 hal_tv_cmpb_default (binder (call transfer))
+(allow system_app_29_0 hal_tv_mtkmtalservice_default (binder (call transfer))
+(allow system_app_29_0 hal_wifi_supplicant_default (binder (call transfer))
+(allow system_app_29_0 hal_wifi_supplicant_default (binder (call))
+(allow system_app_29_0 hal_wifi_supplicant_default (binder (transfer))
+(allow system_app_29_0 hal_wifidisplay_mediatek (binder (call))
+(allow system_app_29_0 hal_wifidisplay_mediatek (binder (transfer))
+
+===== [8] 完整原始规则（去重） =====
+(allow system_app_29_0 AIPQService_exec (file (read getattr open)
+(allow system_app_29_0 TvService (service_manager (add find)
+(allow system_app_29_0 apexd_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 apk_data_file_29_0 (dir (write)
+(allow system_app_29_0 appdomain_tmpfs_29_0 (file (create)
+(allow system_app_29_0 audio_device_29_0 (chr_file (ioctl read write open)
+(allow system_app_29_0 audio_device_29_0 (dir (search)
+(allow system_app_29_0 block_device_29_0 (dir (read open)
+(allow system_app_29_0 block_device_29_0 (dir (search)
+(allow system_app_29_0 bootloader_boot_reason_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 boottime_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 bpf_progs_loaded_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 cache_backup_file_29_0 (dir (ioctl read getattr lock search open)
+(allow system_app_29_0 cache_file_29_0 (dir (search)
+(allow system_app_29_0 cache_file_29_0 (dir (write add_name)
+(allow system_app_29_0 cache_file_29_0 (file (write create open)
+(allow system_app_29_0 cache_recovery_file_29_0 (dir (remove_name)
+(allow system_app_29_0 cache_recovery_file_29_0 (dir (search)
+(allow system_app_29_0 cache_recovery_file_29_0 (dir (write add_name)
+(allow system_app_29_0 cache_recovery_file_29_0 (file (setattr)
+(allow system_app_29_0 cache_recovery_file_29_0 (file (unlink)
+(allow system_app_29_0 cache_recovery_file_29_0 (file (write create getattr open)
+(allow system_app_29_0 cb_device (chr_file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 cgroup_desc_file_29_0 (file (read getattr open)
+(allow system_app_29_0 copylog_exec (file (read getattr open)
+(allow system_app_29_0 cpu_variant_prop_29_0 (file (getattr map open)
+(allow system_app_29_0 ctl_adbd_prop_29_0 (file (getattr map open)
+(allow system_app_29_0 ctl_bootanim_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 ctl_console_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 ctl_dumpstate_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 ctl_fuse_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 ctl_gsid_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 ctl_interface_restart_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 ctl_interface_start_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 ctl_interface_stop_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 ctl_mdnsd_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 debugfs_29_0 (file (read getattr open)
+(allow system_app_29_0 device_29_0 (dir (read open)
+(allow system_app_29_0 device_29_0 (file (getattr)
+(allow system_app_29_0 dmremote_service (service_manager (add)
+(allow system_app_29_0 dmvold_socket (sock_file (write)
+(allow system_app_29_0 dropbox_data_file_29_0 (dir (read write getattr add_name remove_name search open)
+(allow system_app_29_0 dropbox_data_file_29_0 (file (read write create getattr unlink rename open)
+(allow system_app_29_0 factory_service_data_file (dir (getattr search)
+(allow system_app_29_0 factory_service_data_file (filesystem (getattr)
+(allow system_app_29_0 fast_connect_exec (file (read getattr open)
+(allow system_app_29_0 fbm_mpeg2_device (chr_file (ioctl)
+(allow system_app_29_0 fbm_mpeg2_device (chr_file (open)
+(allow system_app_29_0 fbm_mpeg2_device (chr_file (read write)
+(allow system_app_29_0 fbm_mpeg_device (chr_file (ioctl)
+(allow system_app_29_0 fbm_mpeg_device (chr_file (open)
+(allow system_app_29_0 fbm_mpeg_device (chr_file (read write)
+(allow system_app_29_0 fbmpng_device (chr_file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 fbmvenc_device (chr_file (read write open)
+(allow system_app_29_0 graphics_device_29_0 (chr_file (ioctl read write open)
+(allow system_app_29_0 graphics_device_29_0 (dir (search)
+(allow system_app_29_0 hal_camera (binder (call)
+(allow system_app_29_0 hal_factserver_hwservice (hwservice_manager (find)
+(allow system_app_29_0 hal_memtrack_default (binder (call)
+(allow system_app_29_0 hal_mmdisp_mstar (binder (call)
+(allow system_app_29_0 hal_networkproxy_mediatek (binder (call)
+(allow system_app_29_0 hal_tv_cmpb_default (binder (call transfer)
+(allow system_app_29_0 hal_tv_cmpb_hwservice (hwservice_manager (find)
+(allow system_app_29_0 hal_tv_mtkmtalservice_default (binder (call transfer)
+(allow system_app_29_0 hal_tv_mtkmtalservice_hwservice (hwservice_manager (find)
+(allow system_app_29_0 hal_tv_mtknetworkproxy_service (hwservice_manager (find)
+(allow system_app_29_0 hal_wifi_supplicant_default (binder (call transfer)
+(allow system_app_29_0 hal_wifi_supplicant_default (binder (call)
+(allow system_app_29_0 hal_wifi_supplicant_default (binder (transfer)
+(allow system_app_29_0 hal_wifi_supplicant_default (fd (use)
+(allow system_app_29_0 hal_wifi_supplicant_mediatek_hwservice (hwservice_manager (find)
+(allow system_app_29_0 hal_wifidisplay_mediatek (binder (call)
+(allow system_app_29_0 hal_wifidisplay_mediatek (binder (transfer)
+(allow system_app_29_0 hal_wifidisplay_service (hwservice_manager (find)
+(allow system_app_29_0 hal_xiaomiserver_hwservice (hwservice_manager (find)
+(allow system_app_29_0 init_29_0 (unix_stream_socket (connectto)
+(allow system_app_29_0 intertaca_exec (file (read getattr open)
+(allow system_app_29_0 ion_device_29_0 (chr_file (ioctl read write open)
+(allow system_app_29_0 jpg_device (chr_file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 kernel_29_0 (process (getsched)
+(allow system_app_29_0 kmem2_device (chr_file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 mediacodec (fifo_file (read write getattr open)
+(allow system_app_29_0 mi_audio_device (chr_file (ioctl read write open)
+(allow system_app_29_0 mi_audio_device (dir (read getattr search open)
+(allow system_app_29_0 mi_audio_exec (file (read getattr map execute execute_no_trans open)
+(allow system_app_29_0 misysdiagnose_29_0 (fd (use)
+(allow system_app_29_0 misysdiagnose_29_0 (fifo_file (write)
+(allow system_app_29_0 misysdiagnose_exec_29_0 (file (read getattr open)
+(allow system_app_29_0 mitvenergy_exec (file (getattr)
+(allow system_app_29_0 mnt_media_rw_file_29_0 (dir (read open)
+(allow system_app_29_0 mnt_vendor_file_29_0 (dir (search)
+(allow system_app_29_0 mstar_eeprom_block_device (blk_file (read write open)
+(allow system_app_29_0 mstar_mailbox_device (chr_file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 mstar_malloc_device (chr_file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 mstar_mik_devices (chr_file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 mstar_miomap_device (chr_file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 mstar_mma_device (chr_file (ioctl read write open)
+(allow system_app_29_0 mstar_scaler_device (chr_file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 mstar_semutex_device (chr_file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 mstar_system_device (chr_file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 mstar_system_prop (file (read getattr map open)
+(allow system_app_29_0 mt_cpu_audio-svc_exec (file (read getattr open)
+(allow system_app_29_0 mt_dtv-svc_exec (file (read getattr open)
+(allow system_app_29_0 mt_k2logcat_exec (file (read getattr open)
+(allow system_app_29_0 mt_mtk_rm_exec (file (read getattr open)
+(allow system_app_29_0 mt_rootfs_file (dir (ioctl read getattr lock search open)
+(allow system_app_29_0 mt_third_ro_file (dir (ioctl read getattr lock search open)
+(allow system_app_29_0 mt_tmp (dir (create)
+(allow system_app_29_0 mt_tmp (dir (getattr)
+(allow system_app_29_0 mt_tmp (dir (write create add_name remove_name search)
+(allow system_app_29_0 mt_tmp (fifo_file (read write getattr open)
+(allow system_app_29_0 mt_tmp (file (ioctl read getattr lock map open)
+(allow system_app_29_0 mt_tmp (file (write create unlink)
+(allow system_app_29_0 mt_tmp (lnk_file (read)
+(allow system_app_29_0 mt_tmp (sock_file (write)
+(allow system_app_29_0 mt_updatedns_exec (file (read getattr open)
+(allow system_app_29_0 mt_wifi_set_exec (file (read getattr open)
+(allow system_app_29_0 mt_wlan_dongle_detect_exec (file (read getattr open)
+(allow system_app_29_0 mt_zram-svc_exec (file (read getattr open)
+(allow system_app_29_0 mtal_device (chr_file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 mtal_device (chr_file (read write open)
+(allow system_app_29_0 mtk_device (dir (read getattr open)
+(allow system_app_29_0 mtk_network_service (service_manager (add)
+(allow system_app_29_0 mtkwfd_service (service_manager (add)
+(allow system_app_29_0 net_dns_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 netflix_prop (file (read getattr map open)
+(allow system_app_29_0 ntfs (dir (read search open)
+(allow system_app_29_0 ntfs (file (read getattr setattr open)
+(allow system_app_29_0 ota_package_file_29_0 (dir (read write create getattr setattr add_name remove_name search open)
+(allow system_app_29_0 ota_package_file_29_0 (file (ioctl read write create getattr setattr lock append map unlink rename open)
+(allow system_app_29_0 perm_fs (dir (ioctl read getattr lock search open)
+(allow system_app_29_0 powerctl_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 powerctl_prop_29_0 (property_service (set)
+(allow system_app_29_0 pppoe-stop_exec (file (getattr)
+(allow system_app_29_0 proc_29_0 (file (read write getattr open)
+(allow system_app_29_0 proc_asound_29_0 (dir (search)
+(allow system_app_29_0 proc_asound_29_0 (file (read getattr open)
+(allow system_app_29_0 proc_bus_input_devices (file (read getattr open)
+(allow system_app_29_0 proc_cmdline_29_0 (file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 proc_irq (dir (ioctl read getattr lock search open)
+(allow system_app_29_0 proc_irq (file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 proc_net_29_0 (file (read getattr open)
+(allow system_app_29_0 proc_net_tcp_udp_29_0 (file (read getattr open)
+(allow system_app_29_0 proc_stat_29_0 (file (read getattr open)
+(allow system_app_29_0 proc_utopia (dir (ioctl read getattr lock search open)
+(allow system_app_29_0 proc_utopia (file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 property_socket_29_0 (sock_file (write)
+(allow system_app_29_0 rmmgr_device (chr_file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 rootfs_29_0 (dir (read open)
+(allow system_app_29_0 run_post_fs_data_exec (file (read getattr open)
+(allow system_app_29_0 self (netlink_kobject_uevent_socket (read create bind setopt)
+(allow system_app_29_0 self (udp_socket (ioctl)
+(allow system_app_29_0 selinuxfs_29_0 (file (read open)
+(allow system_app_29_0 serialno_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 shell_data_file_29_0 (dir (ioctl read getattr lock search open)
+(allow system_app_29_0 shell_data_file_29_0 (file (ioctl read getattr lock map open)
+(allow system_app_29_0 smbd (unix_stream_socket (connectto)
+(allow system_app_29_0 storage_stub_file_29_0 (dir (getattr)
+(allow system_app_29_0 sysfs_29_0 (dir (read open)
+(allow system_app_29_0 sysfs_devices_mstar_ehci (dir (search)
+(allow system_app_29_0 sysfs_devices_mstar_ehci (file (read getattr open)
+(allow system_app_29_0 sysfs_devices_mstar_mci (dir (ioctl read getattr lock search open)
+(allow system_app_29_0 sysfs_devices_mstar_mci (file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 sysfs_devices_mstar_mci (lnk_file (read)
+(allow system_app_29_0 sysfs_leds_29_0 (dir (read getattr search)
+(allow system_app_29_0 sysfs_net_29_0 (dir (search)
+(allow system_app_29_0 sysfs_net_29_0 (file (read getattr open)
+(allow system_app_29_0 sysfs_net_carrier (file (read getattr open)
+(allow system_app_29_0 sysfs_suspend_cnt (file (read getattr open)
+(allow system_app_29_0 sysfs_thermal_29_0 (dir (read getattr search)
+(allow system_app_29_0 sysfs_thermal_29_0 (file (read write getattr open)
+(allow system_app_29_0 sysfs_wakeup_reasons_29_0 (dir (search)
+(allow system_app_29_0 sysfs_wakeup_reasons_29_0 (file (getattr)
+(allow system_app_29_0 sysfs_wakeup_reasons_29_0 (file (open)
+(allow system_app_29_0 sysfs_wakeup_reasons_29_0 (file (read)
+(allow system_app_29_0 system_app_data_file_29_0 (file (execute execute_no_trans)
+(allow system_app_29_0 system_app_data_file_29_0 (sock_file (write create unlink)
+(allow system_app_29_0 system_boot_reason_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 system_data_file_29_0 (dir (add_name)
+(allow system_app_29_0 system_data_file_29_0 (dir (ioctl read write getattr lock add_name remove_name search open)
+(allow system_app_29_0 system_data_file_29_0 (dir (read open)
+(allow system_app_29_0 system_data_file_29_0 (file (ioctl read write create getattr setattr lock append map unlink rename open)
+(allow system_app_29_0 system_data_file_29_0 (file (read open)
+(allow system_app_29_0 system_data_file_29_0 (sock_file (ioctl read getattr lock map open)
+(allow system_app_29_0 tee_exec (file (getattr)
+(allow system_app_29_0 third_rw_file (dir (getattr)
+(allow system_app_29_0 third_rw_file (dir (search)
+(allow system_app_29_0 third_rw_file (file (ioctl read getattr lock map open)
+(allow system_app_29_0 third_rw_file (file (write lock append map open)
+(allow system_app_29_0 third_rw_file (lnk_file (read getattr open)
+(allow system_app_29_0 tmpfs_29_0 (dir (write create add_name remove_name)
+(allow system_app_29_0 tmpfs_29_0 (dir (write lock add_name remove_name search open)
+(allow system_app_29_0 tmpfs_29_0 (dir (write)
+(allow system_app_29_0 tmpfs_29_0 (fifo_file (ioctl read getattr lock map open)
+(allow system_app_29_0 tmpfs_29_0 (sock_file (create unlink)
+(allow system_app_29_0 tmpfs_29_0 (sock_file (ioctl read getattr lock map open)
+(allow system_app_29_0 tmpfs_29_0 (sock_file (write)
+(allow system_app_29_0 tombstone_data_file_29_0 (dir (ioctl read write getattr lock relabelto add_name remove_name search open)
+(allow system_app_29_0 tombstone_data_file_29_0 (file (ioctl read write create getattr setattr lock append map unlink rename open)
+(allow system_app_29_0 tv_certificate_file (dir (ioctl read getattr lock search open)
+(allow system_app_29_0 tv_certificate_file (file (read getattr open)
+(allow system_app_29_0 tv_config_file (dir (open)
+(allow system_app_29_0 tv_config_file (dir (read getattr search)
+(allow system_app_29_0 tv_config_file (file (read getattr open)
+(allow system_app_29_0 tv_database_file (dir (ioctl read getattr lock search open)
+(allow system_app_29_0 tv_database_file (file (ioctl read write create getattr setattr lock append map unlink rename open)
+(allow system_app_29_0 tv_service_file (dir (read getattr search)
+(allow system_app_29_0 tvremote_service (service_manager (add)
+(allow system_app_29_0 unlabeled_29_0 (dir (getattr)
+(allow system_app_29_0 unlabeled_29_0 (dir (ioctl read write getattr lock add_name remove_name search open)
+(allow system_app_29_0 unlabeled_29_0 (file (ioctl read write getattr lock append map open)
+(allow system_app_29_0 unlabeled_29_0 (filesystem (getattr)
+(allow system_app_29_0 vendor_cusdata_file (dir (read getattr search)
+(allow system_app_29_0 vendor_cusdata_file (file (read getattr open)
+(allow system_app_29_0 vendor_data_file_29_0 (dir (write add_name)
+(allow system_app_29_0 vendor_data_file_29_0 (file (read write create getattr open)
+(allow system_app_29_0 vendor_data_file_29_0 (lnk_file (read getattr)
+(allow system_app_29_0 vendor_default_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 vendor_default_prop_29_0 (property_service (set)
+(allow system_app_29_0 vendor_file_29_0 (file (getattr)
+(allow system_app_29_0 vendor_lib_file (dir (read getattr open)
+(allow system_app_29_0 vendor_mtk_default_prop (file (read getattr map open)
+(allow system_app_29_0 vendor_mtk_default_prop (property_service (set)
+(allow system_app_29_0 vendor_shell_exec_29_0 (file (read getattr open)
+(allow system_app_29_0 vendor_toolbox_exec_29_0 (file (getattr)
+(allow system_app_29_0 vendor_usr_file (dir (read getattr open)
+(allow system_app_29_0 vendor_usr_file (dir (search)
+(allow system_app_29_0 vendor_xiaomi_default_prop (file (read getattr map open)
+(allow system_app_29_0 vendor_xiaomi_default_prop (property_service (set)
+(allow system_app_29_0 vendor_xiaomi_prop (file (read getattr map open)
+(allow system_app_29_0 vfat_29_0 (dir (write add_name remove_name)
+(allow system_app_29_0 vfat_29_0 (file (create unlink)
+(allow system_app_29_0 vold_29_0 (unix_stream_socket (connectto)
+(allow system_app_29_0 wifi_prop_29_0 (file (read getattr map open)
+(allow system_app_29_0 wifi_prop_29_0 (property_service (set)
+(allow system_app_29_0 xiaomi_bluetooth_data_file (dir (read write getattr add_name remove_name search open)
+(allow system_app_29_0 xiaomi_bluetooth_data_file (file (read write create getattr setattr append unlink rename open)
+(allow system_app_29_0 xiaomi_data_file (dir (ioctl read write create getattr setattr lock rename add_name remove_name reparent search rmdir open)
+(allow system_app_29_0 xiaomi_data_file (file (ioctl read write create getattr setattr lock append map unlink rename open)

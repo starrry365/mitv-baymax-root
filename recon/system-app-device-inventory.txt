@@ -1,0 +1,66 @@
+################ system_app (uid 1000, u:r:system_app:s0) 设备可达性实测 ################
+获取方式: ./tools/sysapp.sh '<cmd>'   (TvService.runSystemCommand, code=3)
+对照:     同一批节点在 adb shell 域全部 Permission denied
+
+### /dev 条目（system_app 域 `ls -la /dev`，节选关键项） ###
+crw-rw-rw-  1 root   root      10,  62  ashmem
+crw-r-----  1 root   root     180, 192  cimodule_command0
+crw-rw-rw-  1 media  system   158,   0  malloc          <-- MStar 物理内存分配
+dr-xr-xr-x 15 root   root            0  memcg
+crw-rw-rw-  1 media  system   176,   0  miomap          <-- MStar 物理内存映射(重点)
+crw-rw-rw-  1 system graphics 175,   0  msmailbox       <-- 子核邮箱
+crw-rw----  1 root   root     241,   0  mtal
+crw-rw----  1 media  drmrpc   241,   0  mtal_media
+crw-rw----  1 system system   241,   0  mtal_system
+crw-rw-rw-  1 media  system   147,   0  scaler          <-- 缩放器
+crw-rw-rw-  1 media  system   181,   0  semutex         <-- 硬件信号量
+
+### 非 /dev 特殊接口 ###
+-rw-rw-rw- 1 root root 0   /proc/utopia            (head 读 -> I/O error，是命令接口)
+lrwxrwxrwx      /dev/block/platform/mstar_mci.0/by-name/*
+
+### adb shell 域直接访问的对比结果（dev1.txt / final1.txt） ###
+/dev/miomap                  [R:Permission denied] [W:Permission denied]
+/dev/malloc                  [R:Permission denied] [W:Permission denied]
+/dev/cmapool                 [R:Permission denied] [W:Permission denied]
+/dev/system                  [R:Permission denied] [W:Permission denied]
+/dev/mdlactl                 [R:Permission denied] [W:Permission denied]
+/dev/pmae                    [R:Permission denied] [W:Permission denied]
+/dev/tee0                    [R:Permission denied] [W:Permission denied]
+/dev/teepriv0                [R:Permission denied] [W:Permission denied]
+/dev/log2usb                 [R:Permission denied] [W:Permission denied]
+/dev/cli                     [R:Permission denied] [W:Permission denied]
+/dev/cb                      [R:Permission denied] [W:Permission denied]
+/dev/cb2                     [R:Permission denied] [W:Permission denied]
+/dev/mtal                    [R:Permission denied] [W:Permission denied]
+/dev/msmailbox               [R:Permission denied] [W:Permission denied]
+/dev/semutex                 [R:Permission denied] [W:Permission denied]
+/dev/localdimming            [R:Permission denied] [W:Permission denied]
+/dev/mstar_share_resource    [R:Permission denied] [W:Permission denied]
+/dev/gpiochip0               [R:Permission denied] [W:Permission denied]
+/dev/rtc0                    [R:Permission denied] [W:Permission denied]
+/dev/gflip                   [R:Permission denied] [W:Permission denied]
+/dev/ir                      [R:Permission denied] [W:Permission denied]
+/dev/smart                   [R:Permission denied] [W:Permission denied]
+/dev/feeder                  [R:Permission denied] [W:Permission denied]
+/dev/mtphoto                 [R:Permission denied] [W:Permission denied]
+/dev/block/mmcblk0boot0      [R:Permission denied] [W:Permission denied]
+/dev/block/mmcblk0rpmb       [R:Permission denied] [W:Permission denied]
+/dev/ttyS0 /dev/ttyS1        [R:Permission denied] [W:Permission denied]
+/dev/kmsg                    R=OK  W=no
+/dev/console                 [R:Permission denied] [W:Permission denied]
+/dev/ptmx                    R=OK  W=OK
+/dev/zero                    R=OK  W=OK
+/dev/mma                     R=OK  W=OK   (misysdiagnose 域也 OK)
+/proc/iomem                  Permission denied
+
+### 影子探测程序会 open() 的目标（tools/saprobe.c） ###
+/dev/miomap /dev/malloc /dev/system /dev/msmailbox /dev/mtal /dev/semutex /dev/scaler
+/dev/mma /dev/ion /dev/mali0 /dev/mik!sys /dev/mik!flash /dev/mik!os /dev/mik!disp
+/dev/mik!gpio /dev/eeprom_0 /dev/MPOOL
+
+### ⚠️ 高风险提示 ###
+/dev/miomap /dev/malloc /dev/mma /dev/system /dev/msmailbox /dev/scaler
+是 MStar SoC 的物理内存 / 显示管线 / 总线寄存器接口。
+盲目 ioctl 会让显示控制器或总线仲裁器挂死 -> 画面定格、adbd 失联。
+详见 docs/09-operational-hazards.md。

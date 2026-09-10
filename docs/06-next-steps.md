@@ -1,5 +1,12 @@
 # 06 — 现状总结与下一步
 
+> **2026-09-10 晚 更新**：本文件写于「只有 misysdiagnose uid0 一条路」时。
+> 之后打通了 **`TvService` AIDL → `system_app`(uid 1000) 命令执行 + 原生二进制执行**
+> （见 [`07-tvservice-aidl-breakout.md`](07-tvservice-aidl-breakout.md)、
+> [`08-system-app-execution.md`](08-system-app-execution.md)），
+> 攻击面大幅扩张，**首选路线已改为 `system_app` 域打 `/dev/miomap`**。
+> 文末「路线 A~E」中，路线 D（AF_UNIX CVE-2021-0920）降为最后备选。
+
 ## 已经拿到的
 
 1. **免拆机、纯软件的 uid 0 命令执行通道**（后门链，稳定可用）。
@@ -11,6 +18,10 @@
 6. **内核内存地图**：`/proc/vmallocinfo` 可读，暴露 MMA/CMA 物理区段、
    内核对象虚拟地址、内核符号 + 偏移。
 7. **有利的内核环境**：KASLR 关、`/proc/kallsyms` 可读、slab 加固几乎全关。
+8. **`system_app`(uid 1000) 命令执行 + 原生二进制执行**（阶段 9–11）。
+   能打开 MStar 全部私有设备：`/dev/miomap` ioctl+map、`/dev/malloc`、
+   `/dev/system`、`/proc/utopia` ioctl+rw+map、**可写 `/proc/cmdline`**。
+
 
 ## 还差什么
 
@@ -36,7 +47,33 @@
 
 ## 下一步路线（按优先级）
 
-### 路线 A — 绕开 `alloc`，直接打「句柄/地址」类命令（**首选**）
+### 路线 ★ — `system_app` 域打 `/dev/miomap`（**新首选**）
+
+`system_app` 已被授权 `mstar_miomap_device (chr_file (ioctl map open read write))`，
+而 `/dev/miomap` 从名字与 MStar 惯例看就是**物理地址映射**接口。若它能按物理地址
+映射任意页，就等于**拿到内核物理内存读写** —— 直接改写 `selinux_state.enforcing`
+或自身 `cred`。
+
+步骤：
+1. 反汇编 `/vendor/lib/libutopia.so`、`libmi3.so`、`gralloc.mt5872.so`、
+   `libGLES_mali.so`，找出 `/dev/miomap` 的 **ioctl 命令字与结构体布局**；
+2. 用 `sarun.sh` 在 `system_app` 域跑定向调用程序；
+3. **必须先做 `safe`（只 open/read）→ `mmap`（只 mmap 不读）→ 定向单条 ioctl**，
+   ⚠️ 盲目 ioctl 会把显示管线打挂（见 [`09-operational-hazards.md`](09-operational-hazards.md)）。
+
+### 路线 ★★ — `system_app` 写 `/proc/cmdline`
+
+`system_app` 对 `proc_cmdline_29_0` 有 `write`。理论上可注入
+`androidboot.selinux=permissive` —— 但**只对下次启动生效**，且需确认
+Android 的 boot 属性链是否会被 `ro.boot.*` 覆盖。**低风险，值得一试**。
+
+### 路线 ★★★ — tracefs `kprobe_events`
+
+`debugfs`/`tracefs` 已 rw 挂载，`shell` 域被授权
+`debugfs_tracing_29_0 (file (write))`。若 `kprobe_events` 可写，
+就能用 kprobe 读内核内存。⚠️ 该授权**没有 `read`**，需实测确认。
+
+### 路线 A — 绕开 `mma_alloc`，直接打「句柄/地址」类命令（原首选）
 
 `alloc` 是唯一需要**新物理内存**的命令。其余命令的输入本来就是句柄或物理地址：
 

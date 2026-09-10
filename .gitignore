@@ -24,7 +24,20 @@ unix2
 mma2
 mma_probe
 rootd
+saprobe
+mmafd
+mmamap
+uprobe
+sysw
 *.exe
+
+# 运行期产物
+sa.sh
+sa_out.txt
+ucmd.sh
+cmd_out.txt
+cmd.sh
+probe_out.txt
 
 # 环境
 .DS_Store
