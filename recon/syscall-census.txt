@@ -1,0 +1,47 @@
+===== A. socket() 家族可用性 =====
+  AF_UNIX       : t1=OK t2=OK t3=OK t5=OK
+  AF_INET       : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_INET6      : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_NETLINK    : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_PACKET     : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_LLC        : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_IB         : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_MPLS       : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_CAN        : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_TIPC       : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_BLUETOOTH  : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_RXRPC      : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_ALG        : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_NFC        : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_VSOCK      : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_KCM        : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_SMC        : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_XDP        : t1=no(Permission denied) t2=no(Permission denied) t3=no(Permission denied) t5=no(Permission denied)
+  AF_MCTP       : t1=no t2=no t3=no t5=no
+
+===== B. 关键系统调用 =====
+  memfd_create       -> 3 (OK)
+  userfaultfd        -> -1 (Function not implemented)
+  perf_event_open    -> -1 (Permission denied)
+  bpf(MAP_CREATE)    -> -1 (Permission denied)
+  kexec_load         -> -1 (Function not implemented)
+  reboot(bad magic)  -> -1 (Operation not permitted)
+  finit_module       -> -1 (Operation not permitted)
+  add_key            -> -1 (Permission denied)
+  process_vm_readv   -> 4 (OK)
+  io_uring_setup     -> -1 (Function not implemented)
+
+===== C. 改自身 SELinux 上下文 =====
+  open attr/current O_WRONLY -> 4 (OK)
+  write ctx -> -1 (Permission denied)
+
+===== D. prctl / mmap 能力 =====
+  prctl(PR_SET_MM)   -> -1 (Operation not permitted)
+  mmap MAP_FIXED low -> 0x10000 (OK)
+
+===== E. /dev/mma 专项: 探测 0x0001/0x0002 参数需求 =====
+  ioctl(0x0001, buf) -> -1 (Permission denied)
+  ioctl(0x0001, NULL)-> -1 (Permission denied)
+  ioctl(0x0002, buf) -> -1 (Permission denied)
+  ioctl(0x0002, NULL)-> -1 (Permission denied)
+ALLDONE

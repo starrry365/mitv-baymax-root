@@ -1,0 +1,19 @@
+########## AF_UNIX / socket 能力 (决定 CVE-2021-0920 可行性) ##########
+cp rc=0
+run rc=0
+--- 结果 ---
+uid=0  pid=8759
+selinux=u:r:misysdiagnose:s0
+  socket(AF_UNIX   , STREAM ) -> OK
+  socket(AF_UNIX   , DGRAM  ) -> OK
+  socket(AF_INET   , STREAM ) -> FAIL  errno=13 (Permission denied)
+  socket(AF_INET   , DGRAM  ) -> FAIL  errno=13 (Permission denied)
+  socket(AF_INET6  , STREAM ) -> FAIL  errno=13 (Permission denied)
+  socket(AF_INET6  , DGRAM  ) -> FAIL  errno=13 (Permission denied)
+  socket(AF_NETLINK, STREAM ) -> FAIL  errno=13 (Permission denied)
+  socket(AF_NETLINK, DGRAM  ) -> FAIL  errno=13 (Permission denied)
+  socket(AF_PACKET , STREAM ) -> FAIL  errno=13 (Permission denied)
+  socket(AF_PACKET , DGRAM  ) -> FAIL  errno=13 (Permission denied)
+  AF_UNIX bind  -> FAIL errno=13
+  AF_UNIX listen-> FAIL
+DONE

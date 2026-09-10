@@ -1,0 +1,31 @@
+# 厂商二进制（版权物，不重新分发；用 reverse/extract-mma-ioctl.sh 自行从设备抽取）
+mma_rev/
+*.ko
+*.so
+*.apk
+
+# 设备抓取的大文件
+*.png
+*.jpg
+*.gz
+*.tar
+*.zip
+
+# 编译产物
+*.o
+*.obj
+mmatest
+probe_open
+devenum
+syscap
+socktest
+socktest_dyn
+unix2
+mma2
+mma_probe
+rootd
+*.exe
+
+# 环境
+.DS_Store
+Thumbs.db

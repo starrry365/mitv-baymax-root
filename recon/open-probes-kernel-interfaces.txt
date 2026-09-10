@@ -1,0 +1,133 @@
+################ 身份 ################
+uid=0(root) gid=0(root) groups=0(root) context=u:r:misysdiagnose:s0
+ctx=u:r:misysdiagnose:s0
+caps: CapPrm:	0000003fffffffff CapEff:	0000003fffffffff CapBnd:	0000003fffffffff 
+
+################ A. open() 权限探针(只探测不写入) ################
+/proc/sys/kernel/core_pattern              R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/proc/sys/kernel/modprobe                  R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/proc/sys/kernel/kptr_restrict             R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/proc/sys/kernel/dmesg_restrict            R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/proc/sys/kernel/panic_on_oops             R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/proc/sys/kernel/perf_event_paranoid       R=OK  W=no   [W:Permission denied]
+/proc/sys/kernel/unprivileged_bpf_disabled R=OK  W=no   [W:Permission denied]
+/proc/sys/vm/mmap_min_addr                 R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/proc/sys/vm/panic_on_oom                  R=OK  W=no   [W:Permission denied]
+/proc/sysrq-trigger                        R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/sys/fs/selinux/enforce                    R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/sys/fs/selinux/checkreqprot               R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/sys/fs/selinux/policy                     R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/sys/fs/selinux/load                       R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/proc/kallsyms                             R=OK  W=no   [W:Permission denied]
+/proc/kcore                                R=no  W=no   [R:No such file or directory]  [W:No such file or directory]
+/proc/vmallocinfo                          R=OK  W=no   [W:Permission denied]
+/proc/modules                              R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/sys/module/kernel/sections/.text          R=no  W=no   [R:No such file or directory]  [W:No such file or directory]
+/dev/mem                                   R=no  W=no   [R:No such file or directory]  [W:No such file or directory]
+/dev/kmem                                  R=no  W=no   [R:No such file or directory]  [W:No such file or directory]
+/dev/port                                  R=no  W=no   [R:No such file or directory]  [W:No such file or directory]
+/dev/block/mmcblk0                         R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/dev/block/mmcblk0p12                      R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/dev/block/mmcblk0p11                      R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/dev/block/mmcblk0p27                      R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/dev/block/by-name/boot                    R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/dev/block/by-name/system                  R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/dev/block/by-name/vendor                  R=no  W=no   [R:Permission denied]  [W:Permission denied]
+/dev/mstar_mma                             R=no  W=no   [R:No such file or directory]  [W:No such file or directory]
+/dev/mma                                   R=OK  W=OK 
+/dev/utopia                                R=no  W=no   [R:No such file or directory]  [W:No such file or directory]
+/proc/mstar_dvfs                           R=OK  W=no   [W:Is a directory]
+/system/build.prop                         R=OK  W=no   [W:Read-only file system]
+/vendor/build.prop                         R=OK  W=no   [W:Read-only file system]
+/system/app/TvService/TvService.apk        R=OK  W=no   [W:Read-only file system]
+/vendor/bin/misysdiagnose                  R=OK  W=no   [W:Read-only file system]
+/data/diagnosis/command.sh                 R=OK  W=OK 
+/data/local/tmp                            R=no  W=no   [R:Permission denied]  [W:Is a directory]
+/sdcard                                    R=OK  W=no   [W:Is a directory]
+
+################ B. setenforce 尝试 ################
+before=cat: /sys/fs/selinux/enforce: Permission denied
+setenforce: Couldn't set enforcing status to '0': Permission denied
+setenforce 0 rc=1
+after=cat: /sys/fs/selinux/enforce: Permission denied
+setenforce: Couldn't set enforcing status to '1': Permission denied
+
+################ C. mount / remount ################
+--- 当前挂载 ---
+/dev/block/dm-2 on / type ext4 (ro,seclabel,nodev,relatime)
+/dev/block/dm-3 on /vendor type ext4 (ro,seclabel,relatime)
+/dev/block/platform/mstar_mci.0/by-name/userdata on /data type ext4 (rw,seclabel,nosuid,nodev,noatime,resgid=1065)
+/dev/block/platform/mstar_mci.0/by-name/cache on /cache type ext4 (rw,seclabel,nosuid,nodev,noatime)
+--- remount / rw ---
+'/dev/block/dm-2' is read-only
+mount: '/dev/block/dm-2'->'/': Permission denied
+rc=1
+--- remount /system rw ---
+mount: '/system' not in /proc/mounts
+rc=1
+--- remount /vendor rw ---
+'/dev/block/dm-3' is read-only
+mount: '/dev/block/dm-3'->'/vendor': Permission denied
+rc=1
+--- 建 tmpfs ---
+'tmpfs' is read-only
+mount: 'tmpfs'->'/data/local/tmp/mt': Permission denied
+rc=1
+
+################ D. chcon (SELinux 重标签) ################
+chcon: '/sdcard/lbl.txt' to u:object_r:su_exec:s0: Operation not supported on transport endpoint
+chcon su_exec rc=1
+u:object_r:sdcardfs:s0 /sdcard/lbl.txt
+chcon: '/sdcard/lbl.txt' to u:object_r:system_file:s0: Operation not supported on transport endpoint
+chcon system_file rc=1
+
+################ E. /data/diagnosis 内容 ################
+total 2116
+drwxrw-r--  3 system system u:object_r:system_data_file:s0    4096 2026-09-10 16:42 .
+drwxrwx--x 47 system system u:object_r:system_data_file:s0    4096 2026-09-10 16:30 ..
+-rwxrwxrwx  1 root   root   u:object_r:system_data_file:s0    2320 2026-09-10 16:42 command.sh
+-rwxrwxrwx  1 root   root   u:object_r:system_data_file:s0  376540 2026-09-10 16:12 myid
+-rwxr-xr-x  1 root   root   u:object_r:system_data_file:s0    6528 2026-09-10 16:42 probe_open
+-rwxr-xr-x  1 root   root   u:object_r:system_data_file:s0    7152 2026-09-10 16:33 rootd
+-rwxr-xr-x  1 root   root   u:object_r:system_data_file:s0 1732804 2026-09-10 16:24 socktest
+-rwxr-xr-x  1 root   root   u:object_r:system_data_file:s0    7564 2026-09-10 16:38 st
+-rwxr-xr-x  1 root   root   u:object_r:system_data_file:s0    7468 2026-09-10 16:40 u2
+drwxrw-r--  2 system system u:object_r:system_data_file:s0    4096 2026-09-10 13:11 upload
+--- command.sh 头部 ---
+#!/system/bin/sh
+export PATH=/system/bin:/vendor/bin:/system/xbin:/sbin:/bin
+O=/sdcard/final1.txt
+{
+echo "################ 身份 ################"
+id
+echo "ctx=$(cat /proc/self/attr/current 2>&1)"
+echo "caps: $(grep -E '^Cap(Eff|Prm|Bnd)' /proc/self/status | tr '\n' ' ')"
+echo
+echo "################ A. open() 权限探针(只探测不写入) ################"
+cp /sdcard/probe_open /data/diagnosis/probe_open 2>/dev/null
+chmod 755 /data/diagnosis/probe_open 2>/dev/null
+timeout 20 /data/diagnosis/probe_open 2>&1
+echo
+echo "################ B. setenforce 尝试 ################"
+echo "before=$(cat /sys/fs/selinux/enforce 2>&1)"
+setenforce 0 2>&1; echo "setenforce 0 rc=$?"
+echo "after=$(cat /sys/fs/selinux/enforce 2>&1)"
+setenforce 1 2>&1 >/dev/null
+echo
+
+################ F. /dev 概览 ################
+ls: /dev/: Permission denied 
+--- 字符设备 ---
+
+################ G. mknod 测试 ################
+mknod: /sdcard/testnull: Operation not permitted
+mknod rc=1
+ls: /sdcard/testnull: No such file or directory
+
+################ H. 内核符号 ################
+kptr_restrict=cat: /proc/sys/kernel/kptr_restrict: Permission denied
+kallsyms 前三行:
+0000000000000000 T do_undefinstr
+0000000000000000 T _stext
+0000000000000000 T __exception_text_start
+ALLDONE

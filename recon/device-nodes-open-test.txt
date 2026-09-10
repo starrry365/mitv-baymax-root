@@ -1,0 +1,42 @@
+/dev/miomap                      [R:Permission denied] [W:Permission denied]
+/dev/malloc                      [R:Permission denied] [W:Permission denied]
+/dev/cmapool                     [R:Permission denied] [W:Permission denied]
+/dev/system                      [R:Permission denied] [W:Permission denied]
+/dev/mdlactl                     [R:Permission denied] [W:Permission denied]
+/dev/pmae                        [R:Permission denied] [W:Permission denied]
+/dev/tee0                        [R:Permission denied] [W:Permission denied]
+/dev/teepriv0                    [R:Permission denied] [W:Permission denied]
+/dev/log2usb                     [R:Permission denied] [W:Permission denied]
+/dev/cli                         [R:Permission denied] [W:Permission denied]
+/dev/cb                          [R:Permission denied] [W:Permission denied]
+/dev/cb2                         [R:Permission denied] [W:Permission denied]
+/dev/mtal                        [R:Permission denied] [W:Permission denied]
+/dev/msmailbox                   [R:Permission denied] [W:Permission denied]
+/dev/semutex                     [R:Permission denied] [W:Permission denied]
+/dev/localdimming                [R:Permission denied] [W:Permission denied]
+/dev/mstar_share_resource        [R:Permission denied] [W:Permission denied]
+/dev/gpiochip0                   [R:Permission denied] [W:Permission denied]
+/dev/rtc0                        [R:Permission denied] [W:Permission denied]
+/dev/gflip                       [R:Permission denied] [W:Permission denied]
+/dev/ir                          [R:Permission denied] [W:Permission denied]
+/dev/smart                       [R:Permission denied] [W:Permission denied]
+/dev/feeder                      [R:Permission denied] [W:Permission denied]
+/dev/mtphoto                     [R:Permission denied] [W:Permission denied]
+/dev/block/mmcblk0boot0          [R:Permission denied] [W:Permission denied]
+/dev/block/mmcblk0rpmb           [R:Permission denied] [W:Permission denied]
+/dev/ttyS0                       [R:Permission denied] [W:Permission denied]
+/dev/ttyS1                       [R:Permission denied] [W:Permission denied]
+/dev/kmsg                        R=OK  W=no   char major=0 minor=0
+/dev/console                     [R:Permission denied] [W:Permission denied]
+/dev/ptmx                        R=OK  W=OK   char major=5 minor=2
+/dev/zero                        R=OK  W=OK   char major=1 minor=5
+
+---- /proc/iomem 物理地址泄露测试 ----
+open /proc/iomem: Permission denied
+
+---- /proc/self/maps (进程映射，可用于回推内核布局) ----
+030db000-030dc000 r--p 00000000 b3:1f 1048587                            /data/diagnosis/devenum
+030dc000-030dd000 r-xp 00000000 b3:1f 1048587                            /data/diagnosis/devenum
+030dd000-030de000 r--p 00000000 b3:1f 1048587                            /data/diagnosis/devenum
+030de000
+ALLDONE

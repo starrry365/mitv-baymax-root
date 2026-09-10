@@ -1,0 +1,262 @@
+################ 1. 内核日志 /dev/kmsg (前 18000 字节) ################
+4,5223,36838049,-;__pm_relax,ws->name =[timerfd],
+4,5224,36838056,-;__pm_relax,ws->name =eventpoll,
+4,5225,37041416,-;__pm_stay_awake,ws->name =[timerfd],
+4,5226,37041605,-;__pm_relax,ws->name =[timerfd],
+4,5227,37041611,-;__pm_stay_awake,ws->name =[timerfd],
+4,5228,37041615,-;__pm_relax,ws->name =eventpoll,
+4,5229,37047620,-;__pm_relax,ws->name =[timerfd],
+4,5230,37047628,-;__pm_relax,ws->name =eventpoll,
+6,5231,38529662,-;[wlan][3470]scnFsmSteps:(SCN STATE) [SCAN]TRANSITION: [SCANNING] -> [IDLE]
+6,5232,38529853,-;[wlan][3470]aisFsmSteps:(AIS STATE) [AIS]TRANSITION: [ONLINE_SCAN] -> [NORMAL_TR]
+6,5233,38551410,-;[wlan][3470]aisFsmSteps:(AIS STATE) [AIS]TRANSITION: [NORMAL_TR] -> [REQ_REMAIN_ON_CHANNEL]
+6,5234,39089874,-;[wlan][3470]aisFsmSteps:(AIS STATE) [AIS]TRANSITION: [REQ_REMAIN_ON_CHANNEL] -> [REMAIN_ON_CHANNEL]
+6,5235,39347870,-;[wlan][3470]aisFsmSteps:(AIS STATE) [AIS]TRANSITION: [REMAIN_ON_CHANNEL] -> [NORMAL_TR]
+4,5236,39653999,-;__pm_stay_awake,ws->name =[timerfd],
+4,5237,39658011,-;__pm_relax,ws->name =[timerfd],
+4,5238,39658018,-;__pm_stay_awake,ws->name =[timerfd],
+4,5239,39658024,-;__pm_relax,ws->name =eventpoll,
+4,5240,39660097,-;__pm_relax,ws->name =[timerfd],
+4,5241,39660105,-;__pm_relax,ws->name =eventpoll,
+4,5242,42375449,-;__pm_relax,ws->name =eventpoll,
+4,5243,42375843,-;__pm_stay_awake,ws->name =KeyEvents,
+4,5244,42376136,-;__pm_relax,ws->name =eventpoll,
+4,5245,42376142,-;__pm_relax,ws->name =KeyEvents,
+4,5246,47125027,-;__pm_relax,ws->name =eventpoll,
+4,5247,47126614,-;__pm_stay_awake,ws->name =KeyEvents,
+4,5248,47172501,-;__pm_relax,ws->name =eventpoll,
+4,5249,47173224,-;__pm_relax,ws->name =KeyEvents,
+4,5250,47173805,-;__pm_stay_awake,ws->name =KeyEvents,
+4,5251,47175443,-;__pm_relax,ws->name =KeyEvents,
+4,5252,48077988,-;__pm_stay_awake,ws->name =[timerfd],
+4,5253,48078167,-;__pm_relax,ws->name =[timerfd],
+4,5254,48078174,-;__pm_stay_awake,ws->name =[timerfd],
+4,5255,48078178,-;__pm_relax,ws->name =eventpoll,
+4,5256,48078782,-;__pm_relax,ws->name =[timerfd],
+4,5257,48078787,-;__pm_relax,ws->name =eventpoll,
+14,5258,50461296,-;init: processing action (vendor.misysdiagnose.cmd.code=*) from (init.mitv.rc:29)
+14,5259,50462227,-;init: starting service 'exec 13 (/vendor/bin/misysdiagnose -s /system/bin/getprop,ro.serialno,>/data/mitv_selinux/com.miui.tv.analytics.ro.serialno)'...
+14,5260,50465507,-;init: SVC_EXEC service 'exec 13 (/vendor/bin/misysdiagnose -s /system/bin/getprop,ro.serialno,>/data/mitv_selinux/com.miui.tv.analytics.ro.serialno)' pid 6637 (uid 0 gid 0+0 context default) started; waiting...
+14,5261,50557961,-;init: Service 'exec 13 (/vendor/bin/misysdiagnose -s /system/bin/getprop,ro.serialno,>/data/mitv_selinux/com.miui.tv.analytics.ro.serialno)' (pid 6637) exited with status 0 waiting took 0.093000 seconds
+14,5262,50558928,-;init: processing action (vendor.misysdiagnose.cmd.code=*) from (init.mitv.rc:29)
+14,5263,50559501,-;init: starting service 'exec 14 (/vendor/bin/misysdiagnose -s cat,/sys/class/block/mmcblk0/device/name,>/data/mitv_selinux/name)'...
+14,5264,50561400,-;init: SVC_EXEC service 'exec 14 (/vendor/bin/misysdiagnose -s cat,/sys/class/block/mmcblk0/device/name,>/data/mitv_selinux/name)' pid 6657 (uid 0 gid 0+0 context default) started; waiting...
+14,5265,50623258,-;init: Service 'exec 14 (/vendor/bin/misysdiagnose -s cat,/sys/class/block/mmcblk0/device/name,>/data/mitv_selinux/name)' (pid 6657) exited with status 0 waiting took 0.062000 seconds
+36,5266,52147436,-;type=1400 audit(1789029032.284:20): avc: denied { write } for comm="gsid" name="tasks" dev="tmpfs" ino=12905 scontext=u:r:gsid:s0 tcontext=u:object_r:device:s0 tclass=file permissive=0
+36,5267,52147484,-;type=1400 audit(1789029051.148:21): avc: denied { ioctl } for comm="v.appstore:kcg]" path="socket:[50328]" dev="sockfs" ino=50328 ioctlcmd=0x8927 scontext=u:r:system_app:s0 tcontext=u:r:system_app:s0 tclass=udp_socket permissive=0
+36,5268,52166700,-;type=1400 audit(1789029051.148:23): avc: denied { ioctl } for comm="v.appstore:kcg]" path="socket:[50328]" dev="sockfs" ino=50328 ioctlcmd=0x8927 scontext=u:r:system_app:s0 tcontext=u:r:system_app:s0 tclass=udp_socket permissive=0 duplicate messages suppressed
+36,5269,52166722,-;type=1400 audit(1789029051.160:24): avc: denied { ioctl } for comm="v.appstore:kcg]" path="socket:[50331]" dev="sockfs" ino=50331 ioctlcmd=0x8927 scontext=u:r:system_app:s0 tcontext=u:r:system_app:s0 tclass=udp_socket permissive=0
+4,5270,52584975,-;__pm_stay_awake,ws->name =[timerfd],
+4,5271,52585388,-;__pm_relax,ws->name =[timerfd],
+4,5272,52585395,-;__pm_stay_awake,ws->name =[timerfd],
+4,5273,52585400,-;__pm_relax,ws->name =eventpoll,
+4,5274,52587687,-;__pm_relax,ws->name =[timerfd],
+4,5275,52587695,-;__pm_relax,ws->name =eventpoll,
+14,5276,52842236,-;init: processing action (persist.sys.usb.config=*) from (/vendor/etc/init/hw/init.mt5872.usb.rc:48)
+11,5277,52843391,-;init: property 'persist.sys.usb.config' doesn't exist while expanding '${persist.sys.usb.config}'
+14,5278,52850498,-;init: Command 'setprop sys.usb.config ${persist.sys.usb.config}' action=persist.sys.usb.config=* (/vendor/etc/init/hw/init.mt5872.usb.rc:49) took 8ms and failed: cannot expand '${persist.sys.usb.config}'
+14,5279,52863697,-;init: processing action (sys.usb.config=none && sys.usb.configfs=1) from (/init.usb.configfs.rc:1)
+4,5280,52864293,-;[UDC]pullup_i:0x0
+14,5281,52864467,-;init: Sending signal 9 to service 'adbd' (pid 2870) process group...
+6,5282,52864761,-;android_work: did not send uevent (0 0           (null))
+14,5283,52903180,-;libprocessgroup: Successfully killed process cgroup uid 0 pid 2870 in 38ms
+14,5284,52904113,-;init: Service 'adbd' (pid 2870) received signal 9
+14,5285,52907198,-;init: processing action (sys.usb.config=none) from (/vendor/etc/init/hw/init.mt5872.usb.rc:25)
+14,5286,52916965,-;init: processing action (init.svc.adbd=stopped) from (/init.usb.configfs.rc:14)
+14,5287,52917666,-;init: processing action (init.svc.adbd=stopped) from (/init.usb.configfs.rc:14)
+14,5288,52918547,-;init: processing action (sys.usb.config=mtp && sys.usb.configfs=1) from (/init.usb.configfs.rc:26)
+3,5289,52920953,-;Config b/1 of g1 needs at least one function.
+3,5290,52922139,-;configfs-gadget Mstar-udc: failed to start g1: -22
+ SUBSYSTEM=udc
+ DEVICE=+udc:Mstar-udc
+14,5291,52922321,-;init: Command 'write /config/usb_gadget/g1/UDC ${sys.usb.controller}' action=sys.usb.config=mtp && sys.usb.configfs=1 (/init.usb.configfs.rc:29) took 1ms and failed: Unable to write to file '/config/usb_gadget/g1/UDC': Unable to write file contents: Invalid argument
+14,5292,52922473,-;init: processing action (sys.usb.config=mtp) from (/vendor/etc/init/hw/init.mt5872.usb.rc:38)
+4,5293,52986136,-;__pm_stay_awake,ws->name =ApmOutput,
+4,5294,52988612,-;__pm_relax,ws->name =ApmOutput,
+6,5295,53281911,-;<MI3_DEBUG>[PID:3344][_MI_AOUT_SetBasicSndParam:5119][TREBLE]ePath:4, Enable:1, GainRange:12, u16Level:50 -> gain:(S32)0=(U8)0
+6,5296,53282182,-;<MI3_DEBUG>[PID:3344][_MI_AOUT_SetBasicSndParam:5119][TREBLE]ePath:5, Enable:1, GainRange:12, u16Level:50 -> gain:(S32)0=(U8)0
+6,5297,53282795,-;<MI3_DEBUG>[PID:3344][_MI_AOUT_SetBasicSndParam:5165][BASS]ePath:4, Enable:1, GainRange:12, Level:50 -> gain:(S32)0=(U8)0
+6,5298,53282857,-;<MI3_DEBUG>[PID:3344][_MI_AOUT_SetBasicSndParam:5165][BASS]ePath:5, Enable:1, GainRange:12, Level:50 -> gain:(S32)0=(U8)0
+6,5299,53340708,-;<MI3_DEBUG>[PID:3344][_MI_AOUT_SetBasicSndParam:5119][TREBLE]ePath:4, Enable:1, GainRange:12, u16Level:50 -> gain:(S32)0=(U8)0
+6,5300,53340897,-;<MI3_DEBUG>[PID:3344][_MI_AOUT_SetBasicSndParam:5119][TREBLE]ePath:5, Enable:1, GainRange:12, u16Level:50 -> gain:(S32)0=(U8)0
+6,5301,53341521,-;<MI3_DEBUG>[PID:3344][_MI_AOUT_SetBasicSndParam:5165][BASS]ePath:4, Enable:1, GainRange:12, Level:50 -> gain:(S32)0=(U8)0
+6,5302,53341689,-;<MI3_DEBUG>[PID:3344][_MI_AOUT_SetBasicSndParam:5165][BASS]ePath:5, Enable:1, GainRange:12, Level:50 -> gain:(S32)0=(U8)0
+6,5303,53396417,-;[wlan][3470]wlanoidSet802dot11PowerSaveProfile:(INIT WARN) Set P2P Network BSS(1) PS mode to CAM (0)
+6,5304,53396442,-;[wlan][3470]wlanoidSet802dot11PowerSaveProfile:(INIT WARN) Set P2P Network BSS(1) PS mode to CAM (0)
+6,5305,53396832,-;IPv6: ADDRCONF(NETDEV_UP): p2p0: link is not ready
+14,5306,53568694,-;init: processing action (vendor.misysdiagnose.cmd.code=*) from (init.mitv.rc:29)
+14,5307,53570699,-;init: starting service 'exec 15 (/vendor/bin/misysdiagnose -s cat,/sys/class/block/mmcblk0/device/manfid,>/data/mitv_selinux/manfid)'...
+14,5308,53572617,-;init: SVC_EXEC service 'exec 15 (/vendor/bin/misysdiagnose -s cat,/sys/class/block/mmcblk0/device/manfid,>/data/mitv_selinux/manfid)' pid 6958 (uid 0 gid 0+0 context default) started; waiting...
+14,5309,53630308,-;init: Service 'exec 15 (/vendor/bin/misysdiagnose -s cat,/sys/class/block/mmcblk0/device/manfid,>/data/mitv_selinux/manfid)' (pid 6958) exited with status 0 waiting took 0.058000 seconds
+14,5310,56573359,-;init: processing action (vendor.misysdiagnose.cmd.code=*) from (init.mitv.rc:29)
+14,5311,56574267,-;init: starting service 'exec 16 (/vendor/bin/misysdiagnose -s cat,/sys/class/block/mmcblk0/device/date,>/data/mitv_selinux/date)'...
+14,5312,56576063,-;init: SVC_EXEC service 'exec 16 (/vendor/bin/misysdiagnose -s cat,/sys/class/block/mmcblk0/device/date,>/data/mitv_selinux/date)' pid 7046 (uid 0 gid 0+0 context default) started; waiting...
+14,5313,56625948,-;init: Service 'exec 16 (/vendor/bin/misysdiagnose -s cat,/sys/class/block/mmcblk0/device/date,>/data/mitv_selinux/date)' (pid 7046) exited with status 0 waiting took 0.050000 seconds
+4,5314,57299976,-;__pm_stay_awake,ws->name =[timerfd],
+4,5315,57300014,-;__pm_relax,ws->name =[timerfd],
+4,5316,57300021,-;__pm_stay_awake,ws->name =[timerfd],
+4,5317,57300025,-;__pm_relax,ws->name =eventpoll,
+4,5318,57309156,-;__pm_relax,ws->name =[timerfd],
+4,5319,57309165,-;__pm_stay_awake,ws->name =[timerfd],
+4,5320,57309170,-;__pm_relax,ws->name =eventpoll,
+4,5321,57315161,-;__pm_relax,ws->name =[timerfd],
+4,5322,57315169,-;__pm_relax,ws->name =eventpoll,
+14,5323,59577004,-;init: processing action (vendor.misysdiagnose.cmd.code=*) from (init.mitv.rc:29)
+14,5324,59577540,-;init: starting service 'exec 17 (/vendor/bin/misysdiagnose -s cat,/sys/class/block/mmcblk0/device/serial,>/data/mitv_selinux/serial)'...
+14,5325,59579558,-;init: SVC_EXEC service 'exec 17 (/vendor/bin/misysdiagnose -s cat,/sys/class/block/mmcblk0/device/serial,>/data/mitv_selinux/serial)' pid 7064 (uid 0 gid 0+0 context default) started; waiting...
+14,5326,59628629,-;init: Service 'exec 17 (/vendor/bin/misysdiagnose -s cat,/sys/class/block/mmcblk0/device/serial,>/data/mitv_selinux/serial)' (pid 7064) exited with status 0 waiting took 0.049000 seconds
+4,5327,60996978,-;__pm_stay_awake,ws->name =[timerfd],
+4,5328,60997008,-;__pm_relax,ws->name =[timerfd],
+4,5329,60997014,-;__pm_stay_awake,ws->name =[timerfd],
+4,5330,60997019,-;__pm_relax,ws->name =eventpoll,
+4,5331,60999294,-;__pm_relax,ws->name =[timerfd],
+4,5332,60999302,-;__pm_relax,ws->name =eventpoll,
+4,5333,69830494,-;__pm_stay_awake,ws->name =[timerfd],
+4,5334,69831390,-;__pm_stay_awake,ws->name =mstar-rtc@0,
+6,5335,69831551,-;==RTC== MHAL_RTC_GetCounter, 244, time:0x6aa26ad9, val:0x23, cnt:3
+4,5336,69831558,-;__pm_relax,ws->name =mstar-rtc@0,
+4,5337,69831790,-;__pm_relax,ws->name =[timerfd],
+4,5338,69831797,-;__pm_stay_awake,ws->name =[timerfd],
+4,5339,69831801,-;__pm_relax,ws->name =eventpoll,
+4,5340,69839531,-;__pm_relax,ws->name =[timerfd],
+4,5341,69839539,-;__pm_relax,ws->name =eventpoll,
+14,5342,70195286,-;init: Received control message 'start' for 'smbd' from pid: 7197 (com.xiaomi.mitv.mediaexplorer:music)
+14,5343,70887700,-;init: Received control message 'start' for 'smbd' from pid: 7237 (com.xiaomi.mitv.mediaexplorer)
+4,5344,72375638,-;__pm_relax,ws->name =eventpoll,
+4,5345,72375878,-;__pm_stay_awake,ws->name =KeyEvents,
+4,5346,72376161,-;__pm_relax,ws->name =eventpoll,
+4,5347,72376326,-;__pm_relax,ws->name =KeyEvents,
+14,5348,73869829,-;init: processing action (vendor.misysdiagnose.cmd.code=*) from (init.mitv.rc:29)
+14,5349,73870760,-;init: starting service 'exec 18 (/vendor/bin/misysdiagnose -s cat,/proc/cmdline>/data/user/0/com.xiaomi.mitv.tvmanager/cache/record.log)'...
+14,5350,73872809,-;init: SVC_EXEC service 'exec 18 (/vendor/bin/misysdiagnose -s cat,/proc/cmdline>/data/user/0/com.xiaomi.mitv.tvmanager/cache/record.log)' pid 7340 (uid 0 gid 0+0 context default) started; waiting...
+14,5351,73968281,-;init: Service 'exec 18 (/vendor/bin/misysdiagnose -s cat,/proc/cmdline>/data/user/0/com.xiaomi.mitv.tvmanager/cache/record.log)' (pid 7340) exited with status 0 waiting took 0.096000 seconds
+14,5352,73969300,-;init: processing action (vendor.misysdiagnose.cmd.code=*) from (init.mitv.rc:29)
+14,5353,73969809,-;init: starting service 'exec 19 (/vendor/bin/misysdiagnose -s cat,/proc/cmdline>/data/user/0/com.xiaomi.mitv.tvmanager/cache/record.log)'...
+14,5354,73971530,-;init: SVC_EXEC service 'exec 19 (/vendor/bin/misysdiagnose -s cat,/proc/cmdline>/data/user/0/com.xiaomi.mitv.tvmanager/cache/record.log)' pid 7344 (uid 0 gid 0+0 context default) started; waiting...
+14,5355,74042219,-;init: Service 'exec 19 (/vendor/bin/misysdiagnose -s cat,/proc/cmdline>/data/user/0/com.xiaomi.mitv.tvmanager/cache/record.log)' (pid 7344) exited with status 0 waiting took 0.071000 seconds
+4,5356,78407977,-;__pm_stay_awake,ws->name =[timerfd],
+4,5357,78408010,-;__pm_relax,ws->name =[timerfd],
+4,5358,78408016,-;__pm_stay_awake,ws->name =[timerfd],
+4,5359,78408022,-;__pm_relax,ws->name =eventpoll,
+4,5360,78415337,-;__pm_relax,ws->name =[timerfd],
+4,5361,78415346,-;__pm_relax,ws->name =eventpoll,
+14,5362,87973771,-;init: Received control message 'stop' for 'logcatd' from pid: 3863 (xiaomi.tvservice)
+14,5363,87975183,-;init: processing action (ro.build.type=user && sys.offline.log.enable=0) from (/system/etc/init/logcatd.rc:63)
+4,5364,98413992,-;__pm_stay_awake,ws->name =[timerfd],
+4,5365,98414020,-;__pm_relax,ws->name =[timerfd],
+4,5366,98414027,-;__pm_stay_awake,ws->name =[timerfd],
+4,5367,98414031,-;__pm_relax,ws->name =eventpoll,
+4,5368,98414591,-;__pm_relax,ws->name =[timerfd],
+4,5369,98414597,-;__pm_relax,ws->name =eventpoll,
+4,5370,102375879,-;__pm_relax,ws->name =eventpoll,
+4,5371,102376146,-;__pm_stay_awake,ws->name =KeyEvents,
+4,5372,102376408,-;__pm_relax,ws->name =eventpoll,
+4,5373,102376572,-;__pm_relax,ws->name =KeyEvents,
+4,5374,108830002,-;__pm_stay_awake,ws->name =[timerfd],
+4,5375,108830317,-;__pm_relax,ws->name =[timerfd],
+4,5376,108830326,-;__pm_stay_awake,ws->name =[timerfd],
+4,5377,108830332,-;__pm_relax,ws->name =eventpoll,
+4,5378,108832440,-;__pm_relax,ws->name =[timerfd],
+4,5379,108832449,-;__pm_relax,ws->name =eventpoll,
+4,5380,118414977,-;__pm_stay_awake,ws->name =[timerfd],
+4,5381,118415006,-;__pm_relax,ws->name =[timerfd],
+4,5382,118415013,-;__pm_stay_awake,ws->name =[timerfd],
+4,5383,118415018,-;__pm_relax,ws->name =eventpoll,
+4,5384,118415547,-;__pm_relax,ws->name =[timerfd],
+4,5385,118415553,-;__pm_relax,ws->name =eventpoll,
+4,5386,132376081,-;__pm_relax,ws->name =eventpoll,
+4,5387,132376286,-;__pm_stay_awake,ws->name =KeyEvents,
+4,5388,132376549,-;__pm_relax,ws->name =eventpoll,
+4,5389,132376602,-;__pm_relax,ws->name =KeyEvents,
+4,5390,138415977,-;__pm_stay_awake,ws->name =[timerfd],
+4,5391,138416019,-;__pm_relax,ws->name =[timerfd],
+4,5392,138416032,-;__pm_stay_awake,ws->name =[timerfd],
+4,5393,138416037,-;__pm_relax,ws->name =eventpoll,
+4,5394,138417611,-;__pm_relax,ws->name =[timerfd],
+4,5395,138417619,-;__pm_relax,ws->name =eventpoll,
+4,5396,158417984,-;__pm_stay_awake,ws->name =[timerfd],
+4,5397,158418021,-;__pm_relax,ws->name =[timerfd],
+4,5398,158418027,-;__pm_stay_awake,ws->name =[timerfd],
+4,5399,158418032,-;__pm_relax,ws->name =eventpoll,
+4,5400,158418642,-;__pm_relax,ws->name =[timerfd],
+4,5401,158418649,-;__pm_relax,ws->name =eventpoll,
+4,5402,162376347,-;__pm_relax,ws->name =eventpoll,
+4,5403,162376571,-;__pm_stay_awake,ws->name =KeyEvents,
+4,5404,162376838,-;__pm_relax,ws->name =eventpoll,
+4,5405,162376949,-;__pm_relax,ws->name =KeyEvents,
+6,5406,165835028,-;input: \xe5\xb0\x8f\xe7\xb1\xb3\xe8\x93\x9d\xe7\x89\x99\xe8\xaf\xad\xe9\x9f\xb3\xe9\x81\xa5\xe6\x8e\xa7\xe5\x99\xa8 Keyboard as /devices/virtual/misc/uhid/0005:2717:32B8.0001/input/input2
+6,5407,165839187,-;input: \xe5\xb0\x8f\xe7\xb1\xb3\xe8\x93\x9d\xe7\x89\x99\xe8\xaf\xad\xe9\x9f\xb3\xe9\x81\xa5\xe6\x8e\xa7\xe5\x99\xa8 Consumer Control as /devices/virtual/misc/uhid/0005:2717:32B8.0001/input/input3
+6,5408,165839657,-;hid-generic 0005:2717:32B8.0001: input,hidraw0: BLUETOOTH HID v0.00 Keyboard [\xe5\xb0\x8f\xe7\xb1\xb3\xe8\x93\x9d\xe7\x89\x99\xe8\xaf\xad\xe9\x9f\xb3\xe9\x81\xa5\xe6\x8e\xa7\xe5\x99\xa8] on 
+ SUBSYSTEM=hid
+ DEVICE=+hid:0005:2717:32B8.0001
+4,5409,165854317,-;__pm_relax,ws->name =eventpoll,
+4,5410,165855935,-;__pm_stay_awake,ws->name =KeyEvents,
+4,5411,165884665,-;wakeup_source_register,dev name =event2,
+4,5412,165884913,-;wakeup_source_register,ws->name =event2,
+4,5413,165887647,-;__pm_relax,ws->name =eventpoll,
+4,5414,165890454,-;__pm_relax,ws->name =KeyEvents,
+4,5415,165891708,-;__pm_stay_awake,ws->name =KeyEvents,
+4,5416,165897794,-;wakeup_source_register,dev name =event3,
+4,5417,165898085,-;wakeup_source_register,ws->name =event3,
+4,5418,165901296,-;__pm_relax,ws->name =eventpoll,
+4,5419,165901585,-;__pm_relax,ws->name =KeyEvents,
+4,5420,166155414,-;__pm_stay_awake,ws->name =event2,
+4,5421,166155432,-;__pm_stay_awake,ws->name =event3,
+4,5422,166155444,-;__pm_stay_awake,ws->name =eventpoll,
+4,5423,166155450,-;__pm_relax,ws->name =event2,
+4,5424,166155457,-;__pm_stay_awake,ws->name =event2,
+4,5425,166155461,-;__pm_stay_awake,ws->name =eventpoll,
+4,5426,166155465,-;__pm_relax,ws->name =event3,
+4,5427,166155469,-;__pm_stay_awake,ws->name =event3,
+4,5428,166155473,-;__pm_relax,ws->name =eventpoll,
+4,5429,166155664,-;__pm_stay_awake,ws->name =KeyEvents,
+4,5430,166159639,-;__pm_stay_awake,ws->name =eventpoll,
+4,5431,166159648,-;__pm_
+################ 2. /dev/mma 刻画 ################
+/dev/mma char major=0 minor=0 mode=000000
+read(16) -> -1 errno=22(Invalid argument)
+mmap(4096,SHARED,off=0) -> 0xffffffff errno=13(Permission denied)
+
+---- ioctl 扫描 (只记非 ENOTTY) ----
+  cmd=0x0000 (type=00 nr=0) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0001 (type=00 nr=1) -> r=-1 errno=13(Permission denied)
+  cmd=0x0002 (type=00 nr=2) -> r=-1 errno=13(Permission denied)
+  cmd=0x0003 (type=00 nr=3) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0100 (type=01 nr=0) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0101 (type=01 nr=1) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0102 (type=01 nr=2) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0103 (type=01 nr=3) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0200 (type=02 nr=0) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0201 (type=02 nr=1) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0202 (type=02 nr=2) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0203 (type=02 nr=3) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0300 (type=03 nr=0) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0301 (type=03 nr=1) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0302 (type=03 nr=2) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0303 (type=03 nr=3) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0400 (type=04 nr=0) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0401 (type=04 nr=1) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0402 (type=04 nr=2) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0403 (type=04 nr=3) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0500 (type=05 nr=0) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0501 (type=05 nr=1) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0502 (type=05 nr=2) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0503 (type=05 nr=3) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0600 (type=06 nr=0) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0601 (type=06 nr=1) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0602 (type=06 nr=2) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0603 (type=06 nr=3) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0700 (type=07 nr=0) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0701 (type=07 nr=1) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0702 (type=07 nr=2) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0703 (type=07 nr=3) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0800 (type=08 nr=0) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0801 (type=08 nr=1) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0802 (type=08 nr=2) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0803 (type=08 nr=3) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0900 (type=09 nr=0) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0901 (type=09 nr=1) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0902 (type=09 nr=2) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0903 (type=09 nr=3) -> r=-1 errno=22(Invalid argument)
+  cmd=0x0a00 (type=0a nr=0) -> r=-1 errno=22(Invalid argument)
+ALLDONE

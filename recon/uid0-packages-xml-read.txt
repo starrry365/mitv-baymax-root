@@ -1,0 +1,5 @@
+uid=0(root) gid=0(root) groups=0(root) context=u:r:misysdiagnose:s0
+---
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<packages>
+    <version sdkVersion="29" databaseVersion="3" fin

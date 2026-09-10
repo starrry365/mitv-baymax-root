@@ -1,0 +1,154 @@
+################ /dev 下我们可见的设备 ################
+ls: /dev/: Permission denied
+
+################ /proc/devices ################
+Character devices:
+  1 mem
+  4 /dev/vc/0
+  4 tty
+  4 ttyS
+  5 /dev/tty
+  5 /dev/console
+  5 /dev/ptmx
+  7 vcs
+ 10 misc
+ 13 input
+ 14 sound
+ 29 fb
+ 81 video4linux
+ 90 mtd
+108 ppp
+111 BT_chrdev
+112 BT_chrdevfwlog
+113 BT_chrdev_sco
+116 alsa
+128 ptm
+136 pts
+138 ModIIC
+146 smart
+147 XC
+148 system
+156 ir
+158 malloc
+175 MSMAILBOX
+176 miomap
+180 usb
+181 semutex
+182 cmapool
+185 PM
+186 localdimming
+188 ttyUSB
+189 usb_device
+190 cpu
+193 mstar_share_resource
+199 env_handler
+226 drm
+227 /dev/eeprom_3
+228 /dev/eeprom_0
+230 /dev/eeprom_4
+234 GFLIP
+241 mtal
+241 cli
+241 cb
+241 cb2
+241 log2usb
+244 rtkbt_dev
+245 mik
+246 mdlactl
+247 apusys
+248 pmae
+249 fusion
+250 hidraw
+251 rpmb
+252 tee
+253 rtc
+254 gpiochip
+287 fbm
+288 feeder
+288 mtphoto
+
+Block devices:
+  1 ramdisk
+  7 loop
+  8 sd
+ 31 mtdblock
+ 43 nbd
+ 65 sd
+ 66 sd
+ 67 sd
+ 68 sd
+ 69 sd
+ 70 sd
+ 71 sd
+128 sd
+129 sd
+130 sd
+131 sd
+132 sd
+133 sd
+134 sd
+135 sd
+179 mmc
+253 device-mapper
+254 zram
+259 blkext
+
+################ /proc/misc ################
+cat: /proc/misc: Permission denied
+
+################ sysfs: 找 mma ################
+ls: /sys/class/: Permission denied 
+--- /sys/class/mma ---
+ls: /sys/class/mma: No such file or directory
+--- /sys/class/misc ---
+ls: /sys/class/misc: Permission denied
+--- /sys/class/mstar* ---
+ls: /sys/class/mstar*: No such file or directory
+--- /sys/devices/virtual/misc ---
+ls: /sys/devices/virtual/misc: Permission denied
+
+################ 运行 mma_probe ################
+stat /dev/mma             ERR Permission denied
+stat /proc/mstar_dvfs     mode=040555 type=dir major=0 minor=0 size=0
+stat /dev/diagnosis       ERR No such file or directory
+stat /dev/mma0            ERR No such file or directory
+stat /dev/mma1            ERR No such file or directory
+stat /dev/mt_mma          ERR No such file or directory
+
+--- open /dev/mma and probe ioctl range (harmless queries) ---
+open O_RDWR -> fd=3 OK
+  ioctl type=0x40 nr=0 -> r=-1 errno=22(Invalid argument)
+  ioctl type=0x41 nr=0 -> r=-1 errno=22(Invalid argument)
+  ioctl type=0x42 nr=0 -> r=-1 errno=22(Invalid argument)
+  ioctl type=0x43 nr=0 -> r=-1 errno=22(Invalid argument)
+  ioctl type=0x44 nr=0 -> r=-1 errno=22(Invalid argument)
+  ioctl type=0x45 nr=0 -> r=-1 errno=22(Invalid argument)
+  ioctl type=0x46 nr=0 -> r=-1 errno=22(Invalid argument)
+
+################ /proc/vmallocinfo 泄露的内核地址(top) ################
+0xFFFFFF8000DA0000-0xFFFFFF8000DAB000   45056 load_module+0xfb8/0x37ac pages=10 vmalloc
+0xFFFFFF8000DAF000-0xFFFFFF8000DBD000   57344 load_module+0xfb8/0x37ac pages=13 vmalloc
+0xFFFFFF8000DC0000-0xFFFFFF8000EDF000 1175552 load_module+0xfb8/0x37ac pages=286 vmalloc
+0xFFFFFF8000EDF000-0xFFFFFF8000EE6000   28672 load_module+0xfb8/0x37ac pages=6 vmalloc
+0xFFFFFF8000EE6000-0xFFFFFF8000EEB000   20480 load_module+0xfb8/0x37ac pages=4 vmalloc
+0xFFFFFF8000EF1000-0xFFFFFF8001178000 2650112 load_module+0xfb8/0x37ac pages=646 vmalloc vpages
+0xFFFFFF8001178000-0xFFFFFF8001184000   49152 load_module+0xfb8/0x37ac pages=11 vmalloc
+0xFFFFFF8001188000-0xFFFFFF800118D000   20480 load_module+0xfb8/0x37ac pages=4 vmalloc
+0xFFFFFF8001192000-0xFFFFFF8001256000  802816 load_module+0xfb8/0x37ac pages=195 vmalloc
+0xFFFFFF8001256000-0xFFFFFF800125C000   24576 load_module+0xfb8/0x37ac pages=5 vmalloc
+0xFFFFFF800125D000-0xFFFFFF8001271000   81920 load_module+0xfb8/0x37ac pages=19 vmalloc
+0xFFFFFF8001274000-0xFFFFFF800127A000   24576 load_module+0xfb8/0x37ac pages=5 vmalloc
+
+################ /sys/module 列表 ################
+ls: /sys/module/: Permission denied 
+################ /proc/mstar_dvfs 内容 ################
+ls: /proc/mstar_dvfs//temperature: Permission denied
+ls: /proc/mstar_dvfs//temperature_info: Permission denied
+total 0
+dr-xr-xr-x   2 root root 0 2026-09-10 16:42 .
+dr-xr-xr-x 393 root root 0 1970-01-01 08:00 ..
+-rw-------   1 root root 0 2026-09-10 16:42 boost_list
+-rw-------   1 root root 0 2026-09-10 16:42 core_voltage
+-rw-------   1 root root 0 2026-09-10 16:42 frequency
+-rw-------   1 root root 0 2026-09-10 16:42 voltage
+ALLDONE

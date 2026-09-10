@@ -1,0 +1,279 @@
+%s @ line %d [OPTEE] [MMA] E_XC_OPTEE_DISABLE MHal_XC_UnauthorizeMMA fail!
+%s: MDLA %d start power_timer
+%s: MDLA RESET: %s
+------- dump MDLA code buf -------
+Gamma_VR
+Gamma_dither
+Gamma_dither_Settings
+Hal_PQ_set_sram_xvycc_gamma_table
+MApi_XC_PQ_Gamma_U2
+MDLA
+MDLA0M02CONN_GALS_RX
+MDLA0M02CONN_GALS_TX
+MDLA0M12CONN_GALS_RX
+MDLA0M12CONN_GALS_TX
+MDLA1M02CONN_GALS_RX
+MDLA1M02CONN_GALS_TX
+MDLA1M12CONN_GALS_RX
+MDLA1M12CONN_GALS_TX
+MDLA: Goodbye from the LKM!
+MDLA: set DMA mask failed: %d
+MDLAClose
+MDLAIOCTLSetModule_adp_Init
+MDLAIoctl
+MDLAMdbIoctl
+MDLAOpen
+MDLARegisterToUtopia
+MDLAResgisterModule
+MDLA_AXI1_CTRL
+MDLA_AXI_CTRL
+MDLA_CG_CON
+MDLA_MBIST_CTL
+MDLA_MBIST_DEFAULT_DELSEL
+MDLA_MBIST_MODE0
+MDLA_MBIST_MODE1
+MDLA_RP_CON
+MDLA_RP_RST
+MDLA_SW_RST
+MDLA_adp_Init
+MDrv_MDLA_EFUSE_Info
+MDrv_MDLA_Free
+MDrv_MDLA_GSM_Info
+MDrv_MDLA_Malloc
+MDrv_MDLA_Run_Cmd_Async
+MDrv_MDLA_Run_Cmd_Sync
+MDrv_MDLA_Set_PowerState
+MDrv_MDLA_Wait_Cmd
+MDrv_MDLA_get_PowerState
+MDrv_PQ_EnableScalerGamma_U2
+MHal_PNL_PanelGamma_Enable
+MHal_PNL_PanelGamma_Get2LutEnable
+MHal_PNL_PanelGamma_Set2LUTMode
+MHal_PNL_Support_PanelGamma_W_Channel
+MODULE_MDLA
+MODULE_MDLA_OPEN
+MST_Gamma_COM_Main
+MST_Gamma_Main
+MST_Gamma_VR_COM_Main
+MST_Gamma_VR_Main
+MST_Gamma_dither_COM_Main
+MST_Gamma_dither_Main
+MST_Gamma_dither_Settings_COM_Main
+MST_Gamma_dither_Settings_Main
+MST_PanelGamma_COM_Main
+MST_PanelGamma_Main
+PQ_IPTAB_Gamma_OFF_Text_Main
+PQ_IPTAB_Gamma_ON_Text_Main
+PQ_IPTAB_Gamma_VR_OFF_Text_Main
+PQ_IPTAB_Gamma_VR_ON_Text_Main
+PQ_IPTAB_Gamma_dither_OFF_Text_Main
+PQ_IPTAB_Gamma_dither_ON_Text_Main
+PQ_IPTAB_Gamma_dither_Settings_OFF_Text_Main
+PQ_IPTAB_Gamma_dither_Settings_ON_Text_Main
+PQ_IPTAB_PanelGamma_OFF_Text_Main
+PQ_IPTAB_PanelGamma_ON_Text_Main
+PQ_IP_Gamma_Text_Main
+PQ_IP_Gamma_VR_Text_Main
+PQ_IP_Gamma_dither_Settings_Text_Main
+PQ_IP_Gamma_dither_Text_Main
+PQ_IP_PanelGamma_Text_Main
+RESOURCE_MDLA
+RPOOL_MDLA
+[%s,%5d][MMA] FRC MMA Release %s 
+[%s,%5d][MMA] FRC MMA Release %s time = %lu
+[%s,%5d][MMA] FRC_GetMMAAddr Finish, phyFRCLeftBaseaddress = 0x%llx finish, time = %lu
+[%s,%5d][MMA] FRC_GetMMAAddr Finish, phyFRCPQMMABaseAddress = 0x%llx finish, time = %lu
+[%s,%5d][MMA] GetMMAAddr Finish. eWindow =%u, u64MMAAddr = 0x%llx , time = %lu
+[%s,%5d][MMA] GetMMMAddr Finish. eWindow = %u u64MMAAddr = 0x%llx, time = %lu
+[%s,%5d][MMA] GetMMMAddr Finish. enWindow = %u u64MMAAddr = 0x%llx , time = %lu
+[%s,%5d][MMA] MMA Release Finish, eWindow = %u time = %lu
+[%s,%5d][MMA] MMA Release Finish, enWindow = %u, time = %lu
+[%s,%5d][MMA], the size is 0, no need alloc memory!
+[%s,%5d][MMA], the size is the same as the size of last time!
+[%s,%5d][MMA], u32MMAAddr = %td
+[%s,%5d][MMA], u32PreMMASize = %x u32GetMMASize = %x.
+[%s,%5d][MMA], u32PreMMASize=%x
+[%s,%5d][MMA], u64MMAAddr = %td
+[%s,%5d][MMA]FRC_GetMMAAddr Finish, phyFRCLeftBaseaddress = 0x%llx finish, time = %lu
+[%s,%5d][MMA]FRC_GetMMAAddr Finish, phyFRCRightBaseaddress = 0x%llx finish, time = %lu
+[%s,%5d][MMA][DUAL-FRC],the size is the same as the size of last time!
+[%s,%5d][MMA][MAIN_WINDOW] MMA Release Finish, time = %lu
+[%s,%5d][MMA][SUB_WINDOW] MMA Release Finish, time = %lu
+[%s,%5d][MMA][non-DUAL-FRC],the size is the same as the size of last time!
+[DMS] DMS_AIPQ [%s,%d]: SHM: u32AIModelID:%zu, u32AIResultSize:0x%tx, u32AIResultCount:%zu, index:%zu, u8FrameIndex:%d, u32AICondition:%zu, bIsUpdate:%d, bIsUpdateMDLAResult:%d
+[DMS] DMS_AISR [%s,%d]: AISR MDLA data arrange running success! CurPointer:%u, arrange delay time:%lu(ms), arrange avg time:%lu(us), arrange count:%llu, VDECBufID:%u, OutputBufID:%u, DIPBufID:%u.
+[DMS] DMS_ERROR [%s,%d]: AISR MDLA Data Arrange Fail!!
+[DMS] DMS_ERROR [%s,%d]: AISR allocate MDLA buffer fail!!
+[DMS] DMS_ERROR [%s,%d]: All MDLA DIP Buffer is busy!! Status: %d, CurPointer: %d.
+[DMS] DMS_ERROR [%s,%d]: All MDLA Input Buffer is busy!! Status: %d, CurPointer: %d.
+[DMS] DMS_ERROR [%s,%d]: All MDLA Output Buffer is busy!! Status: %d, CurPointer: %d.
+[DMS] DMS_ERROR [%s,%d]: All MDLA VDEC Buffer is busy!! Status: %d, CurPointer: %d.
+[DMS] DMS_ERROR [%s,%d]: DIP Capture from MDLA arrange buf fail!!enStatus:%d, u16CurPointer:%u
+[DMS] DMS_ERROR [%s,%d]: DIPBuffer: MDrv_MDLA_Malloc fail! size:0x%x, mva:0x%x, pa:0x%tx, kva:0x%tx, id:0x%x, type:0x%x, mva_h:0x%x!!
+[DMS] DMS_ERROR [%s,%d]: InputBuffer: MDrv_MDLA_Free fail! size:0x%x, mva:0x%x, id:0x%x, type:0x%x, mva_h:0x%x!!
+[DMS] DMS_ERROR [%s,%d]: InputBuffer: MDrv_MDLA_Malloc fail! size:0x%x, mva:0x%x, pa:0x%tx, kva:0x%tx, id:0x%x, type:0x%x, mva_h:0x%x!!
+[DMS] DMS_ERROR [%s,%d]: MDrv_MDLA_Free fail ! size:0x%x, mva:0x%x, pa:0x%llx, kva:0x%llx, id:0x%x, type:0x%x, mva_h:0x%x
+[DMS] DMS_ERROR [%s,%d]: MDrv_MDLA_Free fail!InputBuffer: size:0x%x, mva:0x%x, id:0x%x, type:0x%x, mva_h:0x%x!!
+[DMS] DMS_ERROR [%s,%d]: MDrv_MDLA_Free fail!OutputBuffer: size:0x%x, mva:0x%x, id:0x%x, type:0x%x, mva_h:0x%x!!
+[DMS] DMS_ERROR [%s,%d]: MDrv_MDLA_Malloc fail ! size:0x%x, mva:0x%x, pa:0x%llx, kva:0x%llx, id:0x%x, type:0x%x, mva_h:0x%x
+[DMS] DMS_ERROR [%s,%d]: MsOS_SetEvent Fail: MDLA Data Arrange Event!
+[DMS] DMS_ERROR [%s,%d]: Not support MDLA!
+[DMS] DMS_ERROR [%s,%d]: OutputBuffer: MDrv_MDLA_Malloc fail! size:0x%x, mva:0x%x, pa:0x%tx, kva:0x%tx, id:0x%x, type:0x%x, mva_h:0x%x!!
+[DMS] DMS_ERROR [%s,%d]: allocate MDLA buffer fail!
+[DMS] DMS_ERROR [%s,%d]: pstMDLABufInfo is NULL!!
+[MDLA][COMM] 	pa:0x%llx, va:0x%llx, size:0x%x, fd:0x%llx
+[MDLA][COMM] %s alloc failed!!
+[MDLA][COMM] %s done -
+[MDLA][COMM] %s done!
+[MDLA][COMM] %s free failed!!
+[MDLA][COMM] %s start -
+[MDLA][COMM] %s: kva: 0x%llx iova %llx fd %x size %d cached %x
+[MDLA][COMM] %s: resume
+[MDLA][COMM] %s: suspend
+[MDLA][COMM] -
+[MDLA][COMM] Done
+[MDLA][COMM] MDLA: MDLARegisterToUtopia
+[MDLA][COMM] MDLA: MDLARegisterToUtopia had been invoked!!
+[MDLA][COMM] align_size = %llx
+[MDLA][COMM] apusys memory mgr is already inited
+[MDLA][COMM] apusys memory mgr is not init, can't destroy
+[MDLA][COMM] dma_addr = %llx
+[MDLA][COMM] dma_buf_get fail
+[MDLA][COMM] dma_mem_map_uva
+[MDLA][COMM] dma_mem_map_uva location1
+[MDLA][COMM] dma_mem_map_uva location2
+[MDLA][COMM] dma_mem_map_uva location3
+[MDLA][COMM] dma_mmap dma path
+[MDLA][COMM] done
+[MDLA][COMM] enter comm_dma_free
+[MDLA][COMM] failed to register comm_driver device
+[MDLA][COMM] invalid argument
+[MDLA][COMM] iommu_alloc_buf_unregister: va (%p) not found!
+[MDLA][COMM] iova: %08llx kva: %08llx
+[MDLA][COMM] kmalloc fail!!!!!!!!
+[MDLA][COMM] mdla_iommu_free: not match found, va:%llx pid:%x
+[MDLA][COMM] mem->size = %llx
+[MDLA][COMM] mma_alloc failed, ret = %x
+[MDLA][COMM] mma_map failed! va = 0x%p
+[MDLA][COMM] mma_unmap fail, va:%llx pid:%x
+[MDLA][COMM] mmap fail! addr (%llx) size %x!
+[MDLA][COMM] mr(0x%llx/%d/0x%llx/0x%x/0x%llx)
+[MDLA][COMM] original mem->iova: %llx
+[MDLA][COMM] remap_pfn_range fail: %p
+[MDLA][COMM] vma->vm_pgoff =%llx
+[MMA][FRC][%s,%d]Buf tag:%s is not supportted!
+[OPTEE] [MMA] E_XC_OPTEE_DISABLE Unauthorize_MMA Main.
+[OPTEE] [MMA] E_XC_OPTEE_DISABLE Unauthorize_MMA Sub.
+[OPTEE] [MMA] E_XC_OPTEE_DISABLE release_MMA Main Done.
+[OPTEE] [MMA] E_XC_OPTEE_DISABLE release_MMA Sub Done.
+[OPTEE] [MMA] E_XC_OPTEE_ENABLE set AID fail!
+[OPTEE] [MMA] E_XC_OPTEE_ENABLE set mvop AID OK!
+[Utopia][MMA]: [Utopia_K][%s][%06d] addr = 0x%llx, pid =%d
+[Utopia][MMA]: [Utopia_K][%s][%06d] address is iova, pa = 0x%llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] alloc buffer u8bufTag %s size 0x%x
+[Utopia][MMA]: [Utopia_K][%s][%06d] dma_buf_get fail
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: buf_info == NULL
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: buf_tag == NULL
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: feature == NULL
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: pFd == NULL
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: pMem_info == NULL
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: pPhy == NULL
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: pglb_name == NULL
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: pphyBaseAddr == NULL
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: pu8space_tag == NULL
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: size == 0
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: u32pipeID == NULL
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: u32size <= 0
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: u64size == 0
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: u8bufTag == NULL
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: vaddr == 0
+[Utopia][MMA]: [Utopia_K][%s][%06d] error: vaddr == NULL
+[Utopia][MMA]: [Utopia_K][%s][%06d] free buffer, pa = 0x%llx, pid=%d
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma free fail!
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma free fail, fd = %d
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma free fail, fd = %d, pa = %llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma map fail, fd = %d, offset = %d, size = %d, cache = %d
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma map,pid=%d,pa = 0x%llx,va = 0x%p,offset = %d
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_alloc fail, ret = %d
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_buf_remove fail!
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_buf_remove_va fail!
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_buf_store fail
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_buffer_authorize fail, pa = %llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_buffer_unauthorize fail, fd = %d, pa = %llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_cma_buffer_authorize fail, pa = %llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_cma_buffer_unauthorize fail, pa = %llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_export_globalname fail, ret = %d
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_free fail!
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_free_iova_space fail
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_get_meminfo fail, fd = %d, pa = %llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_get_pipeid fail
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_globalname_query fail, pa = 0x%llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_import_globalname fail, pa = %llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_import_globalname fail, pa = 0x%llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_open fail
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_put_pipeid fail
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_reserve_iova_space fail
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_unmap fail
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_unmap fail, size=%d or vaddr=%llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_unmap fail, size=%u or vaddr=0x%llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] mma_va2iova fail, va = %llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] pa = 0x%llx error
+[Utopia][MMA]: [Utopia_K][%s][%06d] pa not found in mma buffer list, pa = 0x%llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] pid=%d,addr = 0x%llx 
+[Utopia][MMA]: [Utopia_K][%s][%06d] pid=%d,addr = 0x%llx ,dmabuf_fd=%d
+[Utopia][MMA]: [Utopia_K][%s][%06d] pid=%d,addr = 0x%llx ,process exit,return.
+[Utopia][MMA]: [Utopia_K][%s][%06d] pid=%d,addr = 0x%llx, u32pipeID =%d
+[Utopia][MMA]: [Utopia_K][%s][%06d] pid=%d,buftag=%s, va = 0x%llx, iova = 0x%llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] pid=%d,dmabuf_fd=%d
+[Utopia][MMA]: [Utopia_K][%s][%06d] pid=%d,pa = 0x%llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] to be filed
+[Utopia][MMA]: [Utopia_K][%s][%06d] unmma map,pid=%d,va = 0x%llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] vaddr not found in mma buffer list, va = 0x%llx
+[Utopia][MMA]: [Utopia_K][%s][%06d] vmalloc fail
+[Utopia][MMA]: [Utopia_K][%s][%06d] vzalloc fail
+_Hal_DMS_AISR_ControlMDLABuf
+_Hal_DMS_AISR_ResetMDLABuf
+__mma_alloc
+gamma_0dot4
+gamma_0dot6
+gamma_0dot7
+gamma_0dot75
+gamma_0dot78
+gamma_0dot8
+gamma_0dot9
+gamma_1dot2
+gamma_1dot4
+gamma_dark_higher
+gamma_linear
+mma_alloc
+mma_alloc failed, ret = %x
+mma_alloc_sec
+mma_buffer_authorize
+mma_buffer_unauthorize
+mma_dmabuf_put
+mma_export_globalname
+mma_flush
+mma_free
+mma_free_iova_space
+mma_get_meminfo
+mma_get_pipeid
+mma_globalname_query
+mma_import_globalname
+mma_import_handle
+mma_map
+mma_map failed! va = 0x%p
+mma_map_iova
+mma_open
+mma_physical_buffer_authorize
+mma_physical_buffer_unauthorize
+mma_put_pipeid
+mma_query_buf_tag
+mma_release
+mma_reserve_iova_space
+mma_unmap
+mma_unmap fail, va:%p pid:%x
+mma_va2iova
+u16PanelGamma_B0
+u16PanelGamma_G0
+u16PanelGamma_R0
+u16PanelGamma_W0

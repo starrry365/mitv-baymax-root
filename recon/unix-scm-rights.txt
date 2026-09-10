@@ -1,0 +1,8 @@
+1. socketpair(AF_UNIX,SOCK_STREAM) -> OK
+2. bind(ABSTRACT)                  -> OK
+   listen()                        -> OK errno=0
+3. sendmsg(SCM_RIGHTS)             -> OK (1 bytes)
+   recvmsg(SCM_RIGHTS)             -> OK (1 bytes)
+   got cmsg: level=1 type=1 -> fd=7
+4. recvmsg(MSG_PEEK)               -> OK (5 bytes: 'hello')
+DONE

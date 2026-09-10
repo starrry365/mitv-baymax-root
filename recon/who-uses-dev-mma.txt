@@ -1,0 +1,10 @@
+################ 1. 谁在使用 /dev/mma ################
+/vendor/lib/egl/libGLES_mali.so
+/vendor/lib/hw/hwcomposer.mt5872.so
+/vendor/lib/hw/vulkan.mt5872.so
+/vendor/lib/hw/gralloc.mt5872.so
+/vendor/lib/libOpenCL.so
+/vendor/lib/libutopia.so
+/vendor/lib/modules/utpa2k.ko
+/vendor/bin/cmdl_service
+--- (若空则用字符串搜) ---
