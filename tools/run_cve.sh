@@ -26,8 +26,10 @@ MODE="${2:-safe}"
 [ "$START" != "0" ] && [ "$START" != "1" ] && { echo "START 只能 0(safe) 或 1(差分)"; exit 1; }
 
 # app_process32 命令行（双 dex classpath，冒号分隔，规避 multi-dex jar PathClassLoader 限制）
-# 位置参数: <目录>/system/bin, 然后 -Djava.class.path=..., 主类, 参数
-APPC="app_process32 /system/bin -Djava.class.path=${CP} TvgTrigger ${MODE} 64"
+# 正确参数序（实测 2026-09-11）：-Djava.class.path 必须在 <目录> 之前！
+#   app_process32 -Djava.class.path=<a.dex>:<b.dex> /system/bin TvgTrigger <mode> <len>
+# 否则 app_process 会把 -D... 当成主类名 → Aborted(ClassNotFoundException)
+APPC="app_process32 -Djava.library.path=/vendor/lib -Djava.class.path=${CP} /system/bin TvgTrigger ${MODE} 64"
 
 # 设备端执行体
 DEVSH="rm -f /sdcard/trig_log.txt /sdcard/trig_debug.txt; echo '=== uid ==='; id; echo '=== run app_process32 ==='; ${APPC} 2>&1 | head -120; echo '=== exit='\$? '==='; echo '=== trig_log tail ==='; [ -f /sdcard/trig_log.txt ] && tail -40 /sdcard/trig_log.txt"

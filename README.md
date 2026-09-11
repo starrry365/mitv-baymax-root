@@ -27,13 +27,44 @@
 | **16** | **底层库逐层逆向 → 定位 root 双 OS 目标** | ✅ **架构实锤**（关键，见下） |
 | **17** | **uid0 通用文件拉取通道**（`uid0_pull.sh`） | ✅ 完成，高复用 |
 | **27** | **HAL 域 `write_file_byte` 打通 MI_UTIL 内核命令通道**（寄存器级写） | ✅ 完成，可用 |
-| **28** | **设备存储拓扑 + eMMC env 分区块定位 + `IMtkTvFApiSystem` 的 eMMC HIDL 方法枚举** | 🔬 情报就绪，正向验证读 env |
+| **28** | **设备存储拓扑 + eMMC env 分区块定位 + `IMtkTvFApiSystem` 的 eMMC HIDL 方法枚举** | 🔬 情报就绪（env 写路线已暂停，见红线） |
+| **29** | **CVE 触发框架闭环 + `mtktvapi-service` 主二进制拉取（OOB 载体 + exchange 函数地图）** | 🔬 service 已 pull，待专项逆向 |
 
 ---
 
-## 当前攻坚焦点（阶段 28，README 最新）
+## 当前攻坚焦点（阶段 29，README 最新）
 
-### 🔑 持久后门路线：eMMC env 分区块定位 + 只读读取（阶段 28）
+### ⛺ 阶段 28（eMMC env 持久后门）——已按安全红线暂停
+
+> 仅保留只读情报（分区拓扑 + cmdline `ENV=EMMC off0 sz64K`）；`set_emmc_env_var` /
+> `write_emmc` / `upgrade_fw` **严禁调用**（无 UART 救不回，绝不做任何持久写）。详见
+> [`docs/28-emmc-env-layout.md`](docs/28-emmc-env-layout.md) 与上文红线。
+
+🔬 详细只读数据见下方「持久后门路线」保留的历史段。
+
+---
+
+### 🎯 CVE-2023-32830 载体逆向：`mtktvapi-service` 主二进制（阶段 29，最新）
+
+设备重启后（2026-09-11 15:33），CVE 差分触发框架一键闭环：
+- **Step0 safe PASS**：app_process 独立子进程从 system_app 域反射 + 加载 `TVNativeWrapper`/`MtkTvFactoryService` 成功；
+- **uart/uartopen/all 全零崩溃**（`outputUART` handle−1 → -1、`*_exchange_data` 有长度预检）→ **证实 JNI 层非越界点**（与 docs/25 完全吻合）；
+- 关键修复：app_process32 需 `-Djava.library.path=/vendor/lib -Djava.class.path=<dex>:<dex> /system/bin 主类`（-D 必须在目录前），否则 JNI 加载失败。
+
+用 **uid0 通道**拉回 OOB 载体：
+```
+native/mtkvapi_work/mtktvapi_service.bin
+  = /tools/bin/hw/vendor.mediatek.tv.mtktvapi@1.0-service  (288268 B)
+```
+- 确证 **import memcpy / __memcpy_chk** → OOB 在 service 主进程；
+- 已定位全部 `hh_*`/`a_hidl_*exchange_data` HIDL 消费函数地图（doc29 §3.3）；
+- **下一关：对 service 主二进制专项逆向，定位 memcpy 长度来自 HIDL `hidl_vec` 且未判界的写点**。
+
+详见 [`docs/29-phaseB-service-bin-memmap.md`](docs/29-phaseB-service-bin-memmap.md)。
+
+---
+
+### 历史（阶段 28）持久后门路线 —— 只读细节
 
 SELinux enforcing + AVB locked + verity enforcing（见下）堵死了所有「运行时改」的快捷 root 路，
 所以把主攻方向压到 **改持久启动配置** → 内核启动时从 eMMC **环境变量区**读取 `androidboot.*`。
@@ -173,7 +204,7 @@ service call TvService 4400 s16 "s" s16 "/sdcard/cmd.sh"   # cmd.sh 以 uid 0 �
 ## 目录结构
 
 ```
-docs/    共 28 篇研究文档（设备 01 → CVE 底层定位 26 → HAL write_file 27 → eMMC env 布局 28，推荐按编号顺序走）
+docs/    共 29 篇研究文档（设备 01 → CVE 底层定位 26 → HAL write_file 27 → eMMC env 布局 28 → CVE 载体逆向 29，推荐按编号顺序走）
 tools/    自研工具（C/shell/python）
           —— tv_root_exec.sh(uid0执行) / uid0_pull.sh(uid0任意文件拉取)
              sysapp.sh / sarun.sh(system_app执行) / reconnect.sh(重启恢复)
@@ -186,7 +217,7 @@ recon/    原始侦察输出（设备节点、AIDL 事务码、cmdline 全文、
 
 **推荐阅读路径**：`docs/01 → 02 → 03 → 07 → 08 → 09 → 1x → 19(全展望) → 20(CVE 计划) →
 21/22/23(触发) → 24(路由判定) → 26(CVE 双 OS 实锤) → 27(HAL write_file 打通 MI_UTIL) →
-28(eMMC env 布局)`。
+28(eMMC env 布局) → 29(CVE 载体逆向)`。
 
 ---
 
