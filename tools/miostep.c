@@ -56,7 +56,8 @@ static void dump16(const unsigned char *p, size_t n) {
     step("        %s |%s|", hex, asc);
 }
 
-int main(void) {
+int main(int argc, char **argv) {
+    (void)argc; (void)argv;
     int ps = sysconf(_SC_PAGESIZE);
     remove(LOG_SD);
     g_a = fopen(LOG_SD, "w");
@@ -108,6 +109,14 @@ int main(void) {
         errno = 0;
         int r = ioctl(fd, cmds[i], buf);
         step("[S4] ioctl(0x%08lx) -> %d %s", cmds[i], r, strerror(errno));
+    }
+
+    /* 默认【不做 mmap】(已两次确认会把设备打挂);
+       只有显式传入 "map" 才继续到 S5/S6 */
+    if (!(argc >= 2 && strcmp(argv[1], "map") == 0)) {
+        close(fd);
+        step("[SKIP] 未传 'map' 参数 => 跳过 S5/S6 (mmap)，本轮只读到此为止");
+        return 0;
     }
 
     /* ---- S5: mmap offset=0 并读 ---- */
