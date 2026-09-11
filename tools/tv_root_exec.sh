@@ -36,6 +36,14 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+# 稳定连接: adb daemon 常退, 需先确保连接在
+"$A" disconnect "$D" >/dev/null 2>&1
+for _i in $(seq 1 15); do
+  "$A" connect "$D" >/dev/null 2>&1
+  if "$A" -s "$D" get-state 2>/dev/null | grep -q device; then break; fi
+  sleep 2
+done
+
 # nonce: init 只在属性"值变化"时触发 on property:*, 故每次用不同文件名
 NONCE="$$_$(date +%s%N | tail -c 7)"
 USER="/sdcard/u_$NONCE.sh"

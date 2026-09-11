@@ -26,10 +26,34 @@
 | **15** | **CVE-2023-32830（TVAPI OOB write）可行性** | 🔬 触发链路成熟，漏洞面已定位到底层 |
 | **16** | **底层库逐层逆向 → 定位 root 双 OS 目标** | ✅ **架构实锤**（关键，见下） |
 | **17** | **uid0 通用文件拉取通道**（`uid0_pull.sh`） | ✅ 完成，高复用 |
+| **27** | **HAL 域 `write_file_byte` 打通 MI_UTIL 内核命令通道**（寄存器级写） | ✅ 完成，可用 |
+| **28** | **设备存储拓扑 + eMMC env 分区块定位 + `IMtkTvFApiSystem` 的 eMMC HIDL 方法枚举** | 🔬 情报就绪，正向验证读 env |
 
 ---
 
-## 当前攻坚焦点（阶段 18，README 最新）
+## 当前攻坚焦点（阶段 28，README 最新）
+
+### 🔑 持久后门路线：eMMC env 分区块定位 + 只读读取（阶段 28）
+
+SELinux enforcing + AVB locked + verity enforcing（见下）堵死了所有「运行时改」的快捷 root 路，
+所以把主攻方向压到 **改持久启动配置** → 内核启动时从 eMMC **环境变量区**读取 `androidboot.*`。
+如果能只读拿到 env、确认含 `selinux`/`verity` 控制项，就有希望在**重启后**让设备进 permissive / 脱离 verity，
+从而获得**完整 root（能改系统 / 关 SELinux）**，而非每次都要手动进 HAL 域。
+
+**本阶段实测确立（已穷举 partition 全景 + HIDL eMMC 方法）：**
+
+- **分区表**（`/dev/block/by-name/`，uid0 读出）共 31 分区：`MBOOT..vbmeta..boot..super..tvservice..userdata` 等，
+  其中 `MBOOT`(mmcblk0p1)、`vbmeta`(mmcblk0p4)、`vbmeta_system`(mmcblk0p29) 为启动校验关键区。
+  完整映射见 [`docs/28-emmc-env-layout.md`](docs/28-emmc-env-layout.md) §2。
+- **cmdline**（system_app 域读全文）确认：`ENV=EMMC ENV_VAR_OFFSET=0x0 ENV_VAR_SIZE=0x10000` →
+  **env 位于 eMMC 起始头部，64KB**；且当前**无** `androidboot.selinux` 显式覆盖（默认 enforcing）。
+- **读取接口**：HAL 域 `IMtkTvFApiSystem` 暴露 `read_emmc`/ `get_emmc_env_var`/`set_emmc_env_var`/`write_emmc` 等
+  eMMC 原始读写方法（signature 已从 mangled 符号还原，见 doc28 §4）。其中 `get_emmc_env_var` 与 `read_emmc`
+  **带 `std::function` 回调**，纯 C 客户端构造该回调 ABI 是下一阶段的解锁点（本机已有一份 `libc++.so` 可反）。
+
+**红线**：`set_emmc_env_var` / `write_emmc` / `upgrade_fw` **严禁调用**（无 UART 救不回，只读阶段）。
+
+---
 
 ### ⚡ 决定性重构：CVE-2023-32830 的真实目标 = root 的 MStar DTV 双系统
 
@@ -126,7 +150,7 @@ service call TvService 4400 s16 "s" s16 "/sdcard/cmd.sh"   # cmd.sh 以 uid 0 �
 ## 目录结构
 
 ```
-docs/     26 篇研究文档（设备 01 → CVE 底层定位 26，推荐按编号顺序走）
+docs/     28 篇研究文档（设备 01 → CVE 底层定位 26 → HAL write_file 27 → eMMC env 布局 28，推荐按编号顺序走）
 tools/    自研工具（C/shell/python）
           —— tv_root_exec.sh(uid0执行) / uid0_pull.sh(uid0任意文件拉取)
              sysapp.sh / sarun.sh(system_app执行) / reconnect.sh(重启恢复)
@@ -137,7 +161,8 @@ recon/    原始侦察输出（设备节点、AIDL 事务码、cmdline 全文、
 ```
 
 **推荐阅读路径**：`docs/01 → 02 → 03 → 07 → 08 → 09 → 1x → 19(全展望) → 20(CVE 计划) →
-21/22/23(触发) → 24(路由判定) → 26(CVE 双 OS 实锤)`。
+21/22/23(触发) → 24(路由判定) → 26(CVE 双 OS 实锤) → 27(HAL write_file 打通 MI_UTIL) →
+28(eMMC env 布局)`。
 
 ---
 
