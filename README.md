@@ -22,7 +22,7 @@ MStar **MMA** 内核驱动的 ioctl 协议逆向（通往完整 root 的下一�
 | 7 | MStar MMA 驱动 ioctl 协议还原 | ✅ 完成（**权威版**，见下） |
 | 7b | 内核地址泄露（`mma_get_pipeid`） | ✅ 完成 |
 | 7c | 内核内存地图（`/proc/vmallocinfo`） | ✅ 完成 |
-| 8 | 经 `/dev/mma` 做内核物理内存读写 → 改 cred / 关 SELinux | 🔬 下一步 |
+| 8 | 经 `/dev/mma` 做内核物理内存读写 → 改 cred / 关 SELinux | 🔬 受阻，已转向 12–14 |
 | **9** | **爆破 `ITvService` AIDL → 三条无鉴权通道** | ✅ 完成 |
 | **10** | **`system_app`（uid 1000）任意命令执行** | ✅ 完成，稳定 |
 | **11** | **`system_app` 域执行自研原生二进制** | ✅ 打通（`system_app_data_file` 有 `execute`） |
@@ -50,6 +50,27 @@ DRAM 地址（recovery 帧缓冲）。因此这条路暂停，改走 `read()` / 
 
 > ⚠️ **`tools/miroot2.c` 尚未在设备上运行过。** 在 mmap 致命问题得到明确解释之前，
 > **不要**直接用它的写模式（不带 `dry` 参数的运行状态）。
+
+### 当前攻坚点（2026-09-11，阶段 14）
+
+经历了两次 mmap 打挂后，物理内存读写通道的策略是 —— **绕开 `mmap`，走 `read()` / `pread()` / `ioctl`**。
+
+* 主工具 [`tools/miostep.c`](tools/miostep.c)：**分级试探**，每完成一步就 `fsync` 落盘，
+  即使某步把内核打挂、重启后也能从日志精确看出死在哪一步（不再盲扫）。
+* 与 `mma` 的 `mma_map` / `mma_va2iova` 这类"任意物理地址 → 用户映射/物理地址"命令交叉验证，
+  若 device 的 `read()` 把**文件偏移当作物理地址**，则无需 mmap 即可读写任意物理内存。
+* 目标：拿到内核物理内存读写后，改写 `selinux_enforcing` 或进程 `cred->security->sid` → 完整 root。
+
+安全护栏（写死在 `miostep`）：
+1. 探测分 `safe 文件读取 → /dev/miomap 只读预检 → 定向 ioctl/read` 三档，危险操作放最后；
+2. 任何写操作前必须先回读校验接口与地址；
+3. **绝不**再对未知设备做宽范围 ioctl 盲扫（260k 条曾把设备打挂）。
+
+配套侦察结论（当天新固化的三条铁律）：
+* **mmap 动作本身是致命的** —— 见 [`docs/17-miomap-mmap-fatal.md`](docs/17-miomap-mmap-fatal.md)；
+* **kallsyms 对任何域都只有符号名、没有地址**（`kptr_restrict=2`）—— 见 [`docs/16-kernel-symbols-blackout.md`](docs/16-kernel-symbols-blackout.md)；
+* **能开 `/dev/miomap` 的只有 `system_app` 及其同族域**（`misysdiagnose` 不行）⇒ 最终写内存必须经 uid1000 通道；
+  而符号 / 内存布局可走 system_app 读 `/proc/cmdline`（三域中唯它可读，见 [`recon/cmdline-full.txt`](recon/cmdline-full.txt)）。
 
 ### 第 7 阶段的关键修正
 
@@ -227,11 +248,15 @@ adb shell 'service call TvService 3 s16 "id"'
 
 ```
 docs/     研究文档（设备、后门、uid0 通道、MMA、环境限制、下一步、
-          TvService AIDL 突破、system_app 执行、操作风险）
+          TvService AIDL 突破、system_app 执行、操作风险、
+          内核符号黑盒 16、miomap-mmap 致命 17）
 tools/    自研工具源码（C / shell / python）
+          —— ioread(读 cmdline/iomem)、mioprobe2(定向读 DRAM)、
+             miostep(分级 read/ioctl 试探)、miroot2(PREL32 反查符号)
 reverse/  MMA ioctl 逆向成果（表 + 从设备抽取 blob 的脚本）
 policy/   关键 SELinux 规则摘录（misysdiagnose / system_app 权限画像）
-recon/    原始侦察输出（设备节点、syscall 普查、进程、AIDL 事务码勘定等）
+recon/    原始侦察输出（设备节点、syscall 普查、进程、AIDL 事务码、
+          cmdline 全文、proc 可读性矩阵等）
 ```
 
 ## 4.5 设备重启后的一键恢复
