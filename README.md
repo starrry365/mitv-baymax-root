@@ -147,13 +147,37 @@ service call TvService 4400 s16 "s" s16 "/sdcard/cmd.sh"   # cmd.sh 以 uid 0 �
 
 ---
 
+## ⚡ 当前执行点：CVE-2023-32830 一键差分触发（待设备上线）
+
+设备因既往盲扫 ioctl 理论触发击穿**曾离线**，现需**物理断电重启**才能恢复 adb。重启后，
+`cve_dispatch/run_cve.sh` 已就绪，一条命令即可推进（严格独立子进程，零砖风险）：
+
+```bash
+# Step 0 （先做）——最小可行性验证：safe mode，仅反射 + 类加载，零风险
+./cve_dispatch/run_cve.sh 0 safe
+
+# Step 2 —— 差分触发：all 渐变长度扫描全部越界面（独立 app_process32 崩溃 = 可观测的 hit）
+./cve_dispatch/run_cve.sh 1 all      # 或 1 uart / 1 esc 单独扫某一面
+```
+
+- **通道**：`sa3.sh`（`system_app` 域 + `runSystemCommand` 单窗口 exec）→ `app_process32` 独立子进程
+- **classpath**：双裸 dex 冒号分隔 `/sdcard/cve_tv.dex:/sdcard/cve_tr.dex`，规避 multi-dex jar 的 PathClassLoader 只读 classes.dex 限制；`cve_tv.dex`=TvService 全类（目标 `TVNativeWrapper`），`cve_tr.dex`=`TvgTrigger` 主类
+- **观测点**：`/sdcard/trig_log.txt` + `logcat -b crash` + tombstone；`TvgTrigger` 对每种长度 try/catch，越界即 SIGSEGV 可复现
+- ⚠️ **红线**：只在独立 app_process32 子进程触发，绝不碰 TvService 主进程；不写 eMMC/env、不做 ioctl
+
+（脚本：[`tools/run_cve.sh`](tools/run_cve.sh)。dex 触发资产因含版权类不留仓，仅存于本机
+`cve_dispatch/`，脚本内已写死 host 绝对路径；dest 侧由脚本推送 `/sdcard/cve_tv.dex:cve_tr.dex`。）
+
+---
+
 ## 目录结构
 
 ```
-docs/     28 篇研究文档（设备 01 → CVE 底层定位 26 → HAL write_file 27 → eMMC env 布局 28，推荐按编号顺序走）
+docs/    共 28 篇研究文档（设备 01 → CVE 底层定位 26 → HAL write_file 27 → eMMC env 布局 28，推荐按编号顺序走）
 tools/    自研工具（C/shell/python）
           —— tv_root_exec.sh(uid0执行) / uid0_pull.sh(uid0任意文件拉取)
              sysapp.sh / sarun.sh(system_app执行) / reconnect.sh(重启恢复)
+             run_cve.sh(CVE-2023-32830 独立子进程差分触发，见下文「当前执行点」)
              mioprobe* / miostep(分级探测) / miroot2(PREL32查符号) / mma* / ...
 reverse/  MMA ioctl 权威表 + 从设备抽取 blob 的脚本
 policy/   关键 SELinux 规则摘录（misysdiagnose / system_app 权限画像）
