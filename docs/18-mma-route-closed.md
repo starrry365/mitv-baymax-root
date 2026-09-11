@@ -59,3 +59,27 @@ offset 0x20:  b8 69 0b c0 ff ff ff     ->  0xffffffc00b69b8     (内核地址)
 - 全程**只跑只读命令**：`get_pipeid`/`get_meminfo`/`get_heapinfo`/`query_buf_tag`，`ioctl` 类安全。
 - **没有调用** `mma_map`/`mma_va2iova`/`mmap`，**没有碰 `mmamap`**(避免重复打挂)。
 - 没有对未知命令做宽范围盲扫（吸取 doc 09/17 教训）。
+## 五、追加：定向试探（方案 A，2026-09-11 10:05）
+
+在收尾前，按"喂已知内核地址"的思路做了一次定向试探（工具 `tools/mmaaddr.c`，全程只读、无 mmap、未扫盲）。
+
+前提：`mma_get_pipeid` 每次调用泄露的地址会变（动态内核对象），本次为
+`0xffffffc0942a1e01` / `0xffffffc039ba3d00`。把这组地址分别当作 `fd` 喂给
+`mma_get_meminfo`（低 32 位），或以地址拼接喂 `mma_query_buf_tag`：
+
+| 尝试 | 结果 |
+|---|---|
+| get_meminfo(把内核地址当 fd 低 32 位) | ❌ `EINVAL` —— 驱动**严格校验 fd**，不接受任意地址伪装 |
+| query_buf_tag(把地址当 tag) | ❌ `EPERM`（该域无权，需更高域） |
+| get_pipeid（只读口径） | ✅ 仍成功 |
+
+结论：**MMA 侧的读命令不提供"把任意内核地址当连接"的通道**。加上 alloc 全 ENOMEM，
+`/dev/mma` 作为"物理内存读写原语"的路线**彻底关闭**。设备全程在线未崩（验证了只读口径安全）。
+
+## 六、至今成统计
+
+已逐条实测并归档的"负面结论"，共同构成完整的安全评估（避免后人重复试错）：
+- `docs/09, 17`: mmap 会打挂设备（含白名单 DRAM）
+- `docs/16`: kallsyms 对任何域只有名字没有地址（kptr_restrict=2）
+- `docs/17`: `/dev/miomap` 唯一通道是 mmap，而 mmap 致命；read/ioctl/seek 全无
+- `docs/18`: `/dev/mma` CMA 耗尽 + 读命令不接受任意地址 → 分配与绕道皆无望
