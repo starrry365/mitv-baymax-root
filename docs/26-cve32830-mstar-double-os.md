@@ -88,4 +88,13 @@ PID 3065, uid 0(root)
 - **路线判定**：CVE-2023-32830 无论深挖 dtv_svc 还是逆向 RPC，本质都是逆向 MStar 闭源 TV 栈（数月量）；**无已证实的低成本 root 捷径**。
 - **保留动作**：拉全 dtv 主程序 + libapp_if_rpc 作**离线攻击面盘点**（只读、可随时做）；仅当命中"无鉴权任意命令入口+ 可达端点"才有机会快速 root（低置信、高回报）。
 
+## 7. 2026-09-11 追测：/mnt/vendor linux_rootfs 连 misysdiagnose(uid0) 也拒读
+
+- `/mnt/vendor` 在 uid0/misysdiagnose 域下 `ls` → **SELinux Permission denied**（非 DAC，DAC 已全通）。逐层 `/mnt/vendor/linux_rootfs/basic/dtv_svc` 全部拒读，`cp` 同样失败。
+- **dtv_svc 主二进制 + libapp_if_rpc 无法静态拉取** —— 但 `/proc/<pid>/maps|cmdline` 仍能读（另一条 LSM 规则放行了进程态）。
+- 含义：
+  1. 静态逆向面被锁定在 **Android 侧已拉到的 4 库 + svc_bin + libmtal**；dtv_svc 内部代码拿不到。
+  2. 进程态可观察（maps/cmdline），做**动态差分**（换内容型/大长度触发、看 dmesg/tomb）是唯一还能触碰 dtv_svc 的存活动态向。
+  3. 路径收敛：CVE-2023-32830 走"纯静态穷举 dtv_svc"已封死，只能走"Android 侧触发 + 进程态反馈"的动态差分。
+
 *文档性质：把之前"4 库都拉平就完了"的假设修正为"真存在 root 双 OS 目标"，为后续专注目标锚定。*
