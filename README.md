@@ -26,7 +26,30 @@ MStar **MMA** 内核驱动的 ioctl 协议逆向（通往完整 root 的下一�
 | **9** | **爆破 `ITvService` AIDL → 三条无鉴权通道** | ✅ 完成 |
 | **10** | **`system_app`（uid 1000）任意命令执行** | ✅ 完成，稳定 |
 | **11** | **`system_app` 域执行自研原生二进制** | ✅ 打通（`system_app_data_file` 有 `execute`） |
-| **12** | **`system_app` 域打 `/dev/miomap` / `/dev/malloc` 物理内存映射** | 🔬 下一步（**新首选**） |
+| **12** | **`system_app` 域打 `/dev/miomap` / `/dev/malloc` 物理内存映射** | ❌ **mmap 会把设备打挂**（两次复现，见 doc 17） |
+| **13** | **内核符号获取：kallsyms 被封 → 改从 Image 反查** | 🔬 进行中，见 doc 16 |
+| **14** | **`/dev/miomap` 的 `read()` / `ioctl` 通道探明** | 🔬 下一步（绕开 mmap） |
+
+### 第 12 / 13 阶段的重要修正（2026-09-11）
+
+之前假设 `/dev/miomap` 的 `mmap` 等价于 devmem，可以直接读写物理内存。
+**实测把它打挂了两次** —— 哪怕映射的是 `/proc/cmdline` 里白纸黑字标注的
+DRAM 地址（recovery 帧缓冲）。因此这条路暂停，改走 `read()` / `ioctl`：
+
+* 详见 [`docs/17-miomap-mmap-fatal.md`](docs/17-miomap-mmap-fatal.md)
+* 分级试探工具 [`tools/miostep.c`](tools/miostep.c)（每步 fsync 落盘，崩了也能定位）
+
+同时，之前赖以取符号地址的 `/proc/kallsyms` **对任何域都只有符号名没有地址**
+（`kptr_restrict=2`），`/proc/iomem` 三域全拒、`/proc/kcore` 不存在。
+取而代之的思路是在内核 Image 里用 **PREL32 反向查找**导出符号：
+
+* 详见 [`docs/16-kernel-symbols-blackout.md`](docs/16-kernel-symbols-blackout.md)
+* 实现：[`tools/miroot2.c`](tools/miroot2.c)（尚未上机验证，见下方警告）
+* 另一个当天的关键收获：**`/proc/cmdline` 只有 `system_app` 域能读**，
+  全文见 [`recon/cmdline-full.txt`](recon/cmdline-full.txt)（含完整内存布局）
+
+> ⚠️ **`tools/miroot2.c` 尚未在设备上运行过。** 在 mmap 致命问题得到明确解释之前，
+> **不要**直接用它的写模式（不带 `dry` 参数的运行状态）。
 
 ### 第 7 阶段的关键修正
 

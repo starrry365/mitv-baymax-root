@@ -1,0 +1,24 @@
+# 小米电视 ES65 2022 (baymax) — /proc/cmdline 全文
+# 读取域: system_app (uid 1000, u:r:system_app:s0)
+#   —— adb shell (u:r:shell:s0) 与 uid0/misysdiagnose 读此文件均被 SELinux 拒绝
+# 读取方式: service call TvService 3 s16 "<factory dir>/ioread"
+# 读取时间: 2026-09-11
+#
+# ⚠️ 这是目前唯一能拿到完整物理内存布局的通道，价值极高。
+
+console=ttyS0,115200 androidboot.console=ttyS0 init=/init CORE_DUMP_PATH=/data/core_dump.%%p.gz KDebug=1 delaylogo=true security=selinux SD_CONFIG=2 loop.max_part=7 loglevel=0 no_autorun_log=1 cgroup.memory=nokmem utpa_str_fr=1 QOS_SYS=1 QOS_AUTO_ADJ=1 sysrq_always_enabled=1 MIU_HIT_PANIC=OFF platform=mi MIRROR=0 LX_MEM=0x22D00000 LX_MEM2=0x4A400000,0x53E00000 EMAC_MEM=0x100000 PM51_ADDR=0x45370000 PM51_LEN=0x10000 tee_mode=optee recovery_fbaddr=0x27800000 pm_path=/vendor/tvconfig/config/PM.bin RTPM_INFO=1,0x45370000 FRC_R2_INFO=1,0x49FA6000 VOC_MEM=0x29600000,0x200000 CMA0=OTHERS_RETURN,miu=0,hid=23,sz=0x1000000,st=0x2A400000 ENV_VAR_OFFSET=0x0 ENV_VAR_SIZE=0x10000 ENV=EMMC SECURITY=ON androidboot.serialno=33778131600017161 cusdata_dataIndex_path=/vendor//tvconfig/config/model/Customer_2.ini CFG_SYS_INI=/vendor/config/sys/sys_02.ini SAR5=ON androidboot.bootloader=01.01.220627 DRAM_ASYM_SIZE=0x0 androidboot.bootreason=kernel_panic cusdata_projectid=2 androidboot.mi.panel_size=65 androidboot.mi.panel_vendor=BOE androidboot.hardware_version=dz3l androidboot.model_name=DZ3L_36:DZ5C androidboot.board_version=dvt2 androidboot.did_key=10B7133D8D15|440151921|K7hOuNwXLQ2pKzjH androidboot.assm_mn=DZ3LBXF1619GXNXX02663 androidboot.mac=04:7A:0B:58:DD:5D androidboot.wake_up_rc=14:AB:56:2F:02:39; USB_OTG_SOFTWARE_ID=host androidboot.vbmeta.device=179:4 androidboot.vbmeta.avb_version=1.0 androidboot.vbmeta.device_state=locked androidboot.vbmeta.hash_alg=sha256 androidboot.vbmeta.size=9344 androidboot.vbmeta.digest=91704e8e5272daa28041c5a972e409975aa68c90a993182bbedaf78fec9fe5ac androidboot.veritymode=enforcing androidboot.verifiedbootstate=green androidboot.dtbo_idx=0
+
+# ---- 关键字段速查 ----
+# LX_MEM=0x22D00000                    主 Linux 内存区
+# LX_MEM2=0x4A400000,0x53E00000        第二内存区（字段顺序存疑）
+# EMAC_MEM=0x100000
+# PM51_ADDR=0x45370000  PM51_LEN=0x10000
+# RTPM_INFO=1,0x45370000
+# FRC_R2_INFO=1,0x49FA6000
+# VOC_MEM=0x29600000,0x200000
+# CMA0=...hid=23,sz=0x1000000,st=0x2A400000
+# recovery_fbaddr=0x27800000           ← 确认存在的真实 DRAM，首选无害靶点
+# MIU_HIT_PANIC=OFF                    ← 内存访问违反不会立刻 panic（但仍会打挂）
+# sysrq_always_enabled=1
+# SECURITY=ON / veritymode=enforcing / vbmeta locked / verifiedbootstate=green
+# androidboot.bootreason=kernel_panic  ← 上次重启原因是内核 panic（2026-09-11 实锤）

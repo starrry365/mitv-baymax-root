@@ -1,0 +1,53 @@
+# proc 可读性矩阵 — 小米电视 ES65 2022 (baymax)
+# 日期：2026-09-11
+# 三个域分别实读同一个文件路径，记录能否打开/能否取到内容。
+
+## 域说明
+
+| 域 | 获取方式 | uid |
+|---|---|---|
+| `shell` | `adb shell`（uid 2000） | 2000 |
+| `misysdiagnose` | `TvService.transact(4400)` → init exec | 0（CapEff=0x3fffffffff） |
+| `system_app` | `TvService` code 3 = `runSystemCommand`，exec 自研 ELF | 1000 |
+
+## 结果表
+
+| 路径 | shell | misysdiagnose(uid0) | system_app |
+|---|---|---|---|
+| `/proc/cmdline` | Permission denied | Permission denied | **OK（全文可读）** |
+| `/proc/iomem` | Permission denied | Permission denied | Permission denied |
+| `/proc/kallsyms` | Permission denied | OK，但**地址全 0** | OK，但**地址全 0** |
+| `/proc/sys/kernel/kptr_restrict` | Permission denied | Permission denied | Permission denied |
+| `/proc/modules` | — | — | Permission denied |
+| `/proc/vmallocinfo` | **OK** | **OK** | Permission denied |
+| `/proc/kcore` | 不存在 | 不存在 | 不存在 |
+| `/proc/version` | OK | OK | OK |
+
+## 要点
+
+1. **system_app 的可读面 ≠ 更 broad。** 它在 `/proc/cmdline` 上唯一，但在 `vmallocinfo` 上反而被拒。
+2. `/proc/cmdline` 是**唯一能给出物理内存布局的通道**，而它只在 system_app 域可读 ——
+   所以后续所有需要物理地址的工作，都要以 system_app 域为准。
+3. `/proc/kallsyms` 在这台机器上**对任何域都只有符号名没有地址**，不要再把时间花在它上面。
+4. `/proc/kcore` 在这台机器上根本不存在（内核未开启 `CONFIG_PROC_KCORE`）。
+
+## 附：uid0 / misysdiagnose 的身份输出
+
+```
+uid=0(root) gid=0(root) groups=0(root) context=u:r:misysdiagnose:s0
+getenforce: Couldn't get enforcing status: Permission denied
+```
+
+## 附：uid0 读到的 kallsyms 片段（地址列全为 0）
+
+```
+0000000000000000 T do_undefinstr
+0000000000000000 T _stext
+0000000000000000 T __exception_text_start
+0000000000000000 T do_sysinstr
+0000000000000000 T do_mem_abort
+0000000000000000 T do_el0_irq_bp_hardening
+...
+```
+
+（完整符号名清单仍有价值：可用来与物理内存里的 kallsyms 名字表做比对，见 docs/16。）

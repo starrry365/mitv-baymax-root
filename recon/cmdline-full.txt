@@ -1,0 +1,37 @@
+# /proc/cmdline 全文 — 小米电视 ES65 2022 (baymax)
+# 读取域：system_app (uid 1000)
+#   注意：shell(uid2000) 与 misysdiagnose(uid0) 读此文件均被 SELinux 拒绝。
+#        只有 system_app 域可读 ⇒ 这是目前唯一能拿到完整物理内存布局的通道。
+# 读取方式：TvService code 3 (runSystemCommand) → 自研 ELF
+# 日期：2026-09-11
+
+console=ttyS0,115200 androidboot.console=ttyS0 init=/init CORE_DUMP_PATH=/data/core_dump.%%p.gz KDebug=1 delaylogo=true security=selinux SD_CONFIG=2 loop.max_part=7 loglevel=0 no_autorun_log=1 cgroup.memory=nokmem utpa_str_fr=1 QOS_SYS=1 QOS_AUTO_ADJ=1 sysrq_always_enabled=1 MIU_HIT_PANIC=OFF platform=mi MIRROR=0 LX_MEM=0x22D00000 LX_MEM2=0x4A400000,0x53E00000 EMAC_MEM=0x100000 PM51_ADDR=0x45370000 PM51_LEN=0x10000 tee_mode=optee recovery_fbaddr=0x27800000 pm_path=/vendor/tvconfig/config/PM.bin RTPM_INFO=1,0x45370000 FRC_R2_INFO=1,0x49FA6000 VOC_MEM=0x29600000,0x200000 CMA0=OTHERS_RETURN,miu=0,hid=23,sz=0x1000000,st=0x2A400000 ENV_VAR_OFFSET=0x0 ENV_VAR_SIZE=0x10000 ENV=EMMC SECURITY=ON androidboot.serialno=33778131600017161 cusdata_dataIndex_path=/vendor//tvconfig/config/model/Customer_2.ini CFG_SYS_INI=/vendor/config/sys/sys_02.ini SAR5=ON androidboot.bootloader=01.01.220627 DRAM_ASYM_SIZE=0x0 androidboot.bootreason=kernel_panic cusdata_projectid=2 androidboot.mi.panel_size=65 androidboot.mi.panel_vendor=BOE androidboot.hardware_version=dz3l androidboot.model_name=DZ3L_36:DZ5C androidboot.board_version=dvt2 androidboot.did_key=10B7133D8D15|440151921|K7hOuNwXLQ2pKzjH androidboot.assm_mn=DZ3LBXF1619GXNXX02663 androidboot.mac=04:7A:0B:58:DD:5D androidboot.wake_up_rc=14:AB:56:2F:02:39; USB_OTG_SOFTWARE_ID=host androidboot.vbmeta.device=179:4 androidboot.vbmeta.avb_version=1.0 androidboot.vbmeta.device_state=locked androidboot.vbmeta.hash_alg=sha256 androidboot.vbmeta.size=9344 androidboot.vbmeta.digest=91704e8e5272daa28041c5a972e409975aa68c90a993182bbedaf78fec9fe5ac androidboot.veritymode=enforcing androidboot.verifiedbootstate=green androidboot.dtbo_idx=0
+
+## 关键字段解读
+
+| 字段 | 值 | 用途 |
+|---|---|---|
+| `LX_MEM` | `0x22D00000` | 主 Linux 内存区（大小或结束地址，需结合 MStar 约定） |
+| `LX_MEM2` | `0x4A400000,0x53E00000` | 第二内存区（start,size 还是 size,start 待确认） |
+| `EMAC_MEM` | `0x100000` | EMAC 保留区 |
+| `PM51_ADDR` / `PM51_LEN` | `0x45370000` / `0x10000` | PM51 固件区（⚠️ 疑似 MMIO，勿直接读） |
+| `RTPM_INFO` | `1,0x45370000` | 与 PM51 同区 |
+| `FRC_R2_INFO` | `1,0x49FA6000` | FRC 区 |
+| `VOC_MEM` | `0x29600000,0x200000` | 音频 VOC 区（真实 DRAM，可作校准靶点） |
+| `CMA0` | `miu=0,hid=23,sz=0x1000000,st=0x2A400000` | CMA 区：起始 `0x2A400000`，大小 `0x1000000` |
+| `recovery_fbaddr` | `0x27800000` | recovery 帧缓冲（真实 DRAM，首选"无害靶点"） |
+| `MIU_HIT_PANIC` | `OFF` | MIU 越界命中时不触发 panic —— **不等于读坏地址安全**（见 docs/17） |
+| `sysrq_always_enabled` | `1` | SysRq 编译时启用（但写 `/proc/sysrq-trigger` 仍被 SELinux 拒） |
+| `SECURITY` | `ON` | 安全启动相关 |
+| `veritymode` / `verifiedbootstate` | `enforcing` / `green` | 无法绕过 dm-verity |
+| `vbmeta.device_state` | `locked` | bootloader 锁，不能刷机/解锁 |
+| `bootreason` | `kernel_panic` | 上次重启原因是内核 panic —— 与本文档记录的事故一致 |
+
+## 推论
+
+1. `CMA0 st=0x2A400000` 与先前记录的"CMA 起始 0x2A400000"吻合，佐证这一带是真实 DRAM。
+2. 已知存在于 DRAM 里的"安全地址"（可用于任何物理读写原语做无副作用校准）：
+   - `0x27800000`（recovery fb）
+   - `0x29600000`（VOC）
+   - `0x2A400000`（CMA 起始）
+3. `0x45370000` / `0x49FA6000` 一带标注为 PM51 / FRC，**很可能是 MMIO**，不要在没有确认前读取。
