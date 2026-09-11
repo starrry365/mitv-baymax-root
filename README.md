@@ -1,11 +1,13 @@
 # mitv-baymax-root
 
 小米电视 **ES65 2022 款**（内部代号 `baymax`，MStar **MT5872** 平台，Android 10 / SDK 29）
-免拆机提权研究 —— 从 `misysdiagnose` 后门到 **uid 0 命令执行通道**，以及
-MStar **MMA** 内核驱动的 ioctl 协议逆向（通往完整 root 的下一步）。
+免拆机提权研究 —— 从 `misysdiagnose` 后门到 **uid 0 + system_app 双命令执行通道**，
+再到 **CVE-2023-32830（TVAPI OOB write）的底层逆向**，最终目标是把 root 提升到
+「能改系统 / 关 SELinux / 刷机」的完整状态。
 
 > 目标设备：Xiaomi Mi TV ES65 2022 / `MiTV_MTEQ0` / 192.168.1.164
 > 前提：无需 root、无需开发者选项（`persist.adb.tcp.port=5555` 已持久化，adb 直连）
+> 仓库：仅存放分析文档与工具，**不重新分发**任一下述版权二进制（见「免责声明」）。
 
 ---
 
@@ -13,272 +15,146 @@ MStar **MMA** 内核驱动的 ioctl 协议逆向（通往完整 root 的下一�
 
 | 阶段 | 内容 | 状态 |
 |---|---|---|
-| 1 | 设备识别 / 硬件巡检 | ✅ 完成 |
-| 2 | 发现 `misysdiagnose` 后门（`/init.mitv.rc`） | ✅ 完成 |
-| 3 | 定位无鉴权写入方 `TvService.transact(4400)` | ✅ 完成 |
-| 4 | 打通 **uid 0 命令执行**（`CapEff=0x3fffffffff`） | ✅ 完成，稳定 |
+| 1–4 | 设备识别 + 发现 `misysdiagnose` 后门 + **uid 0 命令执行**（`CapEff=0x3fffffffff`） | ✅ 完成，稳定 |
 | 5 | 常驻 root daemon（`rootd`） | ✅ 完成 |
-| 6 | SELinux 域 `u:r:misysdiagnose:s0` 提权突破 | 🔬 进行中 |
-| 7 | MStar MMA 驱动 ioctl 协议还原 | ✅ 完成（**权威版**，见下） |
-| 7b | 内核地址泄露（`mma_get_pipeid`） | ✅ 完成 |
-| 7c | 内核内存地图（`/proc/vmallocinfo`） | ✅ 完成 |
-| 8 | 经 `/dev/mma` 做内核物理内存读写 → 改 cred / 关 SELinux | 🔬 受阻，已转向 12–14 |
-| **9** | **爆破 `ITvService` AIDL → 三条无鉴权通道** | ✅ 完成 |
-| **10** | **`system_app`（uid 1000）任意命令执行** | ✅ 完成，稳定 |
-| **11** | **`system_app` 域执行自研原生二进制** | ✅ 打通（`system_app_data_file` 有 `execute`） |
-| **12** | **`system_app` 域打 `/dev/miomap` / `/dev/malloc` 物理内存映射** | ❌ **mmap 会把设备打挂**（两次复现，见 doc 17） |
-| **13** | **内核符号获取：kallsyms 被封 → 改从 Image 反查** | 🔬 进行中，见 doc 16 |
-| **14** | **`/dev/miomap` 的 `read()` / `ioctl` 通道探明** | 🔬 下一步（绕开 mmap） |
-
-### 第 12 / 13 阶段的重要修正（2026-09-11）
-
-之前假设 `/dev/miomap` 的 `mmap` 等价于 devmem，可以直接读写物理内存。
-**实测把它打挂了两次** —— 哪怕映射的是 `/proc/cmdline` 里白纸黑字标注的
-DRAM 地址（recovery 帧缓冲）。因此这条路暂停，改走 `read()` / `ioctl`：
-
-* 详见 [`docs/17-miomap-mmap-fatal.md`](docs/17-miomap-mmap-fatal.md)
-* 分级试探工具 [`tools/miostep.c`](tools/miostep.c)（每步 fsync 落盘，崩了也能定位）
-
-同时，之前赖以取符号地址的 `/proc/kallsyms` **对任何域都只有符号名没有地址**
-（`kptr_restrict=2`），`/proc/iomem` 三域全拒、`/proc/kcore` 不存在。
-取而代之的思路是在内核 Image 里用 **PREL32 反向查找**导出符号：
-
-* 详见 [`docs/16-kernel-symbols-blackout.md`](docs/16-kernel-symbols-blackout.md)
-* 实现：[`tools/miroot2.c`](tools/miroot2.c)（尚未上机验证，见下方警告）
-* 另一个当天的关键收获：**`/proc/cmdline` 只有 `system_app` 域能读**，
-  全文见 [`recon/cmdline-full.txt`](recon/cmdline-full.txt)（含完整内存布局）
-
-> ⚠️ **`tools/miroot2.c` 尚未在设备上运行过。** 在 mmap 致命问题得到明确解释之前，
-> **不要**直接用它的写模式（不带 `dry` 参数的运行状态）。
-
-### 当前攻坚点（2026-09-11，阶段 14）
-
-经历了两次 mmap 打挂后，物理内存读写通道的策略是 —— **绕开 `mmap`，走 `read()` / `pread()` / `ioctl`**。
-
-* 主工具 [`tools/miostep.c`](tools/miostep.c)：**分级试探**，每完成一步就 `fsync` 落盘，
-  即使某步把内核打挂、重启后也能从日志精确看出死在哪一步（不再盲扫）。
-* 与 `mma` 的 `mma_map` / `mma_va2iova` 这类"任意物理地址 → 用户映射/物理地址"命令交叉验证，
-  若 device 的 `read()` 把**文件偏移当作物理地址**，则无需 mmap 即可读写任意物理内存。
-* 目标：拿到内核物理内存读写后，改写 `selinux_enforcing` 或进程 `cred->security->sid` → 完整 root。
-
-安全护栏（写死在 `miostep`）：
-1. 探测分 `safe 文件读取 → /dev/miomap 只读预检 → 定向 ioctl/read` 三档，危险操作放最后；
-2. 任何写操作前必须先回读校验接口与地址；
-3. **绝不**再对未知设备做宽范围 ioctl 盲扫（260k 条曾把设备打挂）。
-
-配套侦察结论（当天新固化的三条铁律）：
-* **mmap 动作本身是致命的** —— 见 [`docs/17-miomap-mmap-fatal.md`](docs/17-miomap-mmap-fatal.md)；
-* **kallsyms 对任何域都只有符号名、没有地址**（`kptr_restrict=2`）—— 见 [`docs/16-kernel-symbols-blackout.md`](docs/16-kernel-symbols-blackout.md)；
-* **能开 `/dev/miomap` 的只有 `system_app` 及其同族域**（`misysdiagnose` 不行）⇒ 最终写内存必须经 uid1000 通道；
-  而符号 / 内存布局可走 system_app 读 `/proc/cmdline`（三域中唯它可读，见 [`recon/cmdline-full.txt`](recon/cmdline-full.txt)）。
-
-### 第 7 阶段的关键修正
-
-早期版本里的 MMA ioctl 表来自对立即数构造点的**猜测性还原，有多处错误**。
-后来在设备上找到了真正实现这套 API 的 `gralloc.mt5872.so`（93 KB，未 strip），
-**反汇编它逐条读出真实命令字**，并顺带解出完整的结构体布局与函数签名
-（C++ 修饰名直接给出参数类型）。
-
-详见 [`reverse/mma-ioctl-table.md`](reverse/mma-ioctl-table.md)。
-
-### 意料之外的两项收获
-
-* **`mma_get_pipeid` 泄露内核地址**：这条只读命令稳定返回两个
-  `0xffffffc0xxxxxxxx` 形式的**内核线性映射地址**（每次调用值不同 ⇒ 真实内核堆对象）。
-* **`/proc/vmallocinfo` 在受限域里完全可读**，直接暴露 MMA/CMA 的**物理地址区段**、
-  各内核对象虚拟地址、以及内核函数符号与偏移 —— 配合 KASLR 关闭，
-  相当于拿到了一张相当完整的内核内存地图。
-
-### 当前阻塞点
-
-`mma_alloc` 在 **744 种组合**（31 个 tag 名 × 3 尺寸 × 8 个 flags）下**全部返回 ENOMEM**。
-根因指向 **CMA 耗尽**：`CmaTotal=24 MB` 而 `CmaFree` 只剩 **~2 MB**，
-MMA 的物理内存正是从 CMA 分配（`/proc/vmallocinfo` 里的
-`MsOS_MMA_CMA_Unauthorize+... phys=0x... ioremap [utpa2k]` 条目即为证据）。
-
-因此下一步改为**绕开分配**，直接打「地址转换 / 句柄导入 / 授权」类命令
-（`mma_map`、`mma_map_iova`、`mma_import_handle`、`mma_import_globalname`、
-`mma_globalname_query`、`mma_buffer_authorize`、`mma_va2iova`），
-这些命令的输入本来就是句柄或物理地址，不需要新分配。详见
-[`docs/06-next-steps.md`](docs/06-next-steps.md)。
-
-**当前权限**：`uid=0(root)`，全部 38 个 capability（`CapEff=0x3fffffffff`），
-但 SELinux 域为受限的 `u:r:misysdiagnose:s0` —— 能读 `/dev/mma`、能 binder 到
-system_server，但不能改 `/system`、不能 `insmod`、不能 `setenforce`。
+| 7–7c | MStar **MMA** 内核驱动 ioctl 协议还原 + 内核地址泄露 + 内存地图 | ✅ 完成（权威版） |
+| 8 | 经 `/dev/mma` 做内核物理内存读写 | 🔬 **CMA 耗尽，路线关闭**（见下） |
+| 9–11 | 爆破 `ITvService` AIDL → `system_app` 任意命令/自研二进制执行 | ✅ 完成，稳定 |
+| 12 | `system_app` 打 `/dev/miomap` 物理内存映射 | ❌ mmap 打挂设备（doc 17） |
+| 13 | 内核符号：kallsyms 封 → 改从 Image 反查 | 🔬 部分，见 doc 16 |
+| 14 | `/dev/miomap` read/ioctl 通道 | ❌ pread 全部 EINVAL，关闭 |
+| **15** | **CVE-2023-32830（TVAPI OOB write）可行性** | 🔬 触发链路成熟，漏洞面已定位到底层 |
+| **16** | **底层库逐层逆向 → 定位 root 双 OS 目标** | ✅ **架构实锤**（关键，见下） |
+| **17** | **uid0 通用文件拉取通道**（`uid0_pull.sh`） | ✅ 完成，高复用 |
 
 ---
 
-## 1. 后门链（阶段 2–4）
+## 当前攻坚焦点（阶段 18，README 最新）
 
-`/init.mitv.rc` 中存在一条极明显的后门规则：
+### ⚡ 决定性重构：CVE-2023-32830 的真实目标 = root 的 MStar DTV 双系统
+
+经过 `uid 0` 通道拉出 HAL 主二进制、`libmtal.so`，并读取 `dtv_svc` 进程 maps/cmdline，
+彻底搞清了这条 CVE 的真实执行往回跳栈 —— **漏洞 OOB 实现不在 Android /vendor 库，
+而在一个独立的、以 root(uid 0) 运行的 MStar DTV 微系统进程（glibc 双架构）**。
 
 ```
-on property:vendor.misysdiagnose.cmd.code=*
-    exec - root root -- /vendor/bin/misysdiagnose -${vendor.misysdiagnose.cmd.code} ${vendor.misysdiagnose.cmd.arguments}
+Android (UI/binder)                      MStar Linux 微内核（root）
+ App/TvService ── TVNative(Java)          ┌──────────────────────────────┐
+   └→ libjni.so（长度校验）                │  /mnt/vendor/linux_rootfs/    │
+       └→ HIDL stub（libmtktvapi_full.so）│    basic/dtv_svc  ← 主进程   │
+           └→ cwrapper（a_scan_*_exchange│    libc-2.21.so（glibc！）    │
+                dispatch vtable）          │    libapp_if_rpc.so（RPC桥）│
+                    └─ ● ────────────────►│    libapi(DMX/VDEC/GFX).so   │
+        root 的 dtvvc 命中 OOB          │    libmi / libdrv* / DirectFB  │
+        = 直接 root，无需过 Android      └──────────────────────────────┘
+          SELinux / cred toast
 ```
 
-只要有人把 `vendor.misysdiagnose.cmd.code` 写成脚本路径参数，**init（uid 0）**
-就会执行 `/vendor/bin/misysdiagnose -<code> <arguments>`。
+**为什么这是最干净的 root 目标**：`dtv_svc`（PID 3065，uid0/glibc）内若命中 OOB write，
+直接获得 **root 代码执行**，不依赖 Android 侧任何 SELinux 策略或 cred 篡改。
 
-关键点在于**谁能写这个属性**：
+**详见 [`docs/26-cve32830-mstar-double-os.md`](docs/26-cve32830-mstar-double-os.md)** —— 含完整
+反汇编证据（`a_scan_*_exchange_data` 的 vtable dispatch）、MStar 双内核架构、uid0 拉取通道记录。
 
-* 该属性被声明的合法写方是 `system_app` 域；
-* 实测 `TvService`（运行于 `u:r:system_app:s0`）暴露的 binder
-  `transact(4400)` **没有任何调用方鉴权** —— 它把传入的
-  `(code, arguments)` 直接 `property_set()` 进上述两个属性。
+### 三条「快」路已全部实证证伪（2026-09-11）
 
-于是任意 adb shell（甚至局域网内任何能连 adb 的主机）都能触发：
+| 路线 | 结论 | 文档 |
+|---|---|---|
+| `/dev/mma` 物理内存读写 | **CMA 耗尽**，`mma_alloc` 全 `ENOMEM`，cur 面「重 4KB 也分不出」 | `docs/18` |
+| `/dev/miomap` mmap | `mmap` 动作本身打挂设备（两次），pread 全 EINVAL | `docs/17` |
+| FIFO/RPC 直连 root dtv_svc | 入口被 deep 封装（fd / net 不可读、无命名 FIFO），**非便宜捷径** | `docs/26` §6 |
 
-```bash
-service call TvService 4400 s16 "s" s16 "/sdcard/cmd.sh"
-```
-
-结果：`/sdcard/cmd.sh` 以 **uid 0** 被执行。
-
-一键执行器见 [`tools/tv_root_exec.sh`](tools/tv_root_exec.sh)：
-
-```bash
-./tools/tv_root_exec.sh "id; cat /proc/version"
-# => uid=0(root) gid=0(root) groups=0(root) context=u:r:misysdiagnose:s0
-```
-
-### 为什么不是完整 root
-
-处于 `u:r:misysdiagnose:s0` 域，DAC 层面全通（uid 0 + 全部 capability），
-但 SELinux 仍拦住了：
-
-* `setenforce` / 写 `/sys/fs/selinux/enforce` → 拒绝
-* `mount`/`remount`、`insmod`/`finit_module` → 拒绝
-* `chcon` 改自身上下文 → 拒绝
-* 大部分 MStar 私有设备节点（`/dev/miomap`、`/dev/malloc`、`/dev/tee0` …）→ 拒绝
-
-因此阶段 4–5 拿到的是 **"受限 root"**：足够读大量系统数据、跑自研二进制、
-常驻守护进程，但不足以改系统分区或关闭 SELinux。
+**存活方向**：CVE-2023-32830 需逆向 MStar 闭源 TV 栈（数月级）。`/mnt/vendor`（linux_rootfs）
+SELinux 拒读（连 uid0 也不行），`dtv_svc` 静态拉不掉 → 只能走**动态差分**（Android 侧触发 +
+`/proc/<pid>/maps` / dmesg 观察）。
 
 ---
 
-## 1.5 TvService AIDL 突破：再拿一层 `system_app`（阶段 9–11）
+## 已打通的真相之王（可利用权限）
 
-`service list` 显示 `TvService: [mitv.internal.ITvService]` —— 它是**标准 AIDL 服务**，
-实现类 `TvServiceDefaultImpl extends ITvService.Stub`，**全部方法都没有调用方校验**。
+### 通道一：uid 0（`misysdiagnose` 域，DAC 全通）— 阶段 4
 
-用「`Not a data message` = 事务码不存在」这个 oracle 枚举，再用三路副作用 oracle
-（属性 / 文件 / 命令）定位危险方法，得到：
+`/init.mitv.rc` 有后门：把 `vendor.misysdiagnose.cmd.code` 写脚本路径，init(uid0) 即执行。
+而 `TvService.transact(4400)` **无调用方鉴权**，任意 adb shell 可触发：
+
+```bash
+service call TvService 4400 s16 "s" s16 "/sdcard/cmd.sh"   # cmd.sh 以 uid 0 执行
+```
+
+一键执行器：`./tools/tv_root_exec.sh "id"` → `uid=0(root) context=u:r:misysdiagnose:s0`
+通用任意文件拉取器：`./tools/uid0_pull.sh /vendor/bin/hw/xxx-service` （能拉 shell 读不到的 vendor 文件）
+
+**局限**：SELinux 域受限——不能 `setenforce`、`insmod`、改 `/system`、改自身上下文。
+
+### 阶段二：`system_app`（uid 1000）— 阶段 9–11
+
+`TvService`（AIDL `ITvService`）全部方法无校验，枚举出三条危险通道：
 
 | code | 方法 | 能力 |
 |---|---|---|
-| **1** | `systemPropertiesSet(k, v)` | 写任意系统属性 |
-| **2** | `writeSystemFile(path, content)` | **任意路径写文件** |
-| **3** | `runSystemCommand(cmd)` | **任意命令执行（system_app / uid 1000）** |
-| 4400 | （非 AIDL）misysdiagnose 属性写 | uid 0 脚本执行（阶段 4） |
+| 1 | `systemPropertiesSet` | 写任意系统属性 |
+| 2 | `writeSystemFile` | **任意路径写文件** |
+| 3 | `runSystemCommand` | **任意命令执行（system_app / uid 1000）** |
+| 4400 | misysdiagnose 属性 | uid 0 脚本执行（阶段 4） |
 
-```bash
-adb shell 'service call TvService 3 s16 "id"'
-# uid=1000(system) ... context=u:r:system_app:s0
-```
+`system_app` 能打开 misysdiagnose 域全拒的 MStar 私有设备（`/dev/miomap`、`/dev/malloc`、
+`/proc/utopia`…），且能在自建的 `system_app_data_file` 目录里**执行自研 armv7a ELF**。
 
-**为什么这一层比 uid 0 更有用**：`system_app` 能打开 misysdiagnose 域被拒的
-**全部 MStar 私有设备** —— `/dev/miomap`(物理内存映射)、`/dev/malloc`(物理内存分配)、
-`/dev/system`、`/dev/msmailbox`、`/dev/scaler`、`/dev/semutex`，以及 `/proc/utopia`
-（ioctl + rw + map）和可写的 `/proc/cmdline`。
-
-更进一步：`system_app` 的 `execute` 权限只覆盖两个类型，其中
-**`system_app_data_file` 是我们自己能创建的目录**（`/data/data/com.mediatek.tv.factory/`，
-新建文件自动继承该标签）⇒ **可以把自研 armv7a ELF 放进去，在 `system_app` 域执行**。
-
-* 详见 [`docs/07-tvservice-aidl-breakout.md`](docs/07-tvservice-aidl-breakout.md)
-* 详见 [`docs/08-system-app-execution.md`](docs/08-system-app-execution.md)
-* 权限清单 [`policy/system-app-privileges.txt`](policy/system-app-privileges.txt)
-* 执行器 [`tools/sysapp.sh`](tools/sysapp.sh) / [`tools/sarun.sh`](tools/sarun.sh)
-
-> ⚠️ **动手前请先读 [`docs/09-operational-hazards.md`](docs/09-operational-hazards.md)** ——
-> 记录了两次把电视搞挂的经过（init 死锁、画面定格在锁屏），以及对应的三层防护。
+> ⚠️ 动手前必读 [`docs/09-operational-hazards.md`](docs/09-operational-hazards.md) ——
+> 记录两次把电视搞挂的经过（init 死锁、画面定格锁屏）与三层防护。
 
 ---
 
-## 2. 常驻通道（阶段 5）
+## 彻底关闭的物理内存路线（阶段 12–14）
 
-[`tools/rootd.c`](tools/rootd.c) 是一个以 uid 0 常驻的用户态 daemon：
-轮询 `/sdcard/.rcmd`，把命令结果写 `/sdcard/.rout`。
-避免每次都走一遍 binder 触发（避开残留进程卡死 init exec 队列的问题）。
+之前一直押注「物理内存读写 → 改 `selinux_enforcing` / `cred`」，现已系统性关闭：
 
-```
-[pid=7914 uid=0] rootd v2 up, polling /sdcard/.rcmd
-```
+- `/dev/mma`：**CMA 耗尽**（`CmaTotal=24MB` 只剩 ~2MB），744 种组合 `mma_alloc` 全 `ENOMEM`，
+  且 `mmap` 需要合法命中才可，起手就断。→ [doc 18](docs/18-mma-route-closed.md)
+- `/dev/miomap`：**mmap 动作本身致命**（连映射 `/proc/cmdline` 标注的 DRAM 地址也崩，两次复现）；
+  `pread(物理地址)` 全 EINVAL（偏移不当物理地址）。→ [doc 17](docs/17-miomap-mmap-fatal.md)
+- 内核符号：`/proc/kallsyms` 只有名无地址（`kptr_restrict=2`）、`/proc/iomem` 三域全拒、
+  `/proc/modules` … → [doc 16](docs/16-kernel-symbols-blackout.md)
 
----
+### 阶段 7 关键修正：MMA ioctl 权威版
 
-## 3. MMA 驱动逆向（阶段 7）
-
-`/dev/mma`（SELinux 类型 `mstar_mma_device`）是 MStar TV SoC 的**物理内存分配器**
-（Memory Management Agent）。它被策略显式授权给 misysdiagnose 域：
-
-```
-(allow misysdiagnose_29_0 mstar_mma_device (chr_file (ioctl read write open)))
-```
-
-这是**已到手 uid 0 中唯一可用的、直接操作内核内存的接口**，因此成为突破 SELinux 的
-主要攻击面。
-
-从设备上拉取的厂商模块 `utpa2k.ko`（未剥离符号，含 `MsOS_MMA_*`）与
-`/vendor/lib/libutopia.so` 中还原出 **29 条 ioctl 命令**（magic = `'M'` = `0x4d`），
-完整表见 [`reverse/mma-ioctl-table.md`](reverse/mma-ioctl-table.md)。
-
-核心几条：
-
-| ioctl | 名称 | 语义 |
-|---|---|---|
-| `0xc0304d03` | `mma_alloc_internal` | 分配物理内存，返回 handle |
-| `0x40284d06` | `mma_map` | 把 handle 映射进进程地址空间 |
-| `0xc0304d17` | `mma_va2iova` | 虚拟地址 → 物理地址 |
-| `0xc0a84d00` | `mma_reserve_iova` | 预留 IOVA 区间 |
-| `0xc0304d0b/0c` | `get_meminfo` / `get_heapinfo` | 读取堆信息 |
-| `0x40284d08` | `mma_flush` | cache flush |
-
-一个设计粗糙的 TV 内存分配器，如果允许把**任意物理地址**当作 handle 交给
-`mma_map` / `mma_va2iova`，就是一条从用户态直达内核物理内存的读写通道 ——
-这正是阶段 8 要验证的。
-
-[`tools/mmatest.c`](tools/mmatest.c) 是上机验证程序（先用只读查询类命令探协议，
-危险命令暂不调用）。
+早期 MMA 表是猜测还原的，后从设备拉到 **`gralloc.mt5872.so`（未 strip）** 反汇编逐条读出
+真实命令字与完整 struct 布局（magic `'M'`=0x4d）。详见 [`reverse/mma-ioctl-table.md`](reverse/mma-ioctl-table.md)。
 
 ---
 
-## 4. 目录结构
+## 目录结构
 
 ```
-docs/     研究文档（设备、后门、uid0 通道、MMA、环境限制、下一步、
-          TvService AIDL 突破、system_app 执行、操作风险、
-          内核符号黑盒 16、miomap-mmap 致命 17）
-tools/    自研工具源码（C / shell / python）
-          —— ioread(读 cmdline/iomem)、mioprobe2(定向读 DRAM)、
-             miostep(分级 read/ioctl 试探)、miroot2(PREL32 反查符号)
-reverse/  MMA ioctl 逆向成果（表 + 从设备抽取 blob 的脚本）
+docs/     26 篇研究文档（设备 01 → CVE 底层定位 26，推荐按编号顺序走）
+tools/    自研工具（C/shell/python）
+          —— tv_root_exec.sh(uid0执行) / uid0_pull.sh(uid0任意文件拉取)
+             sysapp.sh / sarun.sh(system_app执行) / reconnect.sh(重启恢复)
+             mioprobe* / miostep(分级探测) / miroot2(PREL32查符号) / mma* / ...
+reverse/  MMA ioctl 权威表 + 从设备抽取 blob 的脚本
 policy/   关键 SELinux 规则摘录（misysdiagnose / system_app 权限画像）
-recon/    原始侦察输出（设备节点、syscall 普查、进程、AIDL 事务码、
-          cmdline 全文、proc 可读性矩阵等）
+recon/    原始侦察输出（设备节点、AIDL 事务码、cmdline 全文、proc 可读性矩阵…）
 ```
 
-## 4.5 设备重启后的一键恢复
+**推荐阅读路径**：`docs/01 → 02 → 03 → 07 → 08 → 09 → 1x → 19(全展望) → 20(CVE 计划) →
+21/22/23(触发) → 24(路由判定) → 26(CVE 双 OS 实锤)`。
+
+---
+
+## 一键恢复 / 环境
 
 ```bash
-./tools/reconnect.sh          # 循环重连 adb（最长 120s）→ 校验 uid0 + system_app 两条通道
+./tools/reconnect.sh    # 循环重连 adb（最长 120s）→ 校验 uid0 + system_app 两通道
 ```
 
-`persist.adb.tcp.port=5555` 已持久化，重启后 adbd 会自动起；
-但开机头 ~20–40 秒内 `connect` 会报 `Connection refused (10061)`，属正常，重试即可。
-首次 `connect` 若报 `failed to authenticate`，再连一次即 `device`。
+- `persist.adb.tcp.port=5555` 已持久化；开机头 ~20–40s `connect` 报 10061 属正常，重试即可。
+- 交叉编译：NDK r27c `armv7a-linux-androideabi21-clang`（动态链接更省事，无需 patch PT_TLS）
+- 设备侧执行细节：`docs/03`
 
-## 5. 环境 / 编译
+---
 
-* 交叉编译器：Android NDK r27c `armv7a-linux-androideabi21-clang`
-* 静态链接需把 ELF 的 `PT_TLS` 对齐 patch 成 32（Bionic 要求），
-  或改用**动态链接**直接绕开（推荐）
-* 设备侧执行：见 `docs/03-uid0-channel.md`
+## 免责声明
 
-## 6. 免责声明
-
-本研究仅针对**本人自有设备**，用于设备维护、备份与本地化改造。
-所有二进制 blob（`utpa2k.ko`、`libutopia.so`、APK 等）**均为小米 / MStar 版权物**，
-本仓库**不重新分发**，只提供从设备自行抽取的脚本。
-请勿将本仓库内容用于未授权设备。
+本研究仅针对**本人自有设备**，用于维护、备份与本地化改造。所有二进制 blob（`utpa2k.ko`、
+`libutopia.so`、APK、`dtv_svc` 等）均属于小米 / MStar 版权物，本仓库**不重新分发**，只提供
+从设备自行抽取的脚本。请勿用于未授权设备。
